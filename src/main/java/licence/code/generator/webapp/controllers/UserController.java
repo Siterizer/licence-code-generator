@@ -1,12 +1,11 @@
 package licence.code.generator.webapp.controllers;
 
-import licence.code.generator.webapp.entities.User;
 import licence.code.generator.webapp.services.UserCrudService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import java.util.List;
 
 @Controller
 public class UserController {
@@ -17,13 +16,10 @@ public class UserController {
         this.userCrudService = userCrudService;
     }
 
-    @GetMapping(value = {"/user"})
-    public String renderMainView() {
-        List<User> tmp = userCrudService.getAllUsers();
-        for (User user : tmp) {
-            System.out.println(user.getUsername());
-        }
-        return "helloWorld";
+    @GetMapping(value = {"/users"})
+    public String renderMainView(Model model) {
+        model.addAttribute("users", userCrudService.getAllUsers());
+        return "users";
     }
 }
 
