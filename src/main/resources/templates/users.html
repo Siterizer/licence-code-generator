@@ -14,6 +14,7 @@
 <table>
     <tbody th:each="user : ${users}" th:remove="tag">
         <tr>
+            <td th:text="${user.id}">...</td>
             <td th:text="${user.username}">...</td>
         </tr>
     </tbody>
