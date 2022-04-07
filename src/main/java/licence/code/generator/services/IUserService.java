@@ -1,6 +1,6 @@
-package licence.code.generator.webapp.services;
+package licence.code.generator.services;
 
-import licence.code.generator.webapp.entities.User;
+import licence.code.generator.entities.User;
 
 import java.util.List;
 

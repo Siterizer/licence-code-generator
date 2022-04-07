@@ -1,13 +1,10 @@
-package licence.code.generator.webapp.controllers;
+package licence.code.generator.controllers;
 
-import licence.code.generator.webapp.entities.User;
-import licence.code.generator.webapp.services.UserService;
+import licence.code.generator.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-
-import java.util.List;
 
 
 @Controller
@@ -20,16 +17,8 @@ public class UserController {
     }
 
     @GetMapping(value = {"/users"})
-    public String renderMainView(Model model) {
+    public String showAllUsers(Model model) {
         model.addAttribute("users", userService.getAllUsers());
-        return "users";
-    }
-
-    @GetMapping(value = {"/tmp/register"})
-    public String registerUser() {
-        User user = new User();
-        user.setUsername("tak");
-        userService.registerUser(user);
         return "users";
     }
 }

@@ -1,4 +1,4 @@
-package licence.code.generator.webapp.configuration;
+package licence.code.generator.security.configuration;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;

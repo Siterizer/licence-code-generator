@@ -1,6 +1,6 @@
-package licence.code.generator.webapp.repositories;
+package licence.code.generator.repositories;
 
-import licence.code.generator.webapp.entities.User;
+import licence.code.generator.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

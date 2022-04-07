@@ -1,7 +1,8 @@
-package licence.code.generator.webapp.services;
+package licence.code.generator.services;
 
-import licence.code.generator.webapp.entities.User;
-import licence.code.generator.webapp.repositories.UserRepository;
+import licence.code.generator.entities.User;
+import licence.code.generator.repositories.UserRepository;
+import licence.code.generator.services.IUserService;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
