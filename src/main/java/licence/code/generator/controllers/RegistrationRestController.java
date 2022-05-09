@@ -3,6 +3,8 @@ package licence.code.generator.controllers;
 import licence.code.generator.entities.User;
 import licence.code.generator.dto.UserDto;
 import licence.code.generator.services.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,6 +14,9 @@ import javax.validation.Valid;
 
 @Controller
 public class RegistrationRestController {
+    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+
+
     private final UserService userService;
 
     @Autowired
@@ -20,7 +25,8 @@ public class RegistrationRestController {
     }
 
     @PostMapping(value = {"/register"})
-    public RedirectView registerUser(@Valid final UserDto userDto) {
+    public RedirectView registerUser(@Valid final UserDto userToRegister) {
+        LOGGER.debug("Registering user with information: {}", userToRegister);
         User user = new User();
         user.setUsername("tak");
         userService.registerUser(user);
