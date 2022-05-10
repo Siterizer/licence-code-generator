@@ -3,12 +3,15 @@ package licence.code.generator.controllers;
 import licence.code.generator.entities.User;
 import licence.code.generator.dto.UserDto;
 import licence.code.generator.services.UserService;
+import licence.code.generator.web.exception.UserAlreadyExistException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.servlet.view.RedirectView;
 
 import javax.validation.Valid;
 
@@ -25,21 +28,29 @@ public class RegistrationRestController {
     }
 
     @PostMapping(value = {"/register"})
-    public RedirectView registerUser(@Valid final UserDto userToRegister) {
-        LOGGER.debug("Registering user with information: {}", userToRegister);
-        User user = new User();
-        user.setUsername("tak");
-        userService.registerUser(user);
-        RedirectView redirectView = new RedirectView();
-        redirectView.setUrl("users");
-        return redirectView;
+    public ResponseEntity registerUser(@Valid final UserDto userDto, final ModelMap model) {
+        LOGGER.debug("Registering user with information: {}", userDto);
+        try {
+            userService.registerUser(userDto);
+
+
+        } catch (UserAlreadyExistException e){
+            String errMessage = "{\"message\":\"[{\"field\":\"email\",\"defaultMessage\":\"An account for that username/email already exists. Please enter a different username.\"}]}";
+
+            return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .body(errMessage);
+        }
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .build();
     }
 
     @PostMapping(value = {"/user/updatePassword"})
     public String updateUserPassword() {
         User user = new User();
         user.setUsername("tak");
-        userService.registerUser(user);
+        //userService.registerUser(user);
         return "users";
     }
 
@@ -47,7 +58,7 @@ public class RegistrationRestController {
     public String resetUserPassword() {
         User user = new User();
         user.setUsername("tak");
-        userService.registerUser(user);
+        //userService.registerUser(user);
         return "users";
     }
 }
