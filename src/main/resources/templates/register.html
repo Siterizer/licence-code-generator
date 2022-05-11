@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
@@ -14,13 +15,35 @@ REGISTER
     <input type="submit" value="login" />
 </form>
 
-<form name="register" action="/register" method="POST" enctype="utf8" >
-    email<input id="email" name="email" value="asd@email.com" required="required"/>
-    username<input id="username" name="username" value="asd" required="required"/>
-    password<input id="password" type="password" name="password" value="asd" required="required"/>
-    password<input id="matchedPassword" type="password" name="matchedPassword" value="asd" required="required"/>
-    <input type="submit" name="submit" value="submit" />
+<form id="register">
+    email<input id="email" name="email" value="asd@email.com" required="required"/><br>
+    username<input id="username" name="username" value="asd" required="required"/><br>
+    password<input id="password" type="password" name="password" value="asd" required="required"/><br>
+    password<input id="matchedPassword" type="password" name="matchedPassword" value="asd" required="required"/><br>
+    <input type="submit" name="submit" value="submit" /><br><br><br>
+
+    <div id="result"></div>
 </form>
 </body>
+
+<script>
+    $("#register").submit(function(event) {
+        var ajaxRequest;
+        event.preventDefault();
+        $("#result").html('');
+        var values = $(this).serialize();
+           ajaxRequest= $.ajax({
+                url: "register",
+                type: "post",
+                data: values
+           });
+        ajaxRequest.done(function (response){
+             $("#result").html('Submitted successfully');
+        });
+        ajaxRequest.fail(function (data){
+            $("#result").html("error" + data['responseText']);
+        });
+    });
+</script>
 
 </html>
