@@ -2,6 +2,7 @@ package licence.code.generator.controllers;
 
 import licence.code.generator.entities.User;
 import licence.code.generator.dto.UserDto;
+import licence.code.generator.services.IUserService;
 import licence.code.generator.services.UserService;
 import licence.code.generator.web.exception.UserAlreadyExistException;
 import org.slf4j.Logger;
@@ -20,7 +21,7 @@ public class RegistrationRestController {
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
 
-    private final UserService userService;
+    private final IUserService userService;
 
     @Autowired
     public RegistrationRestController(UserService userService) {

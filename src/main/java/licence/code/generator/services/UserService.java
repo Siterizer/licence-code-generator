@@ -3,22 +3,20 @@ package licence.code.generator.services;
 import licence.code.generator.dto.UserDto;
 import licence.code.generator.entities.User;
 import licence.code.generator.repositories.UserRepository;
-import licence.code.generator.services.IUserService;
 import licence.code.generator.web.exception.UserAlreadyExistException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Transactional
 public class UserService implements IUserService {
 
-    private final UserRepository userRepository;
-
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
+    @Autowired
+    private UserRepository userRepository;
 
     public List<User> getAllUsers() {
         return new ArrayList<>(userRepository.findAll());
