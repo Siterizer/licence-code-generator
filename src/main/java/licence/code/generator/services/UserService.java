@@ -5,6 +5,7 @@ import licence.code.generator.entities.User;
 import licence.code.generator.repositories.UserRepository;
 import licence.code.generator.web.exception.UserAlreadyExistException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -17,6 +18,9 @@ public class UserService implements IUserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public List<User> getAllUsers() {
         return new ArrayList<>(userRepository.findAll());
@@ -31,7 +35,7 @@ public class UserService implements IUserService {
         User user = new User();
         user.setUsername(userDto.getUsername());
         user.setEmail(userDto.getEmail());
-        user.setPassword(userDto.getPassword());
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         //user.setRoles(Arrays.asList("ROLE_USER"));
 
         return userRepository.save(user);

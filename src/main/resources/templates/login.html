@@ -1,17 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
 LOGIN
-<form action="register" method="GET">
-    <input type="submit" value="Register" />
-</form>
-
 <form action="mainPage" method="GET">
     <input type="submit" value="MAIN PAGE" />
 </form>
+
+<form action="register" method="GET">
+    <input type="submit" value="register" />
+</form>
+
+<form id="login">
+    email<input id="email" name="email" value="asd@email.com" required="required"/><br>
+    username<input id="username" name="username" value="asd" required="required"/><br>
+    password<input id="password" type="password" name="password" value="asd" required="required"/><br>
+    <input type="submit" name="submit" value="submit" /><br><br><br>
+
+    <div id="result"></div>
+</form>
 </body>
+
+<script>
+    $("#login").submit(function(event) {
+        var ajaxRequest;
+        event.preventDefault();
+        $("#result").html('');
+        var values = $(this).serialize();
+           ajaxRequest= $.ajax({
+                url: "login",
+                type: "post",
+                data: values
+           });
+        ajaxRequest.done(function (response){
+             $("#result").html('Submitted successfully');
+        });
+        ajaxRequest.fail(function (data){
+            $("#result").html("error" + data['responseText']);
+        });
+    });
+</script>
+
 </html>
