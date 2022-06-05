@@ -2,6 +2,7 @@ package licence.code.generator.entities;
 
 
 import javax.persistence.*;
+import java.util.Collection;
 
 @Entity
 @Table(name= "user_account")
@@ -16,6 +17,10 @@ public class User {
     private String email;
 
     private String password;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+    private Collection<Role> roles;
 
     public String getEmail() {
         return email;
@@ -47,5 +52,13 @@ public class User {
 
     public void setId(final Long id) {
         this.id = id;
+    }
+
+    public Collection<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Collection<Role> roles) {
+        this.roles = roles;
     }
 }
