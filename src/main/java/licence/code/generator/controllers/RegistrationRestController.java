@@ -33,15 +33,18 @@ public class RegistrationRestController {
         LOGGER.debug("Registering user with information: {}", userDto);
         try {
             userService.registerUser(userDto);
-
-
         } catch (UserAlreadyExistException e){
             String errMessage = "{\"message\":\"[{\"field\":\"email\",\"defaultMessage\":\"An account for that username/email already exists. Please enter a different username.\"}]}";
-
             return ResponseEntity
                     .status(HttpStatus.FORBIDDEN)
                     .body(errMessage);
+        } catch (RuntimeException ex){
+            LOGGER.warn("Unable to register user", ex);
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .build();
         }
+        LOGGER.debug("User registered");
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .build();

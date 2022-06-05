@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -27,7 +29,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public User registerUser(UserDto userDto) throws UserAlreadyExistException {
+    public void registerUser(UserDto userDto) throws UserAlreadyExistException {
         if (emailExists(userDto.getEmail())) {
             throw new UserAlreadyExistException("There is an account with that email address: " + userDto.getEmail());
         }
@@ -37,8 +39,7 @@ public class UserService implements IUserService {
         user.setEmail(userDto.getEmail());
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         //user.setRoles(Arrays.asList("ROLE_USER"));
-
-        return userRepository.save(user);
+        userRepository.save(user);
     }
 
     private boolean emailExists(String email) {

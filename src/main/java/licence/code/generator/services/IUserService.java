@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface IUserService {
 
-    User registerUser(UserDto userDto);
+    void registerUser(UserDto userDto);
 
     List<User> getAllUsers();
 
