@@ -4,6 +4,7 @@ import licence.code.generator.entities.User;
 import licence.code.generator.dto.UserDto;
 import licence.code.generator.services.IUserService;
 import licence.code.generator.services.UserService;
+import licence.code.generator.util.GenericResponse;
 import licence.code.generator.web.exception.UserAlreadyExistException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,19 +32,7 @@ public class RegistrationRestController {
     @PostMapping(value = {"/register"})
     public ResponseEntity registerUser(@Valid final UserDto userDto, final ModelMap model) {
         LOGGER.debug("Registering user with information: {}", userDto);
-        try {
-            userService.registerUser(userDto);
-        } catch (UserAlreadyExistException e){
-            String errMessage = "{\"message\":\"[{\"field\":\"email\",\"defaultMessage\":\"An account for that username/email already exists. Please enter a different username.\"}]}";
-            return ResponseEntity
-                    .status(HttpStatus.FORBIDDEN)
-                    .body(errMessage);
-        } catch (RuntimeException ex){
-            LOGGER.warn("Unable to register user", ex);
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .build();
-        }
+        userService.registerUser(userDto);
         LOGGER.debug("User registered");
         return ResponseEntity
                 .status(HttpStatus.CREATED)
