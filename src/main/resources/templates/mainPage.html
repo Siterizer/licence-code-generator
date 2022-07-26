@@ -7,24 +7,50 @@
     </head>
     <body>
         <!--Top bar-->
-            <div> TOP BAR</div>
+            <div id="top-placeholder"> TOP BAR</div>
         <!--end of Top bar-->
-            <!--Navigation bar-->
-                <div id="nav-placeholder" style="float: left; width: 100px;">
 
-                </div>
-                <script>
-                $(function(){
-                $("#nav-placeholder").load("navbar");
-                });
-            </script>
-                <!--end of Navigation bar-->
+        <!--Navigation bar-->
+            <div id="nav-placeholder" style="float: left; width: 90px;">
+                <nav>
+                    <ul style="padding: 0;">
+                        <input id="get_main_page" type="submit" value="main page" />
+                        <input id="get_register" type="submit" value="register" />
+                        <input id="get_login" type="submit" value="login" />
+                        <input id="get_users" type="submit" value="users" />
+                        <input id="get_admin" type="submit" value="admin" />
+                    </ul>
+                </nav>
+            </div>
+        <!--end of Navigation bar-->
 
-                <!--Content bar-->
-                <div style="float: right; width: 100px;"> Content BAR</div>
-                <!--end of Content bar-->
+        <!--Content bar-->
+            <div id="content-placeholder" style="float: left; width: 100px;">Content BAR</div>
+        <!--end of Content bar-->
+
         <!--Footer bar-->
-            <div style="clear: both;"> Footer BAR</div>
+            <div id="footer-placeholder" style="clear: both;"> Footer BAR</div>
         <!--end of Footer bar-->
+
     </body>
 </html>
+
+<script>
+$(document).ready(function() {
+    $("#get_main_page").click(function(){
+        $("#content-placeholder").html("Content BAR")
+    });
+    $("#get_register").click(function(){
+        $("#content-placeholder").load("register");
+    });
+    $("#get_login").click(function(){
+        $("#content-placeholder").load("login");
+    });
+    $("#get_users").click(function(){
+        $("#content-placeholder").load("users");
+    });
+    $("#get_admin").click(function(){
+        $("#content-placeholder").load("admin");
+    });
+});
+</script>

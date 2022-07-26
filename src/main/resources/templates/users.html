@@ -1,16 +1,7 @@
-<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{base}">
-
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-
-
 <table>
     <tbody th:each="user : ${users}" th:remove="tag">
         <tr>
@@ -21,8 +12,4 @@
         </tr>
     </tbody>
 </table>
-<form action="mainPage" method="GET">
-    <input type="submit" value="MAIN PAGE" />
-</form>
-</body>
 </html>

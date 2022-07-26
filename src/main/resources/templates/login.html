@@ -1,20 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
 LOGIN
-<form action="mainPage" method="GET">
-    <input type="submit" value="MAIN PAGE" />
-</form>
-
-<form action="register" method="GET">
-    <input type="submit" value="register" />
-</form>
-
 <form id="login">
     email<input id="email" name="email" value="asd@email.com" required="required"/><br>
     username<input id="username" name="username" value="asd" required="required"/><br>
@@ -23,8 +7,6 @@ LOGIN
 
     <div id="result"></div>
 </form>
-</body>
-
 <script>
     $("#login").submit(function(event) {
         var ajaxRequest;
@@ -44,5 +26,3 @@ LOGIN
         });
     });
 </script>
-
-</html>
