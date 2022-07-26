@@ -44,10 +44,10 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
+    //409
     @ExceptionHandler({ UserAlreadyExistException.class })
     public ResponseEntity<Object> handleUserAlreadyExist(final RuntimeException ex, final WebRequest request) {
-        //logger.error("409 Status Code", ex);
-        System.out.println("siema");
+        logger.error("409 Status Code", ex);
         final GenericResponse bodyOfResponse = new GenericResponse("An account for that username/email already exists. Please enter a different username.", "UserAlreadyExist");
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.CONFLICT, request);
     }

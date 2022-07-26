@@ -1,20 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
- MAIN PAGE
- <form action="register" method="GET">
-     <input type="submit" value="Register" />
- </form>
+    <head>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+        <meta charset="UTF-8">
+        <title>Title</title>
+    </head>
+    <body>
+        <!--Top bar-->
+            <div> TOP BAR</div>
+        <!--end of Top bar-->
+            <!--Navigation bar-->
+                <div id="nav-placeholder" style="float: left; width: 100px;">
 
- <form action="login" method="GET">
-     <input type="submit" value="login" />
- </form>
- <form action="users" method="GET">
-     <input type="submit" value="users" />
- </form>
-</body>
+                </div>
+                <script>
+                $(function(){
+                $("#nav-placeholder").load("navbar");
+                });
+            </script>
+                <!--end of Navigation bar-->
+
+                <!--Content bar-->
+                <div style="float: right; width: 100px;"> Content BAR</div>
+                <!--end of Content bar-->
+        <!--Footer bar-->
+            <div style="clear: both;"> Footer BAR</div>
+        <!--end of Footer bar-->
+    </body>
 </html>
