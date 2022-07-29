@@ -28,7 +28,6 @@ public class UserController {
 
     @GetMapping(value = {"/admin"})
     public String showAllUsers(Model model) {
-        System.out.println("siema");
         model.addAttribute("users", userService.getAllUsers());
         return "admin";
     }
