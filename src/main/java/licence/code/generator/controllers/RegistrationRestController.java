@@ -44,8 +44,10 @@ public class RegistrationRestController {
 
     @PostMapping(value = {"/user/updatePassword"})
     public ResponseEntity updateUserPassword(@Valid final UpdatePasswordDto passwordDto) {
+        LOGGER.debug("Changing password with following dao: {}", passwordDto);
         final User user = userService.findUserByUsername(((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername());
-        userService.changeUserPassword(user, passwordDto.getNewPassword());
+        userService.changeUserPassword(user, passwordDto.getOldPassword(), passwordDto.getNewPassword());
+        LOGGER.debug("Password changed for User with id: {}", user.getId());
         return ResponseEntity
                 .status(HttpStatus.ACCEPTED)
                 .build();

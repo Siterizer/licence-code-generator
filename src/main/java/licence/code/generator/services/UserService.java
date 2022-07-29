@@ -58,8 +58,8 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public void changeUserPassword(final User user, final String newPassword) {
-        if (ValidOldPassword(user.getPassword(), newPassword)) {
+    public void changeUserPassword(final User user, final String oldPassword, final String newPassword) {
+        if (!validCurrentPassword(oldPassword, user.getPassword())) {
             throw new InvalidOldPasswordException("Invalid Old Password for user with id: " + user.getId());
         }
         user.setPassword(passwordEncoder.encode(newPassword));
@@ -80,7 +80,7 @@ public class UserService implements IUserService {
         return userRepository.findByEmail(email) != null;
     }
 
-    public boolean ValidOldPassword(String oldPassword, final String newPassword) {
-        return passwordEncoder.matches(oldPassword, newPassword);
+    public boolean validCurrentPassword(String providedPassword, final String currentPassword) {
+        return passwordEncoder.matches(providedPassword, currentPassword);
     }
 }

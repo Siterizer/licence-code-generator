@@ -19,5 +19,5 @@ public interface IUserService {
 
     void deleteUser(User user);
 
-    void changeUserPassword(User user, String newPassword);
+    void changeUserPassword(User user, String oldPassword, String newPassword);
 }

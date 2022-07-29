@@ -2,7 +2,37 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{base}">
-<table>
-    <span th:text="${email}" th:remove="tag">Your email is: email</span>
-</table>
+<span th:text="${email}" th:remove="tag">Your email is: email</span>
+<br><br>
+
+Change your password
+<form id="changePassword">
+    Old password<input id="oldPassword" type="password" name="oldPassword" value="asd" required="required"/><br>
+    New Password<input id="newPassword" type="password" name="newPassword" value="asd" required="required"/><br>
+    Repeat Password<input id="newMatchedPassword" type="password" name="newMatchedPassword" value="asd" required="required"/><br>
+    <input type="submit" name="submit" value="submit" /><br><br><br>
+
+    <div id="result"></div>
+</form>
+
+<script>
+    $("#changePassword").submit(function(event) {
+        var ajaxRequest;
+        event.preventDefault();
+        $("#result").html('');
+        var values = $(this).serialize();
+           ajaxRequest= $.ajax({
+                url: "user/updatePassword",
+                type: "post",
+                data: values
+           });
+        ajaxRequest.done(function (response){
+             $("#result").html('Submitted successfully');
+        });
+        ajaxRequest.fail(function (data){
+            $("#result").html("error     " + data['responseText']);
+        });
+    });
+</script>
+
 </html>
