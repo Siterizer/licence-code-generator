@@ -11,9 +11,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Target({ TYPE, ANNOTATION_TYPE })
 @Retention(RUNTIME)
-@Constraint(validatedBy = PasswordComplianceChecker.class)
+@Constraint(validatedBy = UserPasswordComplianceChecker.class)
 @Documented
-public @interface MatchedPassword {
+public @interface MatchedUserPassword {
 
     String message() default "Passwords do not match";
 

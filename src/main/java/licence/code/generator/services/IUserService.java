@@ -11,7 +11,13 @@ public interface IUserService {
 
     List<User> getAllUsers();
 
+    User findUserByEmail(String email);
+
+    User findUserByUsername(String username);
+
     void saveRegisteredUser(User user);
 
     void deleteUser(User user);
+
+    void changeUserPassword(User user, String newPassword);
 }

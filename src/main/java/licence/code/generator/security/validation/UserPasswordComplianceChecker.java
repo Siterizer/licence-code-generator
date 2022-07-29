@@ -6,16 +6,15 @@ import licence.code.generator.dto.UserDto;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-public class PasswordComplianceChecker implements ConstraintValidator<MatchedPassword, Object> {
+public class UserPasswordComplianceChecker implements ConstraintValidator<MatchedUserPassword, UserDto> {
 
     @Override
-    public void initialize(final MatchedPassword arg0) {
+    public void initialize(final MatchedUserPassword arg0) {
 
     }
 
     @Override
-    public boolean isValid(final Object obj, final ConstraintValidatorContext context) {
-        final UserDto user = (UserDto) obj;
+    public boolean isValid(final UserDto user, final ConstraintValidatorContext context) {
         return user.getPassword().equals(user.getMatchedPassword());
     }
 

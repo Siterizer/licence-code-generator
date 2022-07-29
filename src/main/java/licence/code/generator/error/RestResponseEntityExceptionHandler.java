@@ -1,6 +1,7 @@
 package licence.code.generator.error;
 
 import licence.code.generator.util.GenericResponse;
+import licence.code.generator.web.exception.InvalidOldPasswordException;
 import licence.code.generator.web.exception.UserAlreadyExistException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -41,6 +42,13 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         logger.error("400 Status Code", ex);
         final BindingResult result = ex.getBindingResult();
         final GenericResponse bodyOfResponse = new GenericResponse(result.getAllErrors(), "Invalid" + result.getObjectName());
+        return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
+
+    @ExceptionHandler({ InvalidOldPasswordException.class })
+    public ResponseEntity<Object> handleInvalidOldPassword(final RuntimeException ex, final WebRequest request) {
+        logger.error("400 Status Code", ex);
+        final GenericResponse bodyOfResponse = new GenericResponse("Invalid Old Password", "InvalidOldPassword");
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
