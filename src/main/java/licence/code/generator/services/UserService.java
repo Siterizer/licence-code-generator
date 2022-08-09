@@ -53,6 +53,7 @@ public class UserService implements IUserService {
         user.setEmail(userDto.getEmail());
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         user.setRoles(Arrays.asList(roleRepository.findByName("ROLE_USER")));
+        user.setLocked(false);
         userRepository.save(user);
     }
 

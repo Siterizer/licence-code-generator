@@ -10,6 +10,7 @@ public class UserDto {
     private final String username;
     private final String email;
     private final List<String> roles;
+    private final boolean isLocked;
 
 
     public String getUsername() {
@@ -28,12 +29,18 @@ public class UserDto {
         return roles;
     }
 
+    public boolean isLocked() {
+        return isLocked;
+    }
+
     @Override
     public String toString() {
         return "UserDto [username=" +
                 username +
                 ", id=" +
                 id +
+                ", isLocked=" +
+                isLocked +
                 ", email=" +
                 email + "]";
     }

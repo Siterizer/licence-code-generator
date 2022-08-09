@@ -18,6 +18,6 @@ public class UserDtoMapper {
                 .map(Role::getName)
                 .collect(toList());
 
-        return new UserDto(user.getId(), user.getUsername(), user.getEmail(), roles);
+        return new UserDto(user.getId(), user.getUsername(), user.getEmail(), roles, !user.isAccountNonLocked());
     }
 }
