@@ -1,6 +1,6 @@
 package licence.code.generator.services;
 
-import licence.code.generator.dto.UserDto;
+import licence.code.generator.dto.RegisterUserDto;
 import licence.code.generator.entities.User;
 import licence.code.generator.repositories.RoleRepository;
 import licence.code.generator.repositories.UserRepository;
@@ -14,7 +14,6 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @Transactional
@@ -44,7 +43,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public void registerUser(UserDto userDto) throws UserAlreadyExistException {
+    public void registerUser(RegisterUserDto userDto) throws UserAlreadyExistException {
         if (emailExists(userDto.getEmail())) {
             throw new UserAlreadyExistException("There is an account with that email address: " + userDto.getEmail());
         }

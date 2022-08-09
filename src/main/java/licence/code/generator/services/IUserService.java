@@ -1,13 +1,13 @@
 package licence.code.generator.services;
 
-import licence.code.generator.dto.UserDto;
+import licence.code.generator.dto.RegisterUserDto;
 import licence.code.generator.entities.User;
 
 import java.util.List;
 
 public interface IUserService {
 
-    void registerUser(UserDto userDto);
+    void registerUser(RegisterUserDto userDto);
 
     List<User> getAllUsers();
 

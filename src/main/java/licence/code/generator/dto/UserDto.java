@@ -1,69 +1,40 @@
 package licence.code.generator.dto;
 
-import licence.code.generator.security.validation.MatchedUserPassword;
-import licence.code.generator.security.validation.ValidEmail;
-import licence.code.generator.security.validation.ValidPassword;
+import lombok.RequiredArgsConstructor;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import java.util.List;
 
-@MatchedUserPassword
+@RequiredArgsConstructor
 public class UserDto {
-    @NotNull
-    @Size(min = 3, message = "Length must be greater than {min}")
-    private String username;
+    private final Long id;
+    private final String username;
+    private final String email;
+    private final List<String> roles;
 
-    @ValidEmail
-    @NotNull
-    @Size(min = 3, message = "Length must be greater than {min}")
-    private String email;
-
-    @NotNull
-    @ValidPassword
-    private String password;
-
-    @NotNull
-    @ValidPassword
-    private String matchedPassword;
 
     public String getUsername() {
         return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public Long getId() {
+        return id;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getMatchedPassword() {
-        return matchedPassword;
-    }
-
-    public void setMatchedPassword(String matchedPassword) {
-        this.matchedPassword = matchedPassword;
+    public List<String> getRoles() {
+        return roles;
     }
 
     @Override
     public String toString() {
         return "UserDto [username=" +
                 username +
+                ", id=" +
+                id +
                 ", email=" +
                 email + "]";
     }
-
 }

@@ -2,12 +2,9 @@ package licence.code.generator.controllers;
 
 import licence.code.generator.dto.UpdatePasswordDto;
 import licence.code.generator.entities.User;
-import licence.code.generator.dto.UserDto;
+import licence.code.generator.dto.RegisterUserDto;
 import licence.code.generator.services.IUserService;
 import licence.code.generator.services.UserService;
-import licence.code.generator.util.GenericResponse;
-import licence.code.generator.web.exception.InvalidOldPasswordException;
-import licence.code.generator.web.exception.UserAlreadyExistException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +30,7 @@ public class RegistrationRestController {
     }
 
     @PostMapping(value = {"/register"})
-    public ResponseEntity registerUser(@Valid final UserDto userDto, final ModelMap model) {
+    public ResponseEntity registerUser(@Valid final RegisterUserDto userDto, final ModelMap model) {
         LOGGER.debug("Registering user with information: {}", userDto);
         userService.registerUser(userDto);
         LOGGER.debug("User registered");
