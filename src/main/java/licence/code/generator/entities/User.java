@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
+
 @Entity
 @Table(name= "user_account")
 public class User implements UserDetails {
@@ -105,5 +107,23 @@ public class User implements UserDetails {
 
     public void setLocked(boolean locked) {
         this.isLocked = locked;
+    }
+
+    @Override
+    public String toString() {
+        List<String> roles = this.roles
+                .stream()
+                .map(Role::getName)
+                .collect(toList());
+        return "User [username=" +
+                username +
+                ", id=" +
+                id +
+                ", isLocked=" +
+                isLocked +
+                ", roles=" +
+                roles +
+                ", email=" +
+                email + "]";
     }
 }

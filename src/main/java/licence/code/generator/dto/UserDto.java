@@ -41,6 +41,8 @@ public class UserDto {
                 id +
                 ", isLocked=" +
                 isLocked +
+                ", roles=" +
+                roles +
                 ", email=" +
                 email + "]";
     }
