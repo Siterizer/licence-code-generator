@@ -44,8 +44,8 @@ public class UserService implements IUserService {
 
     @Override
     public void registerUser(RegisterUserDto userDto) throws UserAlreadyExistException {
-        if (emailExists(userDto.getEmail())) {
-            throw new UserAlreadyExistException("There is an account with that email address: " + userDto.getEmail());
+        if (userExists(userDto.getEmail(), userDto.getUsername())) {
+            throw new UserAlreadyExistException("There is an account with that username/email: " + userDto.getEmail());
         }
 
         User user = new User();
@@ -76,8 +76,8 @@ public class UserService implements IUserService {
 
     }
 
-    private boolean emailExists(String email) {
-        return userRepository.findByEmail(email) != null;
+    private boolean userExists(String email, String username) {
+        return userRepository.findByEmail(email) != null && userRepository.findByUsername(username) !=null;
     }
 
     public boolean validCurrentPassword(String providedPassword, final String currentPassword) {
