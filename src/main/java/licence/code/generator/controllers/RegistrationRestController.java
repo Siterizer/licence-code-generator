@@ -12,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.validation.Valid;
@@ -30,7 +29,7 @@ public class RegistrationRestController {
     }
 
     @PostMapping(value = {"/register"})
-    public ResponseEntity registerUser(@Valid final RegisterUserDto userDto, final ModelMap model) {
+    public ResponseEntity registerUser(@Valid final RegisterUserDto userDto) {
         LOGGER.debug("Registering user with information: {}", userDto);
         userService.registerUser(userDto);
         LOGGER.debug("User registered");

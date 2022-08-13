@@ -48,11 +48,11 @@ public class UserRestController {
     public ResponseEntity<List<UserDto>> showAllUsers() {
         final User user = userService.findUserByUsername(((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername());
         LOGGER.debug("Showing all users for admin with id: {}", user.getId());
-        List<UserDto> users = userService.getAllUsers()
+        List<UserDto> usersDto = userService.getAllUsers()
                 .stream()
                 .map(userDtoMapper::toDto)
                 .collect(toList());
-        return ResponseEntity.ok(users);
+        return ResponseEntity.ok(usersDto);
     }
 }
 
