@@ -52,10 +52,12 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         final List<Privilege> userPrivileges = new ArrayList<>(Arrays.asList(mainPage));
         final List<Privilege> adminPrivileges = new ArrayList<>(Arrays.asList(users));
         final Role adminRole = createRoleIfNotFound("ROLE_ADMIN", adminPrivileges);
-        createRoleIfNotFound("ROLE_USER", userPrivileges);
+        final Role userRole = createRoleIfNotFound("ROLE_USER", userPrivileges);
 
         // == create initial user
-        createUserIfNotFound("test@test.com", "test", "test", new ArrayList<>(Arrays.asList(adminRole)));
+        createUserIfNotFound("locked@test.com", "locked", "locked", new ArrayList<>(Arrays.asList(userRole)), true);
+        createUserIfNotFound("asd@test.com", "asd", "asd", new ArrayList<>(Arrays.asList(userRole)), false);
+        createUserIfNotFound("test@test.com", "test", "test", new ArrayList<>(Arrays.asList(adminRole)), false);
 
         alreadySetup = true;
     }
@@ -82,14 +84,14 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     }
 
     @Transactional
-    User createUserIfNotFound(final String email, final String password, final String username, final Collection<Role> roles) {
+    User createUserIfNotFound(final String email, final String password, final String username, final Collection<Role> roles, boolean locked) {
         User user = userRepository.findByEmail(email) == null ? userRepository.findByUsername(username) : userRepository.findByEmail(email);
         if (user == null) {
             user = new User();
             user.setPassword(passwordEncoder.encode(password));
             user.setUsername(username);
             user.setEmail(email);
-            user.setLocked(false);
+            user.setLocked(locked);
         }
         user.setRoles(roles);
         user = userRepository.save(user);
