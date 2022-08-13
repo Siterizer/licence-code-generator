@@ -1,8 +1,5 @@
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{base}">
-<span th:text="${email}" th:remove="tag">Your email is: email</span>
+<span> Your email is: </span>
+<div id="user_email">asd</div>
 <br><br>
 
 Change your password
@@ -16,6 +13,12 @@ Change your password
 </form>
 
 <script>
+$(document).ready(function() {
+
+    $.get("user/info", function( data ) {
+        $("#user_email").html(data.email);
+    });
+});
     $("#changePassword").submit(function(event) {
         var ajaxRequest;
         event.preventDefault();
