@@ -1,5 +1,6 @@
 package licence.code.generator.controllers;
 
+import licence.code.generator.dto.UserDto;
 import licence.code.generator.dto.UserEmailDto;
 import licence.code.generator.dto.mapper.UserDtoMapper;
 import licence.code.generator.dto.mapper.UserEmailDtoMapper;
@@ -11,8 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
@@ -33,7 +35,7 @@ public class UserRestController {
 
     @RequestMapping(value="/user/info", method=RequestMethod.GET, produces= MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<UserEmailDto> getCurrentUserEmail(Model model) {
+    public ResponseEntity<UserEmailDto> getCurrentUserEmail() {
         final User user = userService.findUserByUsername(((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername());
         LOGGER.debug("Showing email for user with id: {}", user.getId());
         UserEmailDto dto = userEmailDtoMapper.toDto(user);
@@ -43,15 +45,14 @@ public class UserRestController {
     }
 
     @GetMapping(value = {"/admin/info"})
-    public String showAllUsers(Model model) {
+    public ResponseEntity<List<UserDto>> showAllUsers() {
         final User user = userService.findUserByUsername(((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername());
         LOGGER.debug("Showing all users for admin with id: {}", user.getId());
-        model.addAttribute("users",
-                userService.getAllUsers()
-                        .stream()
-                        .map(userDtoMapper::toDto)
-                        .collect(toList()));
-        return "admin";
+        List<UserDto> users = userService.getAllUsers()
+                .stream()
+                .map(userDtoMapper::toDto)
+                .collect(toList());
+        return ResponseEntity.ok(users);
     }
 }
 
