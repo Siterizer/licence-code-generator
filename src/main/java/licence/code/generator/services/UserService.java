@@ -67,17 +67,12 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public void saveRegisteredUser(User user) {
-
-    }
-
-    @Override
     public void deleteUser(User user) {
 
     }
 
     private boolean userExists(String email, String username) {
-        return userRepository.findByEmail(email) != null && userRepository.findByUsername(username) !=null;
+        return userRepository.findByEmail(email) != null || userRepository.findByUsername(username) !=null;
     }
 
     public boolean validCurrentPassword(String providedPassword, final String currentPassword) {
