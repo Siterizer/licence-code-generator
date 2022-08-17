@@ -17,5 +17,7 @@ public interface IUserService {
 
     void blockUser(Long id, User admin);
 
+    void unblockUser(Long id, User admin);
+
     void changeUserPassword(User user, String oldPassword, String newPassword);
 }

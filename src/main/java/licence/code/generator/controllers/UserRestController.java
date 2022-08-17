@@ -66,5 +66,16 @@ public class UserRestController {
                 .status(HttpStatus.CREATED)
                 .build();
     }
+
+    @PostMapping(value = {"/admin/unblock"})
+    public ResponseEntity unblockUser(@RequestParam(name = "id") Long id) {
+        final User admin = userService.findUserByUsername(((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername());
+        LOGGER.debug("Admin with id: {} attempts to unblock User with id: {}", admin.getId(), id);
+        userService.unblockUser(id, admin);
+        LOGGER.debug("User unblocked");
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .build();
+    }
 }
 

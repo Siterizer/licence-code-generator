@@ -5,10 +5,7 @@ import licence.code.generator.entities.Role;
 import licence.code.generator.entities.User;
 import licence.code.generator.repositories.RoleRepository;
 import licence.code.generator.repositories.UserRepository;
-import licence.code.generator.web.exception.InsufficientPrivilegesException;
-import licence.code.generator.web.exception.InvalidOldPasswordException;
-import licence.code.generator.web.exception.UserAlreadyBlockedException;
-import licence.code.generator.web.exception.UserAlreadyExistException;
+import licence.code.generator.web.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -86,6 +83,23 @@ public class UserService implements IUserService {
             throw new InsufficientPrivilegesException("Admin with id: " + admin.getId() +" tried to block another admin with id:" + id);
         }
         user.setLocked(true);
+        userRepository.save(user);
+    }
+
+    @Override
+    public void unblockUser(Long id, User admin) {
+        User user = userRepository.findById(id).orElseThrow();
+        if(user.isAccountNonLocked()){
+            throw new UserNotBlockedException("User with id:" + user.getId() +" is not blocked");
+        }
+
+        if(user.getRoles()
+                .stream()
+                .map(Role::getName)
+                .anyMatch(e -> e.equals("ROLE_ADMIN"))){
+            throw new InsufficientPrivilegesException("Admin with id: " + admin.getId() +" tried to unblock another admin with id:" + id);
+        }
+        user.setLocked(false);
         userRepository.save(user);
     }
 

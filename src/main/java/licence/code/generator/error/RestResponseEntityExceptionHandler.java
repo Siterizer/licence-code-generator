@@ -1,10 +1,7 @@
 package licence.code.generator.error;
 
 import licence.code.generator.util.GenericResponse;
-import licence.code.generator.web.exception.InsufficientPrivilegesException;
-import licence.code.generator.web.exception.InvalidOldPasswordException;
-import licence.code.generator.web.exception.UserAlreadyBlockedException;
-import licence.code.generator.web.exception.UserAlreadyExistException;
+import licence.code.generator.web.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
@@ -64,8 +61,16 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     //406
     @ExceptionHandler({ UserAlreadyBlockedException.class })
     public ResponseEntity<Object> handleUserAlreadyBlocked(final RuntimeException ex, final WebRequest request) {
-        logger.error("409 Status Code", ex);
+        logger.error("406 Status Code", ex);
         final GenericResponse bodyOfResponse = new GenericResponse("An blocked flag for that id is already set to true", "UserAlreadyBlocked");
+        return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.NOT_ACCEPTABLE, request);
+    }
+
+    //406
+    @ExceptionHandler({ UserNotBlockedException.class })
+    public ResponseEntity<Object> handleUserNotBlocked(final RuntimeException ex, final WebRequest request) {
+        logger.error("406 Status Code", ex);
+        final GenericResponse bodyOfResponse = new GenericResponse("An blocked flag for that id is already set to false", "UserNotBlockedException");
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.NOT_ACCEPTABLE, request);
     }
 
