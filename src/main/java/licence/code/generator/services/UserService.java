@@ -1,12 +1,16 @@
 package licence.code.generator.services;
 
 import licence.code.generator.dto.RegisterUserDto;
+import licence.code.generator.entities.Role;
 import licence.code.generator.entities.User;
 import licence.code.generator.repositories.RoleRepository;
 import licence.code.generator.repositories.UserRepository;
+import licence.code.generator.web.exception.InsufficientPrivilegesException;
 import licence.code.generator.web.exception.InvalidOldPasswordException;
+import licence.code.generator.web.exception.UserAlreadyBlockedException;
 import licence.code.generator.web.exception.UserAlreadyExistException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +18,8 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 @Transactional
@@ -67,8 +73,20 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public void deleteUser(User user) {
+    public void blockUser(Long id, User admin) {
+        User user = userRepository.findById(id).orElseThrow();
+        if(!user.isAccountNonLocked()){
+            throw new UserAlreadyBlockedException("User with id:" + user.getId() +" is already blocked");
+        }
 
+        if(user.getRoles()
+                .stream()
+                .map(Role::getName)
+                .anyMatch(e -> e.equals("ROLE_ADMIN"))){
+            throw new InsufficientPrivilegesException("Admin with id: " + admin.getId() +" tried to block another admin with id:" + id);
+        }
+        user.setLocked(true);
+        userRepository.save(user);
     }
 
     private boolean userExists(String email, String username) {

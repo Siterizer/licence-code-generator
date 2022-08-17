@@ -9,6 +9,7 @@ import licence.code.generator.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -53,6 +54,17 @@ public class UserRestController {
                 .map(userDtoMapper::toDto)
                 .collect(toList());
         return ResponseEntity.ok(usersDto);
+    }
+
+    @PostMapping(value = {"/admin/block"})
+    public ResponseEntity blockUser(@RequestParam(name = "id") Long id) {
+        final User admin = userService.findUserByUsername(((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername());
+        LOGGER.debug("Admin with id: {} attempts to block User with id: {}", admin.getId(), id);
+        userService.blockUser(id, admin);
+        LOGGER.debug("User blocked");
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .build();
     }
 }
 

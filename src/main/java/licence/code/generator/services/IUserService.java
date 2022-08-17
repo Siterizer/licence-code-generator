@@ -15,7 +15,7 @@ public interface IUserService {
 
     User findUserByUsername(String username);
 
-    void deleteUser(User user);
+    void blockUser(Long id, User admin);
 
     void changeUserPassword(User user, String oldPassword, String newPassword);
 }

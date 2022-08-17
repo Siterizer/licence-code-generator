@@ -1,7 +1,9 @@
 package licence.code.generator.error;
 
 import licence.code.generator.util.GenericResponse;
+import licence.code.generator.web.exception.InsufficientPrivilegesException;
 import licence.code.generator.web.exception.InvalidOldPasswordException;
+import licence.code.generator.web.exception.UserAlreadyBlockedException;
 import licence.code.generator.web.exception.UserAlreadyExistException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -50,6 +52,21 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         logger.error("400 Status Code", ex);
         final GenericResponse bodyOfResponse = new GenericResponse("Invalid Old Password", "InvalidOldPassword");
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
+    //403
+    @ExceptionHandler({ InsufficientPrivilegesException.class })
+    public ResponseEntity<Object> handleInsufficientPrivileges(final RuntimeException ex, final WebRequest request) {
+        logger.error("403 Status Code", ex);
+        final GenericResponse bodyOfResponse = new GenericResponse("You do not have sufficient authority to execute the command", "InsufficientPrivileges");
+        return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.FORBIDDEN, request);
+    }
+
+    //406
+    @ExceptionHandler({ UserAlreadyBlockedException.class })
+    public ResponseEntity<Object> handleUserAlreadyBlocked(final RuntimeException ex, final WebRequest request) {
+        logger.error("409 Status Code", ex);
+        final GenericResponse bodyOfResponse = new GenericResponse("An blocked flag for that id is already set to true", "UserAlreadyBlocked");
+        return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.NOT_ACCEPTABLE, request);
     }
 
     //409
