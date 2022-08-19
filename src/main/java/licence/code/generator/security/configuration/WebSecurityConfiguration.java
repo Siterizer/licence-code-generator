@@ -22,6 +22,9 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired
     private MyUserDetailsService userDetailsService;
 
+    @Autowired
+    private AuthenticationSuccessHandler myAuthenticationSuccessHandler;
+
 
     @Override
     protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
@@ -41,6 +44,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .loginPage("/login")
                     .defaultSuccessUrl("/user")
                     .failureUrl("/login?error=true")
+                    .successHandler(myAuthenticationSuccessHandler)
                     //.failureHandler(authenticationFailureHandler())
                 .and()
                     .logout()
