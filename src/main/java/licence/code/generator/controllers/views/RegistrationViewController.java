@@ -1,10 +1,10 @@
-package licence.code.generator.controllers;
+package licence.code.generator.controllers.views;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-public class RegistrationController {
+public class RegistrationViewController {
 
     @GetMapping(value = {"/register"})
     public String renderRegisterPage() {
