@@ -10,4 +10,7 @@
 	<beans:bean id="myAuthenticationSuccessHandler"
 		class="licence.code.generator.security.configuration.MyCustomLoginAuthenticationSuccessHandler" />
 
+	<beans:bean id="myAuthenticationFailureHandler"
+				class="licence.code.generator.security.configuration.MyCustomLoginAuthenticationFailureHandler" />
+
 </beans:beans>

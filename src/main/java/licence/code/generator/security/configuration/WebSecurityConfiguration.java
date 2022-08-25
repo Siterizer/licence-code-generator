@@ -9,7 +9,6 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -24,6 +23,9 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private AuthenticationSuccessHandler myAuthenticationSuccessHandler;
+
+    @Autowired
+    private AuthenticationFailureHandler myAuthenticationFailureHandler;
 
 
     @Override
@@ -43,9 +45,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .formLogin()
                     .loginPage("/login")
                     .defaultSuccessUrl("/user")
-                    .failureUrl("/login?error=true")
                     .successHandler(myAuthenticationSuccessHandler)
-                    //.failureHandler(authenticationFailureHandler())
+                    .failureHandler(myAuthenticationFailureHandler)
                 .and()
                     .logout()
                     .logoutUrl("/logout")
