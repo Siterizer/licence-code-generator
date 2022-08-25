@@ -15,9 +15,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Comparator;
 import java.util.List;
-
-import static java.util.stream.Collectors.toList;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -52,7 +52,8 @@ public class UserRestController {
         List<UserDto> usersDto = userService.getAllUsers()
                 .stream()
                 .map(userDtoMapper::toDto)
-                .collect(toList());
+                .sorted((Comparator.comparing(UserDto::getId)))
+                .collect(Collectors.toList());
         return ResponseEntity.ok(usersDto);
     }
 
