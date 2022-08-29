@@ -1,0 +1,11 @@
+#users_array {
+   border: 2px solid black;
+}
+
+#users_array th {
+  border: solid 1px black
+}
+
+#users_array td {
+  border: solid 1px black
+}
