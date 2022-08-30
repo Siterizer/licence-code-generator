@@ -33,7 +33,7 @@ public class UserRestController {
     @ResponseBody
     public ResponseEntity<UserEmailDto> getCurrentUserEmail() {
         final User user = userService.findUserByUsername(((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername());
-        LOGGER.debug("Showing email for user with id: {}", user.getId());
+        LOGGER.info("Showing email for user with id: {}", user.getId());
         UserEmailDto dto = userEmailDtoMapper.toDto(user);
 
 
@@ -43,9 +43,9 @@ public class UserRestController {
     @PostMapping(value = {"/user/updatePassword"})
     public ResponseEntity updateUserPassword(@Valid final UpdatePasswordDto passwordDto) {
         final User user = userService.findUserByUsername(((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername());
-        LOGGER.debug("Changing password for user with id: {}", user.getId());
+        LOGGER.info("Changing password for user with id: {}", user.getId());
         userService.changeUserPassword(user, passwordDto.getOldPassword(), passwordDto.getNewPassword());
-        LOGGER.debug("Password changed for User with id: {}", user.getId());
+        LOGGER.info("Password changed for User with id: {}", user.getId());
         return ResponseEntity
                 .status(HttpStatus.ACCEPTED)
                 .build();

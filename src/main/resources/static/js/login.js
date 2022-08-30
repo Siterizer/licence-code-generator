@@ -11,7 +11,7 @@ $("#login").submit(function(event) {
     ajaxRequest.done(function (response){
          $("#result").html('Submitted successfully');
     });
-    ajaxRequest.fail(function (data){
-        $("#result").html("error" + data['responseText']);
+    ajaxRequest.fail(function (response){
+        $("#result").html("error " + response.status);
     });
 });

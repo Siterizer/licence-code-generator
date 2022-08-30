@@ -27,9 +27,9 @@ public class RegistrationRestController {
 
     @PostMapping(value = {"/register"})
     public ResponseEntity registerUser(@Valid final RegisterUserDto userDto) {
-        LOGGER.debug("Registering user with information: {}", userDto);
+        LOGGER.info("Registering user with information: {}", userDto);
         userService.registerUser(userDto);
-        LOGGER.debug("User registered");
+        LOGGER.info("User: {} registered", userDto);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .build();

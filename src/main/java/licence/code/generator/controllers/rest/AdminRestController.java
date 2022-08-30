@@ -32,7 +32,7 @@ public class AdminRestController {
     @GetMapping(value = {"/admin/info"})
     public ResponseEntity<List<UserDto>> showAllUsers() {
         final User user = userService.findUserByUsername(((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername());
-        LOGGER.debug("Showing all users for admin with id: {}", user.getId());
+        LOGGER.info("Showing all users for admin with id: {}", user.getId());
         List<UserDto> usersDto = userService.getAllUsers()
                 .stream()
                 .map(userDtoMapper::toDto)
@@ -44,9 +44,9 @@ public class AdminRestController {
     @PostMapping(value = {"/admin/block"})
     public ResponseEntity blockUser(@RequestParam(name = "id") Long id) {
         final User admin = userService.findUserByUsername(((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername());
-        LOGGER.debug("Admin with id: {} attempts to block User with id: {}", admin.getId(), id);
+        LOGGER.info("Admin with id: {} attempts to block User with id: {}", admin.getId(), id);
         userService.blockUser(id, admin);
-        LOGGER.debug("User blocked");
+        LOGGER.info("User with id: {} blocked by Admin with id: {}", id, admin.getId());
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .build();
@@ -55,9 +55,9 @@ public class AdminRestController {
     @PostMapping(value = {"/admin/unblock"})
     public ResponseEntity unblockUser(@RequestParam(name = "id") Long id) {
         final User admin = userService.findUserByUsername(((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername());
-        LOGGER.debug("Admin with id: {} attempts to unblock User with id: {}", admin.getId(), id);
+        LOGGER.info("Admin with id: {} attempts to unblock User with id: {}", admin.getId(), id);
         userService.unblockUser(id, admin);
-        LOGGER.debug("User unblocked");
+        LOGGER.info("User with id: {} unblocked by Admin with id: {}", id, admin.getId());
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .build();
