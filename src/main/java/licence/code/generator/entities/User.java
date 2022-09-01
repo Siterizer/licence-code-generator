@@ -15,6 +15,7 @@ import static java.util.stream.Collectors.toList;
 @Entity
 @Table(name= "user_account")
 public class User implements UserDetails {
+
     @Id
     @Column(unique = true, nullable = false)
     @GeneratedValue(strategy = GenerationType.AUTO)
