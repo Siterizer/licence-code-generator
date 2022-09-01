@@ -13,7 +13,11 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String name;
+    private final String name;
+
+    public Product(String name) {
+        this.name = name;
+    }
 
 
     public Long getId() {

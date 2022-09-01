@@ -1,11 +1,7 @@
 package licence.code.generator.init;
 
-import licence.code.generator.entities.Privilege;
-import licence.code.generator.entities.Role;
-import licence.code.generator.entities.User;
-import licence.code.generator.repositories.PrivilegeRepository;
-import licence.code.generator.repositories.RoleRepository;
-import licence.code.generator.repositories.UserRepository;
+import licence.code.generator.entities.*;
+import licence.code.generator.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -33,6 +29,12 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     private PrivilegeRepository privilegeRepository;
 
     @Autowired
+    private LicenceRepository licenceRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     // API
@@ -54,10 +56,22 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         final Role adminRole = createRoleIfNotFound("ROLE_ADMIN", adminPrivileges);
         final Role userRole = createRoleIfNotFound("ROLE_USER", userPrivileges);
 
+        // == create initial products
+        final Product fishBot = createProductIfNotFound("Fish Bot");
+        final Product gatheringBot = createProductIfNotFound("Gathering Bot");
+        final Product fightingBot = createProductIfNotFound("Fighting Bot");
+
         // == create initial user
-        createUserIfNotFound("locked@test.com", "locked", "locked", new ArrayList<>(Arrays.asList(userRole)), true);
-        createUserIfNotFound("asd@test.com", "asd", "asd", new ArrayList<>(Arrays.asList(userRole)), false);
-        createUserIfNotFound("test@test.com", "test", "test", new ArrayList<>(Arrays.asList(adminRole)), false);
+        final User locked = createUserIfNotFound("locked@test.com", "locked", "locked", new ArrayList<>(Arrays.asList(userRole)), true);
+        final User user1 = createUserIfNotFound("asd1@test.com", "asd", "asd1", new ArrayList<>(Arrays.asList(userRole)), false);
+        final User user2 = createUserIfNotFound("asd2@test.com", "asd", "asd2", new ArrayList<>(Arrays.asList(userRole)), false);
+        final User admin = createUserIfNotFound("test@test.com", "test", "test", new ArrayList<>(Arrays.asList(adminRole)), false);
+
+        // == create initial licences
+        createLicenceIfNotFound(user1, fishBot);
+        createLicenceIfNotFound(user1, gatheringBot);
+        createLicenceIfNotFound(user2, gatheringBot);
+        createLicenceIfNotFound(user2, fightingBot);
 
         alreadySetup = true;
     }
@@ -84,6 +98,16 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     }
 
     @Transactional
+    Product createProductIfNotFound(final String name) {
+        Product product = productRepository.findByName(name);
+        if (product == null) {
+            product = new Product(name);
+            product = productRepository.save(product);
+        }
+        return product;
+    }
+
+    @Transactional
     User createUserIfNotFound(final String email, final String password, final String username, final Collection<Role> roles, boolean locked) {
         User user = userRepository.findByEmail(email) == null ? userRepository.findByUsername(username) : userRepository.findByEmail(email);
         if (user == null) {
@@ -97,5 +121,14 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         user = userRepository.save(user);
         return user;
     }
+
+    @Transactional
+    Licence createLicenceIfNotFound(final User user, Product product) {
+        Licence licence = new Licence(user, product);
+        licence = licenceRepository.save(licence);
+
+        return licence;
+    }
+
 
 }

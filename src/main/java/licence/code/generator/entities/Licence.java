@@ -5,16 +5,16 @@ package licence.code.generator.entities;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.UUID;
 
 @Entity
 @Table(name= "licence")
 public class Licence {
 
     @Id
-    @Column(name = "id", updatable = false, nullable = false)
-    @GenericGenerator(name = "UUID", strategy = "uuid4")
-    private UUID id;
+    @GeneratedValue(generator="system-uuid")
+    @GenericGenerator(name="system-uuid", strategy = "uuid")
+    @Column(name = "uuid", unique = true)
+    private String id;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -24,7 +24,10 @@ public class Licence {
     @JoinColumn(name = "product_id")
     Product product;
 
-
+    public Licence(User user, Product product) {
+        this.user = user;
+        this.product = product;
+    }
 
 
     @Override
