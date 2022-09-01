@@ -3,6 +3,7 @@ package licence.code.generator.entities;
 
 
 import javax.persistence.*;
+import java.util.Collection;
 
 @Entity
 @Table(name= "product")
@@ -13,11 +14,16 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private final String name;
+    private String name;
+
+    @OneToMany(mappedBy = "product")
+    Collection<Licence> licences;
 
     public Product(String name) {
         this.name = name;
     }
+
+    public Product() {}
 
 
     public Long getId() {

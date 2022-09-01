@@ -10,6 +10,7 @@ public class UserDto {
     private final String username;
     private final String email;
     private final List<String> roles;
+    private final List<String> products;
     private final boolean isLocked;
 
 
@@ -29,6 +30,10 @@ public class UserDto {
         return roles;
     }
 
+    public List<String> getProducts() {
+        return products;
+    }
+
     public boolean isLocked() {
         return isLocked;
     }
@@ -43,6 +48,8 @@ public class UserDto {
                 isLocked +
                 ", roles=" +
                 roles +
+                ", products=" +
+                products +
                 ", email=" +
                 email + "]";
     }

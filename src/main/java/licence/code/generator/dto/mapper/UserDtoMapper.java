@@ -1,6 +1,8 @@
 package licence.code.generator.dto.mapper;
 
 import licence.code.generator.dto.UserDto;
+import licence.code.generator.entities.Licence;
+import licence.code.generator.entities.Product;
 import licence.code.generator.entities.Role;
 import licence.code.generator.entities.User;
 import org.slf4j.Logger;
@@ -21,7 +23,12 @@ public class UserDtoMapper {
                 .stream()
                 .map(Role::getName)
                 .collect(toList());
-        UserDto userDto = new UserDto(user.getId(), user.getUsername(), user.getEmail(), roles, !user.isAccountNonLocked());
+        List<String> products = user.getLicences()
+                .stream()
+                .map(Licence::getProduct)
+                .map(Product::getName)
+                .collect(toList());
+        UserDto userDto = new UserDto(user.getId(), user.getUsername(), user.getEmail(), roles, products, !user.isAccountNonLocked());
         LOGGER.debug("Mapped UserDto: {}", userDto);
 
         return userDto;

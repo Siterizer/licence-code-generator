@@ -1,8 +1,8 @@
 package licence.code.generator.controllers.rest;
 
 import licence.code.generator.dto.UpdatePasswordDto;
-import licence.code.generator.dto.UserEmailDto;
-import licence.code.generator.dto.mapper.UserEmailDtoMapper;
+import licence.code.generator.dto.UserDto;
+import licence.code.generator.dto.mapper.UserDtoMapper;
 import licence.code.generator.entities.User;
 import licence.code.generator.services.UserService;
 import org.slf4j.Logger;
@@ -21,20 +21,20 @@ import javax.validation.Valid;
 public class UserRestController {
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
     private final UserService userService;
-    private final UserEmailDtoMapper userEmailDtoMapper;
+    private final UserDtoMapper userDtoMapper;
 
     @Autowired
-    public UserRestController(UserService userService, UserEmailDtoMapper userEmailDtoMapper) {
+    public UserRestController(UserService userService, UserDtoMapper userDtoMapper) {
         this.userService = userService;
-        this.userEmailDtoMapper = userEmailDtoMapper;
+        this.userDtoMapper = userDtoMapper;
     }
 
     @RequestMapping(value="/user/info", method=RequestMethod.GET, produces= MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<UserEmailDto> getCurrentUserEmail() {
+    public ResponseEntity<UserDto> getCurrentUserEmail() {
         final User user = userService.findUserByUsername(((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername());
-        LOGGER.info("Showing email for user with id: {}", user.getId());
-        UserEmailDto dto = userEmailDtoMapper.toDto(user);
+        LOGGER.info("Showing user info for user with id: {}", user.getId());
+        UserDto dto = userDtoMapper.toDto(user);
 
 
         return ResponseEntity.ok(dto);

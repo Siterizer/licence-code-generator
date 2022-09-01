@@ -2,6 +2,7 @@ $(document).ready(function() {
 
     $.get("user/info", function( data ) {
         $("#user_email").html(data.email);
+        $("#user_products").html(data.products.toString());
     });
 });
     $("#changePassword").submit(function(event) {

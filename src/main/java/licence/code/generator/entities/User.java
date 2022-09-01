@@ -33,12 +33,23 @@ public class User implements UserDetails {
     @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private Collection<Role> roles;
 
+    @OneToMany(mappedBy = "user")
+    private Collection<Licence> licences;
+
     public String getEmail() {
         return email;
     }
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Collection<Licence> getLicences() {
+        return licences;
+    }
+
+    public void setLicences(Collection<Licence> licences) {
+        this.licences = licences;
     }
 
     @Override
@@ -116,6 +127,12 @@ public class User implements UserDetails {
                 .stream()
                 .map(Role::getName)
                 .collect(toList());
+
+        List<String> products = this.licences
+                .stream()
+                .map(Licence::getProduct)
+                .map(Product::getName)
+                .collect(toList());
         return "User [username=" +
                 username +
                 ", id=" +
@@ -124,6 +141,8 @@ public class User implements UserDetails {
                 isLocked +
                 ", roles=" +
                 roles +
+                ", products=" +
+                products +
                 ", email=" +
                 email + "]";
     }
