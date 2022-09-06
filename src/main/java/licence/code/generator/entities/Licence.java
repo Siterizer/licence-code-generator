@@ -12,7 +12,7 @@ public class Licence {
 
     @Id
     @GeneratedValue(generator="system-uuid")
-    @GenericGenerator(name="system-uuid", strategy = "uuid")
+    @GenericGenerator(name="system-uuid", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(name = "uuid", unique = true)
     private String id;
 
@@ -30,6 +30,10 @@ public class Licence {
     }
 
     public Licence() {}
+
+    public String getId() {
+        return id;
+    }
 
     public User getUser() {
         return user;

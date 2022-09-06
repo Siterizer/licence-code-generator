@@ -10,7 +10,7 @@ public class UserDto {
     private final String username;
     private final String email;
     private final List<String> roles;
-    private final List<String> products;
+    private final List<LicenceDto> licences;
     private final boolean isLocked;
 
 
@@ -30,8 +30,8 @@ public class UserDto {
         return roles;
     }
 
-    public List<String> getProducts() {
-        return products;
+    public List<LicenceDto> getProducts() {
+        return licences;
     }
 
     public boolean isLocked() {
@@ -48,8 +48,8 @@ public class UserDto {
                 isLocked +
                 ", roles=" +
                 roles +
-                ", products=" +
-                products +
+                ", licences=" +
+                licences +
                 ", email=" +
                 email + "]";
     }
