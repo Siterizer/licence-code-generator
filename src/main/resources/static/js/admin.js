@@ -10,7 +10,7 @@ function fill_table(){
             "<td>" + data[i].username + "</td>" +
             "<td>" + data[i].email + "</td>" +
             "<td>" + data[i].roles + "</td>" +
-            "<td>" + data[i].products.toString() + "</td>" +
+            "<td>" + generate_products(data[i].products) + "</td>" +
             "<td><input type='checkbox'" + isChecked + "></td>" +
             "<td><button type='button' onclick='block_unblock(\"" + data[i].id + "\", \"" + url_to_use + "\")' id='" + data[i].id + "' value='submit'>Submit</button></td>" +
             "</tr>");
@@ -19,6 +19,16 @@ function fill_table(){
 }
 function clear_table(){
     $(users_array).find('tbody').empty();
+}
+function generate_products(products){
+    result = '';
+    for(let i = 0; i<products.length; i++){
+        result += (
+        "name: " + products[i].name + ", " +
+        "licence: " + products[i].licence + "<br>");
+    }
+    console.log(result);
+    return result;
 }
 function block_unblock(id, url) {
     var ajaxRequest;
