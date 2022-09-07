@@ -2,7 +2,12 @@ $(document).ready(function() {
 
     $.get("user/info", function( data ) {
         $("#user_email").html(data.email);
-        $("#user_products").html(data.products.toString());
+
+        for(let i = 0; i<data.products.length; i++){
+            $(user_products).find('tbody').append("<tr><td>" + data.products[i].name +"</td>" +
+            "<td>" + data.products[i].licence + "</td>" +
+            "</tr>");
+        }
     });
 });
 $("#changePassword").submit(function(event) {

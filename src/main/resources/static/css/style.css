@@ -9,3 +9,15 @@
 #users_array td {
   border: solid 1px black
 }
+
+#user_products {
+   border: 2px solid black;
+}
+
+#user_products th {
+  border: solid 1px black
+}
+
+#user_products td {
+  border: solid 1px black
+}
