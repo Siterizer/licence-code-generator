@@ -25,10 +25,25 @@ function generate_products(products){
     for(let i = 0; i<products.length; i++){
         result += (
         "name: " + products[i].name + ", " +
-        "licence: " + products[i].licence + "<br>");
+        "licence:<br> <button type='button' id=\"button_" + products[i].licence +
+        "\" onclick=toggle_visibility(\"" + products[i].licence + "\")>show</button> " +
+        "<div id=\"div_" + products[i].licence + "\" style=\"display: none;\">" + products[i].licence + "</div><br>"
+        );
     }
     console.log(result);
     return result;
+}
+function toggle_visibility(id) {
+    var button = document.getElementById("button_" + id);
+    var div = document.getElementById("div_" + id);
+    if ( div.style.display == 'block' ){
+        div.style.display = 'none';
+        button.innerHTML = 'show';
+    }
+    else{
+        div.style.display = 'block';
+        button.innerHTML = 'hide';
+    }
 }
 function block_unblock(id, url) {
     var ajaxRequest;
