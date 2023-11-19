@@ -1,8 +1,0 @@
-kubectl create namespace devops-tools
-kubectl create -f .
-kubectl create -f postgres-config.yaml
-
-kubectl get pods --namespace=devops-tools (get the pod name)
-kubectl exec -it <pod name> /bin/bash -n devops-tools
-
-kubectl create -f postgres-config.yaml
