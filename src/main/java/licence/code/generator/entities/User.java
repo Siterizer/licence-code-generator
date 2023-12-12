@@ -1,6 +1,7 @@
 package licence.code.generator.entities;
 
 
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,12 +14,13 @@ import java.util.List;
 import static java.util.stream.Collectors.toList;
 
 @Entity
-@Table(name= "user_account")
+@Table(name = "user_account")
+@Data
 public class User implements UserDetails {
 
     @Id
     @Column(unique = true, nullable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     private String username;
@@ -36,45 +38,16 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user")
     private Collection<Licence> licences;
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public Collection<Licence> getLicences() {
-        return licences;
-    }
-
-    public void setLicences(Collection<Licence> licences) {
-        this.licences = licences;
-    }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
-        for (Role role: roles) {
+        for (Role role : roles) {
             authorities.add(new SimpleGrantedAuthority(role.getName()));
             role.getPrivileges().stream()
                     .map(p -> new SimpleGrantedAuthority(p.getName()))
                     .forEach(authorities::add);
         }
-
         return authorities;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getUsername() {
-        return username;
     }
 
     @Override
@@ -97,37 +70,12 @@ public class User implements UserDetails {
         return true;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public Collection<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Collection<Role> roles) {
-        this.roles = roles;
-    }
-
-    public void setLocked(boolean locked) {
-        this.isLocked = locked;
-    }
-
     @Override
     public String toString() {
         List<String> roles = this.roles
                 .stream()
                 .map(Role::getName)
                 .collect(toList());
-
         List<String> products = this.licences
                 .stream()
                 .map(Licence::getProduct)

@@ -3,9 +3,9 @@ $(document).ready(function() {
     $.get("user/info", function( data ) {
         $("#user_email").html(data.email);
 
-        for(let i = 0; i<data.products.length; i++){
-            $(user_products).find('tbody').append("<tr><td>" + data.products[i].name +"</td>" +
-            "<td>" + data.products[i].licence + "</td>" +
+        for(let i = 0; i<data.licences.length; i++){
+            $(user_products).find('tbody').append("<tr><td>" + data.licences[i].name +"</td>" +
+            "<td>" + data.licences[i].licence + "</td>" +
             "</tr>");
         }
     });

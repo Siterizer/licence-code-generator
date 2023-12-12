@@ -80,7 +80,8 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     Privilege createPrivilegeIfNotFound(final String name) {
         Privilege privilege = privilegeRepository.findByName(name);
         if (privilege == null) {
-            privilege = new Privilege(name);
+            privilege = new Privilege();
+            privilege.setName(name);
             privilege = privilegeRepository.save(privilege);
         }
         return privilege;
@@ -90,7 +91,8 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     Role createRoleIfNotFound(final String name, final Collection<Privilege> privileges) {
         Role role = roleRepository.findByName(name);
         if (role == null) {
-            role = new Role(name);
+            role = new Role();
+            role.setName(name);
         }
         role.setPrivileges(privileges);
         role = roleRepository.save(role);
@@ -101,7 +103,8 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     Product createProductIfNotFound(final String name) {
         Product product = productRepository.findByName(name);
         if (product == null) {
-            product = new Product(name);
+            product = new Product();
+            product.setName(name);
             product = productRepository.save(product);
         }
         return product;
@@ -124,7 +127,9 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
     @Transactional
     Licence createLicenceIfNotFound(final User user, Product product) {
-        Licence licence = new Licence(user, product);
+        Licence licence = new Licence();
+        licence.setUser(user);
+        licence.setProduct(product);
         licence = licenceRepository.save(licence);
 
         return licence;
