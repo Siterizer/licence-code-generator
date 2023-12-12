@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class LicenceDtoMapper {
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+
     public LicenceDto toDto(Licence licence) {
         LOGGER.debug("Mapping Licence: {} to LicenceDto", licence);
 

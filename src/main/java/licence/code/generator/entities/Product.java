@@ -1,12 +1,14 @@
 package licence.code.generator.entities;
 
 
+import lombok.Data;
 
 import javax.persistence.*;
 import java.util.Collection;
 
 @Entity
-@Table(name= "product")
+@Table(name = "product")
+@Data
 public class Product {
 
     @Id
@@ -19,24 +21,8 @@ public class Product {
     @OneToMany(mappedBy = "product")
     Collection<Licence> licences;
 
-    public Product(String name) {
-        this.name = name;
-    }
-
-    public Product() {}
-
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
     @Override
     public String toString() {
-
         return "Product [id=" +
                 id +
                 ", name=" +

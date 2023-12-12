@@ -16,8 +16,6 @@ import javax.validation.Valid;
 @Controller
 public class RegistrationRestController {
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
-
-
     private final IUserService userService;
 
     @Autowired
@@ -26,12 +24,10 @@ public class RegistrationRestController {
     }
 
     @PostMapping(value = {"/register"})
-    public ResponseEntity registerUser(@Valid final RegisterUserDto userDto) {
+    public ResponseEntity<?> registerUser(@Valid final RegisterUserDto userDto) {
         LOGGER.info("Registering user with information: {}", userDto);
         userService.registerUser(userDto);
         LOGGER.info("User: {} registered", userDto);
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .build();
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }

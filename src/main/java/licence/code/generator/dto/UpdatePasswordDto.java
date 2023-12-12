@@ -2,9 +2,13 @@ package licence.code.generator.dto;
 
 import licence.code.generator.security.validation.MatchedUpdatePassword;
 import licence.code.generator.security.validation.ValidPassword;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
 
+@Getter
+@Setter
 @MatchedUpdatePassword
 public class UpdatePasswordDto {
 
@@ -18,30 +22,6 @@ public class UpdatePasswordDto {
     @NotNull
     @ValidPassword
     private String newMatchedPassword;
-
-    public String getOldPassword() {
-        return oldPassword;
-    }
-
-    public void setOldPassword(String oldPassword) {
-        this.oldPassword = oldPassword;
-    }
-
-    public String getNewPassword() {
-        return newPassword;
-    }
-
-    public void setNewPassword(String newPassword) {
-        this.newPassword = newPassword;
-    }
-
-    public String getNewMatchedPassword() {
-        return newMatchedPassword;
-    }
-
-    public void setNewMatchedPassword(String newMatchedPassword) {
-        this.newMatchedPassword = newMatchedPassword;
-    }
 
     @Override
     public String toString() {

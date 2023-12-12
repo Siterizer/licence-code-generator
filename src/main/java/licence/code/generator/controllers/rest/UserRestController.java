@@ -29,7 +29,7 @@ public class UserRestController {
         this.userDtoMapper = userDtoMapper;
     }
 
-    @RequestMapping(value="/user/info", method=RequestMethod.GET, produces= MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/user/info", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<UserDto> getCurrentUserEmail() {
         final User user = userService.findUserByUsername(((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername());
@@ -41,20 +41,17 @@ public class UserRestController {
     }
 
     @PostMapping(value = {"/user/updatePassword"})
-    public ResponseEntity updateUserPassword(@Valid final UpdatePasswordDto passwordDto) {
+    public ResponseEntity<?> updateUserPassword(@Valid final UpdatePasswordDto passwordDto) {
         final User user = userService.findUserByUsername(((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername());
         LOGGER.info("Changing password for user with id: {}", user.getId());
         userService.changeUserPassword(user, passwordDto.getOldPassword(), passwordDto.getNewPassword());
         LOGGER.info("Password changed for User with id: {}", user.getId());
-        return ResponseEntity
-                .status(HttpStatus.ACCEPTED)
-                .build();
+        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 
     @PostMapping("/user/resetPassword")
     public String resetUserPassword() {
-        User user = new User();
-        user.setUsername("tak");
+        //TODO create resetPassword functionality
         //userService.registerUser(user);
         return "users";
     }

@@ -12,21 +12,23 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Service
 @Transactional
 public class UserService implements IUserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final RoleRepository roleRepository;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private RoleRepository roleRepository;
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.roleRepository = roleRepository;
+    }
 
     public List<User> getAllUsers() {
         return new ArrayList<>(userRepository.findAll());
@@ -52,7 +54,7 @@ public class UserService implements IUserService {
         user.setUsername(userDto.getUsername());
         user.setEmail(userDto.getEmail());
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        user.setRoles(Arrays.asList(roleRepository.findByName("ROLE_USER")));
+        user.setRoles(Collections.singletonList(roleRepository.findByName("ROLE_USER")));
         user.setLocked(false);
         userRepository.save(user);
     }
@@ -69,15 +71,15 @@ public class UserService implements IUserService {
     @Override
     public void blockUser(Long id, User admin) {
         User user = userRepository.findById(id).orElseThrow();
-        if(!user.isAccountNonLocked()){
-            throw new UserAlreadyBlockedException("User with id:" + user.getId() +" is already blocked");
+        if (!user.isAccountNonLocked()) {
+            throw new UserAlreadyBlockedException("User with id:" + user.getId() + " is already blocked");
         }
 
-        if(user.getRoles()
+        if (user.getRoles()
                 .stream()
                 .map(Role::getName)
-                .anyMatch(e -> e.equals("ROLE_ADMIN"))){
-            throw new InsufficientPrivilegesException("Admin with id: " + admin.getId() +" tried to block another admin with id:" + id);
+                .anyMatch(e -> e.equals("ROLE_ADMIN"))) {
+            throw new InsufficientPrivilegesException("Admin with id: " + admin.getId() + " tried to block another admin with id:" + id);
         }
         user.setLocked(true);
         userRepository.save(user);
@@ -86,22 +88,22 @@ public class UserService implements IUserService {
     @Override
     public void unblockUser(Long id, User admin) {
         User user = userRepository.findById(id).orElseThrow();
-        if(user.isAccountNonLocked()){
-            throw new UserNotBlockedException("User with id:" + user.getId() +" is not blocked");
+        if (user.isAccountNonLocked()) {
+            throw new UserNotBlockedException("User with id:" + user.getId() + " is not blocked");
         }
 
-        if(user.getRoles()
+        if (user.getRoles()
                 .stream()
                 .map(Role::getName)
-                .anyMatch(e -> e.equals("ROLE_ADMIN"))){
-            throw new InsufficientPrivilegesException("Admin with id: " + admin.getId() +" tried to unblock another admin with id:" + id);
+                .anyMatch(e -> e.equals("ROLE_ADMIN"))) {
+            throw new InsufficientPrivilegesException("Admin with id: " + admin.getId() + " tried to unblock another admin with id:" + id);
         }
         user.setLocked(false);
         userRepository.save(user);
     }
 
     private boolean userExists(String email, String username) {
-        return userRepository.findByEmail(email) != null || userRepository.findByUsername(username) !=null;
+        return userRepository.findByEmail(email) != null || userRepository.findByUsername(username) != null;
     }
 
     public boolean validCurrentPassword(String providedPassword, final String currentPassword) {

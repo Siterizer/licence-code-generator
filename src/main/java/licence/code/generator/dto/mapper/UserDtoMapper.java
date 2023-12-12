@@ -18,11 +18,12 @@ public class UserDtoMapper {
     private final LicenceDtoMapper licenceDtoMapper;
 
     @Autowired
-    UserDtoMapper(LicenceDtoMapper licenceDtoMapper){
+    UserDtoMapper(LicenceDtoMapper licenceDtoMapper) {
         this.licenceDtoMapper = licenceDtoMapper;
     }
 
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+
     public UserDto toDto(User user) {
         LOGGER.debug("Mapping User: {} to UserDto", user);
         List<String> roles = user

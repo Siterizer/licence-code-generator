@@ -10,34 +10,30 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @Component
 public class SetupDataLoader implements ApplicationListener<ContextRefreshedEvent> {
 
     private boolean alreadySetup = false;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final PrivilegeRepository privilegeRepository;
+    private final LicenceRepository licenceRepository;
+    private final ProductRepository productRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
-    private PrivilegeRepository privilegeRepository;
-
-    @Autowired
-    private LicenceRepository licenceRepository;
-
-    @Autowired
-    private ProductRepository productRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    // API
+    public SetupDataLoader(UserRepository userRepository, RoleRepository roleRepository, PrivilegeRepository privilegeRepository, LicenceRepository licenceRepository, ProductRepository productRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+        this.privilegeRepository = privilegeRepository;
+        this.licenceRepository = licenceRepository;
+        this.productRepository = productRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     @Transactional
@@ -51,8 +47,8 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         final Privilege users = createPrivilegeIfNotFound("WRITE_PRIVILEGE");
 
         // == create initial roles
-        final List<Privilege> userPrivileges = new ArrayList<>(Arrays.asList(mainPage));
-        final List<Privilege> adminPrivileges = new ArrayList<>(Arrays.asList(users));
+        final List<Privilege> userPrivileges = new ArrayList<>(Collections.singletonList(mainPage));
+        final List<Privilege> adminPrivileges = new ArrayList<>(Collections.singletonList(users));
         final Role adminRole = createRoleIfNotFound("ROLE_ADMIN", adminPrivileges);
         final Role userRole = createRoleIfNotFound("ROLE_USER", userPrivileges);
 
@@ -62,16 +58,17 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         final Product fightingBot = createProductIfNotFound("Fighting Bot");
 
         // == create initial user
-        final User locked = createUserIfNotFound("locked@test.com", "locked", "locked", new ArrayList<>(Arrays.asList(userRole)), true);
-        final User user1 = createUserIfNotFound("asd1@test.com", "asd", "asd1", new ArrayList<>(Arrays.asList(userRole)), false);
-        final User user2 = createUserIfNotFound("asd2@test.com", "asd", "asd2", new ArrayList<>(Arrays.asList(userRole)), false);
-        final User admin = createUserIfNotFound("test@test.com", "test", "test", new ArrayList<>(Arrays.asList(adminRole)), false);
+        final User locked = createUserIfNotFound("locked@test.com", "locked", "locked", new ArrayList<>(Collections.singletonList(userRole)), true);
+        final User user1 = createUserIfNotFound("asd1@test.com", "asd", "asd1", new ArrayList<>(Collections.singletonList(userRole)), false);
+        final User user2 = createUserIfNotFound("asd2@test.com", "asd", "asd2", new ArrayList<>(Collections.singletonList(userRole)), false);
+        final User admin = createUserIfNotFound("test@test.com", "test", "test", new ArrayList<>(Collections.singletonList(adminRole)), false);
 
         // == create initial licences
         createLicenceIfNotFound(user1, fishBot);
         createLicenceIfNotFound(user1, gatheringBot);
         createLicenceIfNotFound(user2, gatheringBot);
         createLicenceIfNotFound(user2, fightingBot);
+        createLicenceIfNotFound(admin, fightingBot);
 
         alreadySetup = true;
     }
@@ -80,7 +77,8 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     Privilege createPrivilegeIfNotFound(final String name) {
         Privilege privilege = privilegeRepository.findByName(name);
         if (privilege == null) {
-            privilege = new Privilege(name);
+            privilege = new Privilege();
+            privilege.setName(name);
             privilege = privilegeRepository.save(privilege);
         }
         return privilege;
@@ -90,7 +88,8 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     Role createRoleIfNotFound(final String name, final Collection<Privilege> privileges) {
         Role role = roleRepository.findByName(name);
         if (role == null) {
-            role = new Role(name);
+            role = new Role();
+            role.setName(name);
         }
         role.setPrivileges(privileges);
         role = roleRepository.save(role);
@@ -101,7 +100,8 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     Product createProductIfNotFound(final String name) {
         Product product = productRepository.findByName(name);
         if (product == null) {
-            product = new Product(name);
+            product = new Product();
+            product.setName(name);
             product = productRepository.save(product);
         }
         return product;
@@ -124,9 +124,15 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
     @Transactional
     Licence createLicenceIfNotFound(final User user, Product product) {
-        Licence licence = new Licence(user, product);
+        for (Licence userLicence : licenceRepository.findByUser(user)) {
+            if (userLicence.getProduct().getName().equals(product.getName())) {
+                return userLicence;
+            }
+        }
+        Licence licence = new Licence();
+        licence.setUser(user);
+        licence.setProduct(product);
         licence = licenceRepository.save(licence);
-
         return licence;
     }
 

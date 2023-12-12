@@ -10,7 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Comparator;
 import java.util.List;
@@ -42,7 +45,7 @@ public class AdminRestController {
     }
 
     @PostMapping(value = {"/admin/block"})
-    public ResponseEntity blockUser(@RequestParam(name = "id") Long id) {
+    public ResponseEntity<?> blockUser(@RequestParam(name = "id") Long id) {
         final User admin = userService.findUserByUsername(((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername());
         LOGGER.info("Admin with id: {} attempts to block User with id: {}", admin.getId(), id);
         userService.blockUser(id, admin);
@@ -53,7 +56,7 @@ public class AdminRestController {
     }
 
     @PostMapping(value = {"/admin/unblock"})
-    public ResponseEntity unblockUser(@RequestParam(name = "id") Long id) {
+    public ResponseEntity<?> unblockUser(@RequestParam(name = "id") Long id) {
         final User admin = userService.findUserByUsername(((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername());
         LOGGER.info("Admin with id: {} attempts to unblock User with id: {}", admin.getId(), id);
         userService.unblockUser(id, admin);
