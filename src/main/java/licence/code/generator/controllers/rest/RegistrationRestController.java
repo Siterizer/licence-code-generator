@@ -16,7 +16,6 @@ import javax.validation.Valid;
 @Controller
 public class RegistrationRestController {
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
-
     private final IUserService userService;
 
     @Autowired
