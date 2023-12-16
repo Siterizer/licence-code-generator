@@ -1,18 +1,13 @@
 version: '3.3'
 services:
-  jenkins:
-    image: jenkins/jenkins:lts
-    restart: unless-stopped
-    privileged: true
-    user: root
+  web:
+    image: licence-code-generator
     ports:
-      - 8081:8080
-    container_name: jenkins
-    volumes:
-      - ~/jenkins:/var/jenkins_home
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /usr/local/bin/docker:/usr/local/bin/docker
-
+      - "8081:8080"
+    environment:
+      - "SPRING_PROFILES_ACTIVE=prod"
+    depends_on:
+      - postgres
   postgres:
     container_name: postgres_container
     image: postgres

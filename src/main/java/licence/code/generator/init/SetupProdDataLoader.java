@@ -4,6 +4,7 @@ import licence.code.generator.entities.*;
 import licence.code.generator.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -15,7 +16,8 @@ import java.util.Collections;
 import java.util.List;
 
 @Component
-public class SetupDataLoader implements ApplicationListener<ContextRefreshedEvent> {
+@Profile("prod")
+public class SetupProdDataLoader implements ApplicationListener<ContextRefreshedEvent> {
 
     private boolean alreadySetup = false;
     private final UserRepository userRepository;
@@ -26,7 +28,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public SetupDataLoader(UserRepository userRepository, RoleRepository roleRepository, PrivilegeRepository privilegeRepository, LicenceRepository licenceRepository, ProductRepository productRepository, PasswordEncoder passwordEncoder) {
+    public SetupProdDataLoader(UserRepository userRepository, RoleRepository roleRepository, PrivilegeRepository privilegeRepository, LicenceRepository licenceRepository, ProductRepository productRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.privilegeRepository = privilegeRepository;
@@ -50,25 +52,11 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         final List<Privilege> userPrivileges = new ArrayList<>(Collections.singletonList(mainPage));
         final List<Privilege> adminPrivileges = new ArrayList<>(Collections.singletonList(users));
         final Role adminRole = createRoleIfNotFound("ROLE_ADMIN", adminPrivileges);
-        final Role userRole = createRoleIfNotFound("ROLE_USER", userPrivileges);
-
-        // == create initial products
-        final Product fishBot = createProductIfNotFound("Fish Bot");
-        final Product gatheringBot = createProductIfNotFound("Gathering Bot");
-        final Product fightingBot = createProductIfNotFound("Fighting Bot");
+        createRoleIfNotFound("ROLE_USER", userPrivileges);
 
         // == create initial user
-        final User locked = createUserIfNotFound("locked@test.com", "locked", "locked", new ArrayList<>(Collections.singletonList(userRole)), true);
-        final User user1 = createUserIfNotFound("asd1@test.com", "asd", "asd1", new ArrayList<>(Collections.singletonList(userRole)), false);
-        final User user2 = createUserIfNotFound("asd2@test.com", "asd", "asd2", new ArrayList<>(Collections.singletonList(userRole)), false);
         final User admin = createUserIfNotFound("test@test.com", "test", "test", new ArrayList<>(Collections.singletonList(adminRole)), false);
 
-        // == create initial licences
-        createLicenceIfNotFound(user1, fishBot);
-        createLicenceIfNotFound(user1, gatheringBot);
-        createLicenceIfNotFound(user2, gatheringBot);
-        createLicenceIfNotFound(user2, fightingBot);
-        createLicenceIfNotFound(admin, fightingBot);
 
         alreadySetup = true;
     }
@@ -97,17 +85,6 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     }
 
     @Transactional
-    Product createProductIfNotFound(final String name) {
-        Product product = productRepository.findByName(name);
-        if (product == null) {
-            product = new Product();
-            product.setName(name);
-            product = productRepository.save(product);
-        }
-        return product;
-    }
-
-    @Transactional
     User createUserIfNotFound(final String email, final String password, final String username, final Collection<Role> roles, boolean locked) {
         User user = userRepository.findByEmail(email) == null ? userRepository.findByUsername(username) : userRepository.findByEmail(email);
         if (user == null) {
@@ -121,20 +98,4 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         user = userRepository.save(user);
         return user;
     }
-
-    @Transactional
-    Licence createLicenceIfNotFound(final User user, Product product) {
-        for (Licence userLicence : licenceRepository.findByUser(user)) {
-            if (userLicence.getProduct().getName().equals(product.getName())) {
-                return userLicence;
-            }
-        }
-        Licence licence = new Licence();
-        licence.setUser(user);
-        licence.setProduct(product);
-        licence = licenceRepository.save(licence);
-        return licence;
-    }
-
-
 }
