@@ -4,6 +4,7 @@ import licence.code.generator.entities.*;
 import licence.code.generator.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -15,7 +16,8 @@ import java.util.Collections;
 import java.util.List;
 
 @Component
-public class SetupDataLoader implements ApplicationListener<ContextRefreshedEvent> {
+@Profile("local")
+public class SetupLocalDataLoader implements ApplicationListener<ContextRefreshedEvent> {
 
     private boolean alreadySetup = false;
     private final UserRepository userRepository;
@@ -26,7 +28,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public SetupDataLoader(UserRepository userRepository, RoleRepository roleRepository, PrivilegeRepository privilegeRepository, LicenceRepository licenceRepository, ProductRepository productRepository, PasswordEncoder passwordEncoder) {
+    public SetupLocalDataLoader(UserRepository userRepository, RoleRepository roleRepository, PrivilegeRepository privilegeRepository, LicenceRepository licenceRepository, ProductRepository productRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.privilegeRepository = privilegeRepository;
