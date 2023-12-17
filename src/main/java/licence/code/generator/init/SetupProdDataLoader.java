@@ -23,17 +23,13 @@ public class SetupProdDataLoader implements ApplicationListener<ContextRefreshed
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PrivilegeRepository privilegeRepository;
-    private final LicenceRepository licenceRepository;
-    private final ProductRepository productRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public SetupProdDataLoader(UserRepository userRepository, RoleRepository roleRepository, PrivilegeRepository privilegeRepository, LicenceRepository licenceRepository, ProductRepository productRepository, PasswordEncoder passwordEncoder) {
+    public SetupProdDataLoader(UserRepository userRepository, RoleRepository roleRepository, PrivilegeRepository privilegeRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.privilegeRepository = privilegeRepository;
-        this.licenceRepository = licenceRepository;
-        this.productRepository = productRepository;
         this.passwordEncoder = passwordEncoder;
     }
 

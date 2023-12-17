@@ -16,8 +16,8 @@ import java.util.Collections;
 import java.util.List;
 
 @Component
-@Profile("dev")
-public class SetupDevDataLoader implements ApplicationListener<ContextRefreshedEvent> {
+@Profile("local")
+public class SetupLocalDataLoader implements ApplicationListener<ContextRefreshedEvent> {
 
     private boolean alreadySetup = false;
     private final UserRepository userRepository;
@@ -28,7 +28,7 @@ public class SetupDevDataLoader implements ApplicationListener<ContextRefreshedE
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public SetupDevDataLoader(UserRepository userRepository, RoleRepository roleRepository, PrivilegeRepository privilegeRepository, LicenceRepository licenceRepository, ProductRepository productRepository, PasswordEncoder passwordEncoder) {
+    public SetupLocalDataLoader(UserRepository userRepository, RoleRepository roleRepository, PrivilegeRepository privilegeRepository, LicenceRepository licenceRepository, ProductRepository productRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.privilegeRepository = privilegeRepository;
