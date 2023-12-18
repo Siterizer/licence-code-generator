@@ -50,6 +50,14 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         final GenericResponse bodyOfResponse = new GenericResponse("Invalid Old Password", "InvalidOldPassword");
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
+
+    //401
+    @ExceptionHandler({ UnauthorizedUserException.class })
+    public ResponseEntity<Object> handleUnauthorizedUser(final RuntimeException ex, final WebRequest request) {
+        logger.error("401 Status Code", ex);
+        final GenericResponse bodyOfResponse = new GenericResponse("Unauthorized User", "UnauthorizedUser");
+        return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.UNAUTHORIZED, request);
+    }
     //403
     @ExceptionHandler({ InsufficientPrivilegesException.class })
     public ResponseEntity<Object> handleInsufficientPrivileges(final RuntimeException ex, final WebRequest request) {
@@ -58,20 +66,20 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.FORBIDDEN, request);
     }
 
-    //406
+    //409
     @ExceptionHandler({ UserAlreadyBlockedException.class })
     public ResponseEntity<Object> handleUserAlreadyBlocked(final RuntimeException ex, final WebRequest request) {
-        logger.error("406 Status Code", ex);
+        logger.error("409 Status Code", ex);
         final GenericResponse bodyOfResponse = new GenericResponse("An blocked flag for that id is already set to true", "UserAlreadyBlocked");
-        return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.NOT_ACCEPTABLE, request);
+        return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.CONFLICT, request);
     }
 
-    //406
+    //409
     @ExceptionHandler({ UserNotBlockedException.class })
     public ResponseEntity<Object> handleUserNotBlocked(final RuntimeException ex, final WebRequest request) {
-        logger.error("406 Status Code", ex);
+        logger.error("409 Status Code", ex);
         final GenericResponse bodyOfResponse = new GenericResponse("An blocked flag for that id is already set to false", "UserNotBlockedException");
-        return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.NOT_ACCEPTABLE, request);
+        return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.CONFLICT, request);
     }
 
     //409

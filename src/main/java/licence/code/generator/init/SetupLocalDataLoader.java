@@ -51,8 +51,8 @@ public class SetupLocalDataLoader implements ApplicationListener<ContextRefreshe
         // == create initial roles
         final List<Privilege> userPrivileges = new ArrayList<>(Collections.singletonList(mainPage));
         final List<Privilege> adminPrivileges = new ArrayList<>(Collections.singletonList(users));
-        final Role adminRole = createRoleIfNotFound("ROLE_ADMIN", adminPrivileges);
-        final Role userRole = createRoleIfNotFound("ROLE_USER", userPrivileges);
+        final Role adminRole = createRoleIfNotFound(RoleName.ROLE_ADMIN, adminPrivileges);
+        final Role userRole = createRoleIfNotFound(RoleName.ROLE_USER, userPrivileges);
 
         // == create initial products
         final Product fishBot = createProductIfNotFound("Fish Bot");
@@ -87,7 +87,7 @@ public class SetupLocalDataLoader implements ApplicationListener<ContextRefreshe
     }
 
     @Transactional
-    Role createRoleIfNotFound(final String name, final Collection<Privilege> privileges) {
+    Role createRoleIfNotFound(final RoleName name, final Collection<Privilege> privileges) {
         Role role = roleRepository.findByName(name);
         if (role == null) {
             role = new Role();

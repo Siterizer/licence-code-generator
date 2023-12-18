@@ -9,7 +9,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 
@@ -26,13 +29,15 @@ public class UserDtoMapper {
 
     public UserDto toDto(User user) {
         LOGGER.debug("Mapping User: {} to UserDto", user);
-        List<String> roles = user
-                .getRoles()
-                .stream()
+        List<String> roles = Stream.ofNullable(user.getRoles())
+                .flatMap(Collection::stream)
+                .filter(Objects::nonNull)
                 .map(Role::getName)
+                .map(Enum::name)
                 .collect(toList());
-        List<LicenceDto> licences = user.getLicences()
-                .stream()
+        List<LicenceDto> licences = Stream.ofNullable(user.getLicences())
+                .flatMap(Collection::stream)
+                .filter(Objects::nonNull)
                 .map(licenceDtoMapper::toDto)
                 .collect(toList());
 

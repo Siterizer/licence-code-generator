@@ -4,7 +4,7 @@ import licence.code.generator.dto.UpdatePasswordDto;
 import licence.code.generator.dto.UserDto;
 import licence.code.generator.dto.mapper.UserDtoMapper;
 import licence.code.generator.entities.User;
-import licence.code.generator.services.UserService;
+import licence.code.generator.services.IUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +20,11 @@ import javax.validation.Valid;
 @RestController
 public class UserRestController {
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
-    private final UserService userService;
+    private final IUserService userService;
     private final UserDtoMapper userDtoMapper;
 
     @Autowired
-    public UserRestController(UserService userService, UserDtoMapper userDtoMapper) {
+    public UserRestController(IUserService userService, UserDtoMapper userDtoMapper) {
         this.userService = userService;
         this.userDtoMapper = userDtoMapper;
     }

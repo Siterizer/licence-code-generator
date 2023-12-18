@@ -47,8 +47,8 @@ public class SetupProdDataLoader implements ApplicationListener<ContextRefreshed
         // == create initial roles
         final List<Privilege> userPrivileges = new ArrayList<>(Collections.singletonList(mainPage));
         final List<Privilege> adminPrivileges = new ArrayList<>(Collections.singletonList(users));
-        final Role adminRole = createRoleIfNotFound("ROLE_ADMIN", adminPrivileges);
-        createRoleIfNotFound("ROLE_USER", userPrivileges);
+        final Role adminRole = createRoleIfNotFound(RoleName.ROLE_ADMIN, adminPrivileges);
+        createRoleIfNotFound(RoleName.ROLE_USER, userPrivileges);
 
         // == create initial user
         final User admin = createUserIfNotFound("test@test.com", "test", "test", new ArrayList<>(Collections.singletonList(adminRole)), false);
@@ -69,7 +69,7 @@ public class SetupProdDataLoader implements ApplicationListener<ContextRefreshed
     }
 
     @Transactional
-    Role createRoleIfNotFound(final String name, final Collection<Privilege> privileges) {
+    Role createRoleIfNotFound(final RoleName name, final Collection<Privilege> privileges) {
         Role role = roleRepository.findByName(name);
         if (role == null) {
             role = new Role();

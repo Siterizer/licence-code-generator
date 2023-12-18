@@ -10,6 +10,8 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 
@@ -20,7 +22,7 @@ public class User implements UserDetails {
 
     @Id
     @Column(unique = true, nullable = false)
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String username;
@@ -42,7 +44,7 @@ public class User implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
         for (Role role : roles) {
-            authorities.add(new SimpleGrantedAuthority(role.getName()));
+            authorities.add(new SimpleGrantedAuthority(role.getName().name()));
             role.getPrivileges().stream()
                     .map(p -> new SimpleGrantedAuthority(p.getName()))
                     .forEach(authorities::add);
@@ -70,14 +72,21 @@ public class User implements UserDetails {
         return true;
     }
 
+    public boolean isAdmin(){
+        return roles.stream().anyMatch(role -> role.getName().equals(RoleName.ROLE_ADMIN));
+    }
+
     @Override
     public String toString() {
-        List<String> roles = this.roles
-                .stream()
+        List<String> roles = Stream.ofNullable(this.roles)
+                .flatMap(Collection::stream)
+                .filter(Objects::nonNull)
                 .map(Role::getName)
+                .map(Enum::name)
                 .collect(toList());
-        List<String> products = this.licences
-                .stream()
+        List<String> products = Stream.ofNullable(this.licences)
+                .flatMap(Collection::stream)
+                .filter(Objects::nonNull)
                 .map(Licence::getProduct)
                 .map(Product::getName)
                 .collect(toList());
