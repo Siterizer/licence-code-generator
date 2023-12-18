@@ -44,7 +44,7 @@ public class User implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
         for (Role role : roles) {
-            authorities.add(new SimpleGrantedAuthority(role.getName()));
+            authorities.add(new SimpleGrantedAuthority(role.getName().name()));
             role.getPrivileges().stream()
                     .map(p -> new SimpleGrantedAuthority(p.getName()))
                     .forEach(authorities::add);
@@ -72,12 +72,17 @@ public class User implements UserDetails {
         return true;
     }
 
+    public boolean isAdmin(){
+        return roles.stream().anyMatch(role -> role.getName().equals(RoleName.ROLE_ADMIN));
+    }
+
     @Override
     public String toString() {
         List<String> roles = Stream.ofNullable(this.roles)
                 .flatMap(Collection::stream)
                 .filter(Objects::nonNull)
                 .map(Role::getName)
+                .map(Enum::name)
                 .collect(toList());
         List<String> products = Stream.ofNullable(this.licences)
                 .flatMap(Collection::stream)

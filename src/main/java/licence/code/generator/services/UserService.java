@@ -1,7 +1,9 @@
 package licence.code.generator.services;
 
 import licence.code.generator.dto.RegisterUserDto;
-import licence.code.generator.entities.Role;
+import licence.code.generator.dto.UserDto;
+import licence.code.generator.dto.mapper.UserDtoMapper;
+import licence.code.generator.entities.RoleName;
 import licence.code.generator.entities.User;
 import licence.code.generator.repositories.RoleRepository;
 import licence.code.generator.repositories.UserRepository;
@@ -13,7 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -22,16 +26,30 @@ public class UserService implements IUserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
+    private final UserDtoMapper userDtoMapper;
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,
+                       RoleRepository roleRepository, UserDtoMapper userDtoMapper) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.roleRepository = roleRepository;
+        this.userDtoMapper = userDtoMapper;
     }
 
     public List<User> getAllUsers() {
         return new ArrayList<>(userRepository.findAll());
+    }
+
+    @Override
+    public List<UserDto> getAllUsersDto(User admin) {
+        if (!admin.isAdmin()) {
+            throw new InsufficientPrivilegesException("User with id: " + admin.getId() + " tried to get all UsersDto:");
+        }
+        return userRepository.findAll().stream()
+                .map(userDtoMapper::toDto)
+                .sorted((Comparator.comparing(UserDto::getId)))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -54,7 +72,7 @@ public class UserService implements IUserService {
         user.setUsername(userDto.getUsername());
         user.setEmail(userDto.getEmail());
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        user.setRoles(Collections.singletonList(roleRepository.findByName("ROLE_USER")));
+        user.setRoles(Collections.singletonList(roleRepository.findByName(RoleName.ROLE_USER)));
         user.setLocked(false);
         userRepository.save(user);
     }
@@ -70,15 +88,14 @@ public class UserService implements IUserService {
 
     @Override
     public void blockUser(Long id, User admin) {
+        if (!admin.isAdmin()) {
+            throw new InsufficientPrivilegesException("User with id: " + admin.getId() + " tried to block another User");
+        }
         User user = userRepository.findById(id).orElseThrow();
         if (!user.isAccountNonLocked()) {
             throw new UserAlreadyBlockedException("User with id:" + user.getId() + " is already blocked");
         }
-
-        if (user.getRoles()
-                .stream()
-                .map(Role::getName)
-                .anyMatch(e -> e.equals("ROLE_ADMIN"))) {
+        if (user.isAdmin()) {
             throw new InsufficientPrivilegesException("Admin with id: " + admin.getId() + " tried to block another admin with id:" + id);
         }
         user.setLocked(true);
@@ -87,15 +104,14 @@ public class UserService implements IUserService {
 
     @Override
     public void unblockUser(Long id, User admin) {
+        if (!admin.isAdmin()) {
+            throw new InsufficientPrivilegesException("User with id: " + admin.getId() + " tried to unblock another User");
+        }
         User user = userRepository.findById(id).orElseThrow();
         if (user.isAccountNonLocked()) {
             throw new UserNotBlockedException("User with id:" + user.getId() + " is not blocked");
         }
-
-        if (user.getRoles()
-                .stream()
-                .map(Role::getName)
-                .anyMatch(e -> e.equals("ROLE_ADMIN"))) {
+        if (user.isAdmin()) {
             throw new InsufficientPrivilegesException("Admin with id: " + admin.getId() + " tried to unblock another admin with id:" + id);
         }
         user.setLocked(false);

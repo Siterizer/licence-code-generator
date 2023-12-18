@@ -33,6 +33,7 @@ public class UserDtoMapper {
                 .flatMap(Collection::stream)
                 .filter(Objects::nonNull)
                 .map(Role::getName)
+                .map(Enum::name)
                 .collect(toList());
         List<LicenceDto> licences = Stream.ofNullable(user.getLicences())
                 .flatMap(Collection::stream)
