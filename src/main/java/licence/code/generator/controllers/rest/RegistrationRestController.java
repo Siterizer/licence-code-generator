@@ -2,7 +2,6 @@ package licence.code.generator.controllers.rest;
 
 import licence.code.generator.dto.RegisterUserDto;
 import licence.code.generator.services.IUserService;
-import licence.code.generator.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,7 @@ public class RegistrationRestController {
     private final IUserService userService;
 
     @Autowired
-    public RegistrationRestController(UserService userService) {
+    public RegistrationRestController(IUserService userService) {
         this.userService = userService;
     }
 

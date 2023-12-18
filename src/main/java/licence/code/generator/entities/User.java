@@ -10,6 +10,8 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 
@@ -20,7 +22,7 @@ public class User implements UserDetails {
 
     @Id
     @Column(unique = true, nullable = false)
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String username;
@@ -72,12 +74,14 @@ public class User implements UserDetails {
 
     @Override
     public String toString() {
-        List<String> roles = this.roles
-                .stream()
+        List<String> roles = Stream.ofNullable(this.roles)
+                .flatMap(Collection::stream)
+                .filter(Objects::nonNull)
                 .map(Role::getName)
                 .collect(toList());
-        List<String> products = this.licences
-                .stream()
+        List<String> products = Stream.ofNullable(this.licences)
+                .flatMap(Collection::stream)
+                .filter(Objects::nonNull)
                 .map(Licence::getProduct)
                 .map(Product::getName)
                 .collect(toList());
