@@ -72,9 +72,10 @@ public class User implements UserDetails {
         return true;
     }
 
-    public boolean isAdmin(){
-        return roles.stream().anyMatch(role -> role.getName().equals(RoleName.ROLE_ADMIN));
+    public boolean hasRole(RoleName roleName) {
+        return roles.stream().anyMatch(role -> role.getName().equals(roleName));
     }
+
 
     @Override
     public String toString() {

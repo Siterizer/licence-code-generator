@@ -44,9 +44,7 @@ public class AdminRestController {
         LOGGER.info("Admin with id: {} attempts to block User with id: {}", requester.getId(), id);
         userService.blockUser(id, requester);
         LOGGER.info("User with id: {} blocked by Admin with id: {}", id, requester.getId());
-        return ResponseEntity
-                .status(HttpStatus.NO_CONTENT)
-                .build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @PostMapping(value = {"/admin/unblock"})
@@ -55,15 +53,13 @@ public class AdminRestController {
         LOGGER.info("Admin with id: {} attempts to unblock User with id: {}", requester.getId(), id);
         userService.unblockUser(id, requester);
         LOGGER.info("User with id: {} unblocked by Admin with id: {}", id, requester.getId());
-        return ResponseEntity
-                .status(HttpStatus.NO_CONTENT)
-                .build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     private User getRequester() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (Objects.isNull(authentication)) {
-            throw new UnauthorizedUserException("Unauthorized User wanted to access /admin/info GET request");
+            throw new UnauthorizedUserException("Unauthorized User wanted to access /admin endpoint");
         }
         return userService.findUserByUsername(authentication.getName());
     }
