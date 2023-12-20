@@ -1,9 +1,10 @@
-package licence.code.generator.integration.rest;
+package licence.code.generator.integration.controller.rest;
 
 import licence.code.generator.controllers.rest.AdminRestController;
 import licence.code.generator.dto.UserDto;
 import licence.code.generator.entities.User;
 import licence.code.generator.helper.JpaUserEntityHelper;
+import licence.code.generator.helper.SecurityHelper;
 import licence.code.generator.web.exception.InsufficientPrivilegesException;
 import licence.code.generator.web.exception.UnauthorizedUserException;
 import licence.code.generator.web.exception.UserAlreadyBlockedException;
@@ -11,10 +12,8 @@ import licence.code.generator.web.exception.UserNotBlockedException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -23,20 +22,21 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest()
 class AdminRestControllerTest {
 
     @Autowired
     private AdminRestController controller;
-
     @Autowired
     private JpaUserEntityHelper jpaUserEntityHelper;
+    @Autowired
+    SecurityHelper securityHelper;
 
     @Test
-    @WithMockUser(username = "admin")
     @Transactional
     void showAllUsers_shouldReturnMultipleUsers() {
         //given:
+        securityHelper.setSecurityContextFromRandomAdmin();
         List<User> expected = List.of(
                 jpaUserEntityHelper.createRandomUser(),
                 jpaUserEntityHelper.createRandomUser(),
@@ -54,10 +54,10 @@ class AdminRestControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "admin")
     @Transactional
     void blockUser_shouldSuccessfullyBlockUserOnly() {
         //given:
+        securityHelper.setSecurityContextFromRandomAdmin();
         User userToBeBlocked = jpaUserEntityHelper.createNotBlockedUser();
         List<User> usersToNotBeBlocked = List.of(
                 jpaUserEntityHelper.createNotBlockedUser(),
@@ -74,10 +74,10 @@ class AdminRestControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "admin")
     @Transactional
     void blockUser_shouldThrowExceptionOnNotBlockedUser() {
         //given:
+        securityHelper.setSecurityContextFromRandomAdmin();
         User userToBeBlocked = jpaUserEntityHelper.createBlockedUser();
 
         //when-then:
@@ -85,10 +85,10 @@ class AdminRestControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "admin")
     @Transactional
     void blockUser_shouldThrowExceptionOnAdminBlockTry() {
         //given:
+        securityHelper.setSecurityContextFromRandomAdmin();
         User adminToBeBlocked = jpaUserEntityHelper.createNotBlockedAdmin();
 
         //when-then:
@@ -96,10 +96,10 @@ class AdminRestControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "admin")
     @Transactional
     void unblockUser_shouldSuccessfullyUnblockUserOnly() {
         //given:
+        securityHelper.setSecurityContextFromRandomAdmin();
         User userToBeUnblocked = jpaUserEntityHelper.createBlockedUser();
         List<User> usersToNotBeBlocked = List.of(
                 jpaUserEntityHelper.createBlockedUser(),
@@ -116,10 +116,10 @@ class AdminRestControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "admin")
     @Transactional
     void unblockUser_shouldThrowExceptionOnNotBlockedUser() {
         //given:
+        securityHelper.setSecurityContextFromRandomAdmin();
         User userToBeUnblocked = jpaUserEntityHelper.createNotBlockedUser();
 
         //when-then:
@@ -127,10 +127,10 @@ class AdminRestControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "admin")
     @Transactional
     void unblockUser_shouldThrowExceptionOnAdminBlockTry() {
         //given:
+        securityHelper.setSecurityContextFromRandomAdmin();
         User adminToBeUnblocked = jpaUserEntityHelper.createBlockedAdmin();
 
         //when-then:
@@ -139,10 +139,10 @@ class AdminRestControllerTest {
 
 
     @Test
-    @WithMockUser(username = "user1")
     @Transactional
     void adminRestControllerMethods_shouldThrowExceptionOnUserAttempt() {
         //given:
+        securityHelper.setSecurityContextFromRandomUser();
         jpaUserEntityHelper.createRandomUser();
         User userToBeBlocked = jpaUserEntityHelper.createNotBlockedUser();
         User userToBeUnblocked = jpaUserEntityHelper.createBlockedUser();

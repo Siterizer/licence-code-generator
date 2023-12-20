@@ -43,7 +43,7 @@ public class UserService implements IUserService {
 
     @Override
     public List<UserDto> getAllUsersDto(User admin) {
-        if (!admin.isAdmin()) {
+        if (!admin.hasRole(RoleName.ROLE_ADMIN)) {
             throw new InsufficientPrivilegesException("User with id: " + admin.getId() + " tried to get all UsersDto:");
         }
         return userRepository.findAll().stream()
@@ -88,14 +88,14 @@ public class UserService implements IUserService {
 
     @Override
     public void blockUser(Long id, User admin) {
-        if (!admin.isAdmin()) {
+        if (!admin.hasRole(RoleName.ROLE_ADMIN)) {
             throw new InsufficientPrivilegesException("User with id: " + admin.getId() + " tried to block another User");
         }
         User user = userRepository.findById(id).orElseThrow();
         if (!user.isAccountNonLocked()) {
             throw new UserAlreadyBlockedException("User with id:" + user.getId() + " is already blocked");
         }
-        if (user.isAdmin()) {
+        if (user.hasRole(RoleName.ROLE_ADMIN)) {
             throw new InsufficientPrivilegesException("Admin with id: " + admin.getId() + " tried to block another admin with id:" + id);
         }
         user.setLocked(true);
@@ -104,14 +104,14 @@ public class UserService implements IUserService {
 
     @Override
     public void unblockUser(Long id, User admin) {
-        if (!admin.isAdmin()) {
+        if (!admin.hasRole(RoleName.ROLE_ADMIN)) {
             throw new InsufficientPrivilegesException("User with id: " + admin.getId() + " tried to unblock another User");
         }
         User user = userRepository.findById(id).orElseThrow();
         if (user.isAccountNonLocked()) {
             throw new UserNotBlockedException("User with id:" + user.getId() + " is not blocked");
         }
-        if (user.isAdmin()) {
+        if (user.hasRole(RoleName.ROLE_ADMIN)) {
             throw new InsufficientPrivilegesException("Admin with id: " + admin.getId() + " tried to unblock another admin with id:" + id);
         }
         user.setLocked(false);
