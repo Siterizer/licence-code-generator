@@ -17,11 +17,9 @@ public class UpdatePasswordDto {
     @NotNull
     private String oldPassword;
 
-    @NotNull
     @ValidPassword
     private String newPassword;
 
-    @NotNull
     @ValidPassword
     private String newMatchedPassword;
 
