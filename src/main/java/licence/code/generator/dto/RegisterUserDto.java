@@ -20,15 +20,11 @@ public class RegisterUserDto {
     private String username;
 
     @ValidEmail
-    @NotNull
-    @Size(min = 3, message = "Length must be greater than {min}")
     private String email;
 
-    @NotNull
     @ValidPassword
     private String password;
 
-    @NotNull
     @ValidPassword
     private String matchedPassword;
 
