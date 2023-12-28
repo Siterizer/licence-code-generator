@@ -16,7 +16,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.Locale;
 import java.util.Objects;
 
 
@@ -60,6 +62,8 @@ public class UserRestController {
     private User getRequester() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (Objects.isNull(authentication)) {
+            //Note this is never going to happen in real-life usage case as Spring Security prevents any Unauthorized
+            //entrance with RestAuthenticationEntryPoint class
             throw new UnauthorizedUserException("Unauthorized User wanted to access /user/ GET request");
         }
         return userService.findUserByUsername(authentication.getName());

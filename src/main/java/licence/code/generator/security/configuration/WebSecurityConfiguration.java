@@ -4,7 +4,6 @@ import licence.code.generator.services.MyUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -14,7 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.web.servlet.LocaleResolver;
 
 @Configuration
 @EnableWebSecurity
@@ -28,6 +27,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private AuthenticationFailureHandler myAuthenticationFailureHandler;
+    @Autowired
+    private RestAuthenticationEntryPoint authenticationEntryPoint;
 
 
     @Override
@@ -44,6 +45,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/login*", "/logout*", "/mainPage*", "/register*", "/navbar*", "/").permitAll()
                 .antMatchers("/css/*").permitAll()
                 .antMatchers("/js/*").permitAll()
+                .antMatchers( "/favicon.ico").permitAll()
                 .anyRequest().authenticated()
                 .and()
                     .formLogin()
@@ -52,8 +54,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .successHandler(myAuthenticationSuccessHandler)
                     .failureHandler(myAuthenticationFailureHandler)
                 .and()
-                .exceptionHandling()
-                .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
+                    .exceptionHandling()
+                    .authenticationEntryPoint(authenticationEntryPoint)
                 .and()
                     .logout()
                     .logoutUrl("/logout")
@@ -67,6 +69,11 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         authProvider.setUserDetailsService(userDetailsService);
         authProvider.setPasswordEncoder(encoder());
         return authProvider;
+    }
+
+    @Bean
+    public LocaleResolver sessionLocaleResolver() {
+        return new CustomLocaleResolver();
     }
 
     @Bean

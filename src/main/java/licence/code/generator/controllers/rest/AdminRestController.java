@@ -59,6 +59,8 @@ public class AdminRestController {
     private User getRequester() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (Objects.isNull(authentication)) {
+            //Note this is never going to happen in real-life usage case as Spring Security prevents any Unauthorized
+            //entrance with RestAuthenticationEntryPoint class
             throw new UnauthorizedUserException("Unauthorized User wanted to access /admin endpoint");
         }
         return userService.findUserByUsername(authentication.getName());
