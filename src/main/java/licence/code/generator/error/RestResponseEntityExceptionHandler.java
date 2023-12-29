@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.util.NoSuchElementException;
+
 @ControllerAdvice
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
@@ -31,7 +33,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     protected ResponseEntity<Object> handleBindException(final BindException ex, final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
         logger.error("400 Status Code", ex);
         final GenericResponse bodyOfResponse = new GenericResponse(messages.getMessage("message.validation.invalid.binding", null, request.getLocale()), ex.getBindingResult().getObjectName());
-        return handleExceptionInternal(ex, bodyOfResponse.getMessage(), new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+        return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
     @Override
@@ -62,6 +64,14 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         logger.error("403 Status Code", ex);
         final GenericResponse bodyOfResponse = new GenericResponse(messages.getMessage("message.user.insufficient.privileges", null, request.getLocale()), "InsufficientPrivileges");
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.FORBIDDEN, request);
+    }
+
+    //404
+    @ExceptionHandler({NoSuchElementException.class})
+    public ResponseEntity<Object> handleNoSuchElement(final RuntimeException ex, final WebRequest request) {
+        logger.error("404 Status Code", ex);
+        final GenericResponse bodyOfResponse = new GenericResponse(messages.getMessage("message.database.not.found", null, request.getLocale()), "NoSuchElement");
+        return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
     //409
