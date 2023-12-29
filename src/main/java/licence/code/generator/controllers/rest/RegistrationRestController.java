@@ -9,8 +9,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.validation.Valid;
+
+import static licence.code.generator.util.GeneratorStringUtils.REGISTER_PATH;
 
 @Controller
 public class RegistrationRestController {
@@ -22,8 +25,8 @@ public class RegistrationRestController {
         this.userService = userService;
     }
 
-    @PostMapping(value = {"/register"})
-    public ResponseEntity<?> registerUser(@Valid final RegisterUserDto userDto) {
+    @PostMapping(value = {REGISTER_PATH})
+    public ResponseEntity<?> registerUser(@Valid @RequestBody final RegisterUserDto userDto) {
         LOGGER.info("Registering user with information: {}", userDto);
         userService.registerUser(userDto);
         LOGGER.info("User: {} registered", userDto);
