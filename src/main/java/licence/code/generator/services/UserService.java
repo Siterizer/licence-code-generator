@@ -122,7 +122,7 @@ public class UserService implements IUserService {
         return userRepository.findByEmail(email) != null || userRepository.findByUsername(username) != null;
     }
 
-    public boolean validCurrentPassword(String providedPassword, final String currentPassword) {
+    private boolean validCurrentPassword(String providedPassword, final String currentPassword) {
         return passwordEncoder.matches(providedPassword, currentPassword);
     }
 }
