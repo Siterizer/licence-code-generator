@@ -1,13 +1,15 @@
 $("#register").submit(function(event) {
-    var ajaxRequest;
     event.preventDefault();
+    var formData = {email: $("#email").val(), username: $("#username").val(),
+                    password: $("#password").val(), matchedPassword: $("#matchedPassword").val()};
+    var ajaxRequest;
     $("#result").html('');
-    var values = $(this).serialize();
-       ajaxRequest= $.ajax({
-            url: "register",
-            type: "post",
-            data: values
-       });
+    ajaxRequest= $.ajax({
+        type: "post",
+        url: "register",
+        contentType : "application/json",
+        data: JSON.stringify(formData)
+    });
     ajaxRequest.done(function (response){
          $("#result").html('Submitted successfully');
     });

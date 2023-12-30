@@ -8,11 +8,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class DtoHelper {
     public RegisterUserDto createRandomRegisterUserDto() {
-        return new RegisterUserDto(RandomString.make(), RandomString.make(), RandomString.make(), RandomString.make());
+        String password = RandomString.make() + "1";
+        return new RegisterUserDto(RandomString.make(), RandomString.make() + "@email.com", password, password);
     }
 
     public UpdatePasswordDto createRandomUpdatePasswordDto(String oldPassword) {
-        String newPassword = RandomString.make();
+        String newPassword = RandomString.make() + "1";
         return new UpdatePasswordDto(oldPassword, newPassword, newPassword);
     }
 }

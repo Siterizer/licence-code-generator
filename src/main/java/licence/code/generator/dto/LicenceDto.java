@@ -9,7 +9,6 @@ public class LicenceDto {
     private final String name;
     private final String licence;
 
-
     @Override
     public String toString() {
         return "LicenceDto [name=" +

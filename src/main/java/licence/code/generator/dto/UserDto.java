@@ -1,21 +1,20 @@
 package licence.code.generator.dto;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
 @Getter
 @Setter
-@RequiredArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserDto {
-    private final Long id;
-    private final String username;
-    private final String email;
-    private final List<String> roles;
-    private final List<LicenceDto> licences;
-    private final boolean isLocked;
+    private Long id;
+    private String username;
+    private String email;
+    private List<String> roles;
+    private List<LicenceDto> licences;
+    private boolean isLocked;
 
     @Override
     public String toString() {
