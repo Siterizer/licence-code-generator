@@ -16,10 +16,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.Locale;
 import java.util.Objects;
+
+import static licence.code.generator.util.GeneratorStringUtils.USER_INFO_PATH;
+import static licence.code.generator.util.GeneratorStringUtils.USER_UPDATE_PASSWORD_PATH;
 
 
 @RestController
@@ -34,7 +35,7 @@ public class UserRestController {
         this.userDtoMapper = userDtoMapper;
     }
 
-    @RequestMapping(value = "/user/info", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = USER_INFO_PATH, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<UserDto> getCurrentUserDetails() {
         User requester = getRequester();
@@ -43,8 +44,8 @@ public class UserRestController {
         return ResponseEntity.ok(dto);
     }
 
-    @PostMapping(value = {"/user/updatePassword"})
-    public ResponseEntity<?> updateUserPassword(@Valid final UpdatePasswordDto passwordDto) {
+    @PostMapping(value = {USER_UPDATE_PASSWORD_PATH})
+    public ResponseEntity<?> updateUserPassword(@Valid @RequestBody final UpdatePasswordDto passwordDto) {
         User requester = getRequester();
         LOGGER.info("Changing password for user with id: {}", requester.getId());
         userService.changeUserPassword(requester, passwordDto.getOldPassword(), passwordDto.getNewPassword());

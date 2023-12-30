@@ -4,13 +4,12 @@ $("#register").submit(function(event) {
                     password: $("#password").val(), matchedPassword: $("#matchedPassword").val()};
     var ajaxRequest;
     $("#result").html('');
-    var values = $(this).serialize();
-       ajaxRequest= $.ajax({
-            type: "post",
-            url: "register",
-            contentType : "application/json",
-            data: JSON.stringify(formData)
-       });
+    ajaxRequest= $.ajax({
+        type: "post",
+        url: "register",
+        contentType : "application/json",
+        data: JSON.stringify(formData)
+    });
     ajaxRequest.done(function (response){
          $("#result").html('Submitted successfully');
     });

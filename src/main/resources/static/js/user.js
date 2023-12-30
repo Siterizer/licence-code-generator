@@ -14,12 +14,14 @@ $("#changePassword").submit(function(event) {
     var ajaxRequest;
     event.preventDefault();
     $("#result").html('');
-    var values = $(this).serialize();
-       ajaxRequest= $.ajax({
-            url: "user/updatePassword",
-            type: "post",
-            data: values
-       });
+    var formData = {oldPassword: $("#oldPassword").val(), newPassword: $("#newPassword").val(),
+                    newMatchedPassword: $("#newMatchedPassword").val()};
+    ajaxRequest= $.ajax({
+        url: "user/updatePassword",
+        type: "post",
+        contentType : "application/json",
+        data: JSON.stringify(formData)
+    });
     ajaxRequest.done(function (response){
          $("#result").html('Submitted successfully');
     });
