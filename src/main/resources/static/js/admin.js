@@ -54,7 +54,8 @@ function block_unblock(id, url) {
        ajaxRequest= $.ajax({
             url: "admin/"+ url,
             type: "post",
-            data: {id: id}
+            contentType : "application/json",
+            data: JSON.stringify(id)
        });
     ajaxRequest.done(function (response){
          $("#result").html('Submitted successfully');

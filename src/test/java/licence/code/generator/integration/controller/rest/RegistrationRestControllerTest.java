@@ -1,5 +1,6 @@
 package licence.code.generator.integration.controller.rest;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import licence.code.generator.dto.RegisterUserDto;
 import licence.code.generator.entities.RoleName;
 import licence.code.generator.entities.User;
@@ -7,45 +8,49 @@ import licence.code.generator.helper.DtoHelper;
 import licence.code.generator.repositories.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.transaction.annotation.Transactional;
 
-import static licence.code.generator.util.GeneratorStringUtils.LOCALHOST_URL;
 import static licence.code.generator.util.GeneratorStringUtils.REGISTER_PATH;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureMockMvc
 class RegistrationRestControllerTest {
-
-    @LocalServerPort
-    private int port;
-
     @Autowired
-    private TestRestTemplate restTemplate;
-    @Autowired
-    private UserRepository userRepository;
+    private MockMvc mvc;
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
     private DtoHelper dtoHelper;
+    @Autowired
+    private UserRepository userRepository;
+    ObjectMapper mapper = new ObjectMapper();
 
     @Test
-    void registerRequest_shouldCreateNewUser() {
+    @Transactional
+    void registerRequest_shouldCreateNewUser() throws Exception {
         //given:
-        String registerFullUrl = LOCALHOST_URL + port + REGISTER_PATH;
         RegisterUserDto userToRegister = dtoHelper.createRandomRegisterUserDto();
 
         //when:
-        ResponseEntity<?> response = restTemplate.postForEntity(registerFullUrl, userToRegister, String.class);
+        MvcResult result = mvc.perform(post(REGISTER_PATH)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(userToRegister)))
+                .andReturn();
 
         //then:
         User registeredUser = userRepository.findByUsername(userToRegister.getUsername());
 
-        assertEquals(response.getStatusCode(), HttpStatus.CREATED);
+        assertEquals(result.getResponse().getStatus(), HttpStatus.CREATED.value());
         assertEquals(registeredUser.getEmail(), userToRegister.getEmail());
         assertEquals(registeredUser.getUsername(), userToRegister.getUsername());
         assertTrue(passwordEncoder.matches(userToRegister.getPassword(), registeredUser.getPassword()));
@@ -54,23 +59,28 @@ class RegistrationRestControllerTest {
     }
 
     @Test
-    void registerRequest_shouldReturnConflictOnTheSameEmailOrUsername() {
+    void registerRequest_shouldReturnConflictOnTheSameEmailOrUsername() throws Exception {
         //given:
-        String registerFullUrl = LOCALHOST_URL + port + REGISTER_PATH;
         RegisterUserDto userToRegister = dtoHelper.createRandomRegisterUserDto();
         RegisterUserDto userWithDuplicatedEmail = dtoHelper.createRandomRegisterUserDto();
         userWithDuplicatedEmail.setEmail(userToRegister.getEmail());
         RegisterUserDto userWithDuplicatedUsername = dtoHelper.createRandomRegisterUserDto();
         userWithDuplicatedUsername.setUsername(userToRegister.getUsername());
 
-        //when:
-        ResponseEntity<?> response = restTemplate.postForEntity(registerFullUrl, userToRegister, String.class);
-        ResponseEntity<?> responseDuplicatedEmail = restTemplate.postForEntity(registerFullUrl, userWithDuplicatedEmail, String.class);
-        ResponseEntity<?> responseDuplicatedUsername = restTemplate.postForEntity(registerFullUrl, userWithDuplicatedUsername, String.class);
+        //when-then:
+        mvc.perform(post(REGISTER_PATH)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(userToRegister)))
+                .andExpect(status().isCreated());
 
-        //then:
-        assertEquals(response.getStatusCode(), HttpStatus.CREATED);
-        assertEquals(responseDuplicatedEmail.getStatusCode(), HttpStatus.CONFLICT);
-        assertEquals(responseDuplicatedUsername.getStatusCode(), HttpStatus.CONFLICT);
+        mvc.perform(post(REGISTER_PATH)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(userWithDuplicatedEmail)))
+                .andExpect(status().isConflict());
+
+        mvc.perform(post(REGISTER_PATH)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(userWithDuplicatedUsername)))
+                .andExpect(status().isConflict());
     }
 }
