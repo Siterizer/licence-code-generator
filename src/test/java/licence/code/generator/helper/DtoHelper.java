@@ -13,7 +13,7 @@ public class DtoHelper {
     }
 
     public UpdatePasswordDto createRandomUpdatePasswordDto(String oldPassword) {
-        String newPassword = RandomString.make();
+        String newPassword = RandomString.make() + "1";
         return new UpdatePasswordDto(oldPassword, newPassword, newPassword);
     }
 }
