@@ -3,6 +3,7 @@ package licence.code.generator.init;
 import licence.code.generator.entities.*;
 import licence.code.generator.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -24,6 +25,12 @@ public class SetupProdDataLoader implements ApplicationListener<ContextRefreshed
     private final RoleRepository roleRepository;
     private final PrivilegeRepository privilegeRepository;
     private final PasswordEncoder passwordEncoder;
+    @Value("${setup.admin.username}")
+    private String adminUsername;
+    @Value("${setup.admin.email}")
+    private String adminEmail;
+    @Value("${setup.admin.password}")
+    private String adminPassword;
 
     @Autowired
     public SetupProdDataLoader(UserRepository userRepository, RoleRepository roleRepository, PrivilegeRepository privilegeRepository, PasswordEncoder passwordEncoder) {
@@ -48,10 +55,10 @@ public class SetupProdDataLoader implements ApplicationListener<ContextRefreshed
         final List<Privilege> userPrivileges = new ArrayList<>(Collections.singletonList(mainPage));
         final List<Privilege> adminPrivileges = new ArrayList<>(Collections.singletonList(users));
         final Role adminRole = createRoleIfNotFound(RoleName.ROLE_ADMIN, adminPrivileges);
-        createRoleIfNotFound(RoleName.ROLE_USER, userPrivileges);
+        final Role userRole = createRoleIfNotFound(RoleName.ROLE_USER, userPrivileges);
 
-        // == create initial user
-        final User admin = createUserIfNotFound("test@test.com", "test", "test", new ArrayList<>(Collections.singletonList(adminRole)), false);
+        // == create initial admin
+        createUserIfNotFound(adminEmail, adminPassword, adminUsername, new ArrayList<>(List.of(adminRole, userRole)), false);
 
 
         alreadySetup = true;
