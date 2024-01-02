@@ -63,7 +63,7 @@ public class SetupLocalDataLoader implements ApplicationListener<ContextRefreshe
         final User locked = createUserIfNotFound("locked@test.com", "locked", "locked", new ArrayList<>(Collections.singletonList(userRole)), true);
         final User user1 = createUserIfNotFound("asd1@test.com", "asd", "asd1", new ArrayList<>(Collections.singletonList(userRole)), false);
         final User user2 = createUserIfNotFound("asd2@test.com", "asd", "asd2", new ArrayList<>(Collections.singletonList(userRole)), false);
-        final User admin = createUserIfNotFound("test@test.com", "test", "test", new ArrayList<>(Collections.singletonList(adminRole)), false);
+        final User admin = createUserIfNotFound("test@test.com", "test", "test", new ArrayList<>(List.of(adminRole, userRole)), false);
 
         // == create initial licences
         createLicenceIfNotFound(user1, fishBot);

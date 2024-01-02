@@ -21,3 +21,15 @@
 #user_products td {
   border: solid 1px black
 }
+
+#products_array {
+   border: 2px solid black;
+}
+
+#products_array th {
+  border: solid 1px black
+}
+
+#products_array td {
+  border: solid 1px black
+}
