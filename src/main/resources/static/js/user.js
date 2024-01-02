@@ -1,4 +1,5 @@
 $(document).ready(function() {
+    fill_products_table()
 
     $.get("user/info", function( data ) {
         $("#user_email").html(data.email);
@@ -29,3 +30,13 @@ $("#changePassword").submit(function(event) {
         $("#result").html("error     " + data['responseText']);
     });
 });
+function fill_products_table(){
+    $.get("products", function( data ) {
+        for(let i = 0; i<data.length; i++){
+            $(products_array).find('tbody').append("<tr><td>" + data[i].id +"</td>" +
+            "<td>" + data[i].name + "</td>" +
+            "<td><button type='button' value='submit'>Buy</button></td>" +
+            "</tr>");
+        }
+    });
+}
