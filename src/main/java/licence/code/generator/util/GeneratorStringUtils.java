@@ -8,4 +8,6 @@ public class GeneratorStringUtils {
     public static final String ADMIN_UNBLOCK_PATH = "/admin/unblock";
     public static final String USER_INFO_PATH = "/user/info";
     public static final String USER_UPDATE_PASSWORD_PATH = "/user/updatePassword";
+    public static final String PRODUCT_GET_ALL_PATH = "/products";
+
 }
