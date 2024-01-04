@@ -1,13 +1,16 @@
 package licence.code.generator.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 @Getter
-@RequiredArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor
 public class LicenceDto {
-    private final String name;
-    private final String licence;
+    private String name;
+    private String licence;
 
     @Override
     public String toString() {

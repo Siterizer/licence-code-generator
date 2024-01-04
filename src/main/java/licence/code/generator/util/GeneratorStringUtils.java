@@ -9,5 +9,6 @@ public class GeneratorStringUtils {
     public static final String USER_INFO_PATH = "/user/info";
     public static final String USER_UPDATE_PASSWORD_PATH = "/user/updatePassword";
     public static final String PRODUCT_GET_ALL_PATH = "/products";
+    public static final String LICENCE_BUY_PATH = "/licence/buy";
 
 }

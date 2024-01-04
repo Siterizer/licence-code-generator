@@ -2,6 +2,7 @@ package licence.code.generator.integration.controller.rest;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import licence.code.generator.dto.IdRequestDto;
 import licence.code.generator.dto.ProductDto;
 import licence.code.generator.entities.Product;
 import licence.code.generator.helper.JpaProductEntityHelper;
@@ -19,10 +20,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static licence.code.generator.util.GeneratorStringUtils.LICENCE_BUY_PATH;
 import static licence.code.generator.util.GeneratorStringUtils.PRODUCT_GET_ALL_PATH;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
@@ -53,4 +57,10 @@ public class ProductRestControllerTest {
         assertEquals(result.getResponse().getStatus(), HttpStatus.OK.value());
     }
 
+    @Test
+    void getAllProducts_shouldReturn401nOnNonLoggedInUse() throws Exception {
+        //when-then:
+        mvc.perform(get(PRODUCT_GET_ALL_PATH).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized());
+    }
 }
