@@ -14,7 +14,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,17 +43,16 @@ class UserRestControllerTest {
     ObjectMapper mapper = new ObjectMapper();
 
     @Test
-    @WithMockUser(username = "user1")
-    @Transactional
     void getCurrentUserDetails_shouldReturnDetails() throws Exception {
         //when:
-        MvcResult result = mvc.perform(get(USER_INFO_PATH).contentType(MediaType.APPLICATION_JSON)).andReturn();
+        User user = jpaUserEntityHelper.createRandomUser();
+        MvcResult result = mvc.perform(get(USER_INFO_PATH).with(user(user)).contentType(MediaType.APPLICATION_JSON)).andReturn();
         UserDto resultDto = mapper.readValue(result.getResponse().getContentAsString(), UserDto.class);
 
         //then:
-        assertEquals(result.getResponse().getStatus(), HttpStatus.OK.value());
-        assertEquals(resultDto.getUsername(), "user1");
-        assertEquals(resultDto.getEmail(), "user1@email.com");
+        assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
+        assertEquals(user.getUsername(), resultDto.getUsername());
+        assertEquals(user.getEmail(), resultDto.getEmail());
     }
 
     @Test
@@ -72,12 +70,11 @@ class UserRestControllerTest {
                 .andReturn();
 
         //then:
-        assertEquals(result.getResponse().getStatus(), HttpStatus.NO_CONTENT.value());
+        assertEquals(HttpStatus.NO_CONTENT.value(), result.getResponse().getStatus());
         assertTrue(passwordEncoder.matches(requestDto.getNewPassword(), userRepository.getById(userToChangePassword.getId()).getPassword()));
     }
 
     @Test
-    @Transactional
     void updateUserPassword_shouldThrowExceptionOnInvalidOldPassword() throws Exception {
         //given:
         User userToChangePassword = jpaUserEntityHelper.createRandomUser();
@@ -92,7 +89,6 @@ class UserRestControllerTest {
     }
 
     @Test
-    @Transactional
     void getCurrentUserDetails_shouldThrowExceptionOnNonLoggedInUse() throws Exception {
         //when-then:
         mvc.perform(get(USER_INFO_PATH)

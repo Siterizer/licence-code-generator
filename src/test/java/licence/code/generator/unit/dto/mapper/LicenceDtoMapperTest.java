@@ -29,8 +29,8 @@ class LicenceDtoMapperTest {
         LicenceDto result = dtoMapper.toDto(licence);
 
         //then:
-        assertEquals(result.getName(), licence.getProduct().getName());
-        assertEquals(result.getLicence(), licence.getId());
+        assertEquals(licence.getProduct().getName(), result.getName());
+        assertEquals(licence.getId(), result.getLicence());
     }
 
     @Test

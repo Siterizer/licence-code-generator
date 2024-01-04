@@ -15,7 +15,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.transaction.annotation.Transactional;
 
 import static licence.code.generator.util.GeneratorStringUtils.REGISTER_PATH;
 import static org.junit.jupiter.api.Assertions.*;
@@ -36,7 +35,6 @@ class RegistrationRestControllerTest {
     ObjectMapper mapper = new ObjectMapper();
 
     @Test
-    @Transactional
     void registerRequest_shouldCreateNewUser() throws Exception {
         //given:
         RegisterUserDto userToRegister = dtoHelper.createRandomRegisterUserDto();
@@ -50,9 +48,9 @@ class RegistrationRestControllerTest {
         //then:
         User registeredUser = userRepository.findByUsername(userToRegister.getUsername());
 
-        assertEquals(result.getResponse().getStatus(), HttpStatus.CREATED.value());
-        assertEquals(registeredUser.getEmail(), userToRegister.getEmail());
-        assertEquals(registeredUser.getUsername(), userToRegister.getUsername());
+        assertEquals(HttpStatus.CREATED.value(), result.getResponse().getStatus());
+        assertEquals(userToRegister.getEmail(), registeredUser.getEmail());
+        assertEquals(userToRegister.getUsername(), registeredUser.getUsername());
         assertTrue(passwordEncoder.matches(userToRegister.getPassword(), registeredUser.getPassword()));
         assertTrue(registeredUser.hasRole(RoleName.ROLE_USER));
         assertFalse(registeredUser.isLocked());

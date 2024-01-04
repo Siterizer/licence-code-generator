@@ -31,7 +31,7 @@ class RegisterUserDtoValidationTest {
         Set<ConstraintViolation<RegisterUserDto>> validateResultSet = validator.validate(dto);
 
         //then:
-        assertEquals(validateResultSet.size(), violationNumber);
+        assertEquals(violationNumber, validateResultSet.size());
     }
 
     private static Stream<Arguments> provideRegisterUserDtoValuesWithViolationNumber() {
