@@ -43,10 +43,10 @@ class UserDtoMapperTest {
         List<String> collectedLicenceNames = result.getLicences().stream().map(LicenceDto::getName).collect(Collectors.toList());
 
         //then:
-        assertEquals(result.getId(), user.getId());
-        assertEquals(result.getUsername(), user.getUsername());
-        assertEquals(result.getEmail(), user.getEmail());
-        assertEquals(result.isLocked(), user.isLocked());
+        assertEquals(user.getId(), result.getId());
+        assertEquals(user.getUsername(), result.getUsername());
+        assertEquals(user.getEmail(), result.getEmail());
+        assertEquals(user.isLocked(), result.isLocked());
         assertTrue(result.getRoles().contains(RoleName.ROLE_USER.name()));
         collectedLicences.containsAll(licenceIds);
         collectedLicenceNames.containsAll(licenceNames);

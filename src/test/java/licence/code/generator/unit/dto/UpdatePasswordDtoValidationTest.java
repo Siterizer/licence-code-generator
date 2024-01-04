@@ -31,7 +31,7 @@ class UpdatePasswordDtoValidationTest {
         Set<ConstraintViolation<UpdatePasswordDto>> validateResultSet = validator.validate(dto);
 
         //then:
-        assertEquals(validateResultSet.size(), violationNumber);
+        assertEquals(violationNumber, validateResultSet.size());
     }
 
     private static Stream<Arguments> provideUpdatePasswordDtoValuesWithViolationNumber() {

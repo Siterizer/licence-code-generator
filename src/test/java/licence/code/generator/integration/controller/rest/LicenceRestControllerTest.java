@@ -16,15 +16,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static licence.code.generator.util.GeneratorStringUtils.*;
+import static licence.code.generator.util.GeneratorStringUtils.LICENCE_BUY_PATH;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -48,16 +45,16 @@ public class LicenceRestControllerTest {
         Product product = jpaProductEntityHelper.createRandomProduct();
 
         //when:
-        MvcResult result =  mvc.perform(post(LICENCE_BUY_PATH).with(user(user))
+        MvcResult result = mvc.perform(post(LICENCE_BUY_PATH).with(user(user))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(new IdRequestDto(product.getId()))))
                 .andReturn();
 
         //then:
-        assertEquals(result.getResponse().getStatus(), HttpStatus.CREATED.value());
+        assertEquals(HttpStatus.CREATED.value(), result.getResponse().getStatus());
         Licence createdLicence = licenceRepository.findByUser(user).get(0);
-        assertEquals(createdLicence.getProduct().getId(), product.getId());
-        assertEquals(createdLicence.getUser().getId(), user.getId());
+        assertEquals(product.getId(), createdLicence.getProduct().getId());
+        assertEquals(user.getId(), createdLicence.getUser().getId());
     }
 
     @Test
@@ -108,9 +105,9 @@ public class LicenceRestControllerTest {
 
         //when-then:
         mvc.perform(post(LICENCE_BUY_PATH).with(user(user))
-                .contentType(MediaType.APPLICATION_JSON)
-                //some "random" Id
-                .content(mapper.writeValueAsString(new IdRequestDto(3465713455L))))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        //some "random" Id
+                        .content(mapper.writeValueAsString(new IdRequestDto(3465713455L))))
                 .andExpect(status().isNotFound());
     }
 

@@ -28,7 +28,7 @@ class ProductDtoMapperTest {
         ProductDto result = dtoMapper.toDto(product);
 
         //then:
-        assertEquals(result.getName(), product.getName());
-        assertEquals(result.getId(), product.getId());
+        assertEquals(product.getName(), result.getName());
+        assertEquals(product.getId(), result.getId());
     }
 }
