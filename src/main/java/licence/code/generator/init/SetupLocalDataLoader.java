@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -55,9 +56,9 @@ public class SetupLocalDataLoader implements ApplicationListener<ContextRefreshe
         final Role userRole = createRoleIfNotFound(RoleName.ROLE_USER, userPrivileges);
 
         // == create initial products
-        final Product fishBot = createProductIfNotFound("Fish Bot");
-        final Product gatheringBot = createProductIfNotFound("Gathering Bot");
-        final Product fightingBot = createProductIfNotFound("Fighting Bot");
+        final Product fishBot = createProductIfNotFound("Fish Bot", new BigDecimal("0.50"));
+        final Product gatheringBot = createProductIfNotFound("Gathering Bot", new BigDecimal("1.00"));
+        final Product fightingBot = createProductIfNotFound("Fighting Bot", new BigDecimal("2.50"));
 
         // == create initial user
         final User locked = createUserIfNotFound("locked@test.com", "locked", "locked", new ArrayList<>(Collections.singletonList(userRole)), true);
@@ -99,11 +100,12 @@ public class SetupLocalDataLoader implements ApplicationListener<ContextRefreshe
     }
 
     @Transactional
-    Product createProductIfNotFound(final String name) {
+    Product createProductIfNotFound(final String name, final BigDecimal price) {
         Product product = productRepository.findByName(name);
         if (product == null) {
             product = new Product();
             product.setName(name);
+            product.setPrice(price);
             product = productRepository.save(product);
         }
         return product;

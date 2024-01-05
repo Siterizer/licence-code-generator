@@ -4,6 +4,8 @@ package licence.code.generator.entities;
 import lombok.Data;
 
 import javax.persistence.*;
+import javax.validation.constraints.Digits;
+import java.math.BigDecimal;
 import java.util.Collection;
 
 @Entity
@@ -17,6 +19,9 @@ public class Product {
     private Long id;
 
     private String name;
+
+    @Digits(integer = 5, fraction = 2)
+    private BigDecimal price;
 
     @OneToMany(mappedBy = "product")
     Collection<Licence> licences;

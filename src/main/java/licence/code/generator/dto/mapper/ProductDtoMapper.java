@@ -13,7 +13,7 @@ public class ProductDtoMapper {
     public ProductDto toDto(Product product) {
         LOGGER.debug("Mapping product: {} to ProductDto", product);
 
-        ProductDto productDto = new ProductDto(product.getId(), product.getName());
+        ProductDto productDto = new ProductDto(product.getId(), product.getName(), product.getPrice());
         LOGGER.debug("Mapped ProductDto: {}", productDto);
 
         return productDto;
