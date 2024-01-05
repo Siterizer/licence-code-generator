@@ -37,6 +37,7 @@ function fill_products_table(){
         for(let i = 0; i<data.length; i++){
             $(products_array).find('tbody').append("<tr><td>" + data[i].id +"</td>" +
             "<td>" + data[i].name + "</td>" +
+            "<td>" + data[i].price + "</td>" +
             "<td><button type='button' onclick='buy_licence(\"" + data[i].id + "\")' id='" + data[i].id + "' value='submit'>Submit</button></td>" +
 
             "</tr>");
