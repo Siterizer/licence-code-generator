@@ -8,16 +8,17 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.web.servlet.LocaleResolver;
 
 @Configuration
 @EnableWebSecurity
-public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfiguration {
 
     @Autowired
     private MyUserDetailsService userDetailsService;
@@ -30,38 +31,38 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired
     private RestAuthenticationEntryPoint authenticationEntryPoint;
 
-
-    @Override
     protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService);
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable()
-                .authorizeRequests()
-                .antMatchers("/admin*").hasRole("ADMIN")
-                .antMatchers("/users*").hasRole("USER")
-                .antMatchers("/product*").hasRole("USER")
-                .antMatchers("/login*", "/logout*", "/mainPage*", "/register*", "/navbar*", "/").permitAll()
-                .antMatchers("/css/*").permitAll()
-                .antMatchers("/js/*").permitAll()
-                .antMatchers( "/favicon.ico").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                    .formLogin()
-                    .loginPage("/login")
-                    .defaultSuccessUrl("/user")
-                    .successHandler(myAuthenticationSuccessHandler)
-                    .failureHandler(myAuthenticationFailureHandler)
-                .and()
-                    .exceptionHandling()
-                    .authenticationEntryPoint(authenticationEntryPoint)
-                .and()
-                    .logout()
-                    .logoutUrl("/logout")
-                    //.authenticationDetailsSource(authenticationDetailsSource)
-        .permitAll();
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+        return httpSecurity.csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/admin*").hasRole("ADMIN")
+                        .requestMatchers("/users*").hasRole("USER")
+                        .requestMatchers("/product*").hasRole("USER")
+                        .requestMatchers("/licence*").hasRole("USER")
+                        .requestMatchers("/login*", "/logout*", "/mainPage*", "/register*", "/navbar*", "/").permitAll()
+                        .requestMatchers("/css/*").permitAll()
+                        .requestMatchers("/js/*").permitAll()
+                        .requestMatchers( "/favicon.ico").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/user")
+                        .successHandler(myAuthenticationSuccessHandler)
+                        .failureHandler(myAuthenticationFailureHandler)
+                )
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(authenticationEntryPoint)
+
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                )
+                .build();
     }
 
     @Bean

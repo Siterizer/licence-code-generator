@@ -1,5 +1,6 @@
 package licence.code.generator.controllers.rest;
 
+import jakarta.validation.Valid;
 import licence.code.generator.dto.UpdatePasswordDto;
 import licence.code.generator.dto.UserDto;
 import licence.code.generator.dto.mapper.UserDtoMapper;
@@ -16,7 +17,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.Objects;
 
 import static licence.code.generator.util.GeneratorStringUtils.USER_INFO_PATH;
@@ -48,7 +48,7 @@ public class UserRestController {
     public ResponseEntity<?> updateUserPassword(@Valid @RequestBody final UpdatePasswordDto passwordDto) {
         User requester = getRequester();
         LOGGER.info("Changing password for user with id: {}", requester.getId());
-        userService.changeUserPassword(requester, passwordDto.getOldPassword(), passwordDto.getNewPassword());
+        userService.changeUserPassword(requester, passwordDto.oldPassword(), passwordDto.newPassword());
         LOGGER.info("Password changed for User with id: {}", requester.getId());
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

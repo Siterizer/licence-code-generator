@@ -51,8 +51,8 @@ class UserRestControllerTest {
 
         //then:
         assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
-        assertEquals(user.getUsername(), resultDto.getUsername());
-        assertEquals(user.getEmail(), resultDto.getEmail());
+        assertEquals(user.getUsername(), resultDto.username());
+        assertEquals(user.getEmail(), resultDto.email());
     }
 
     @Test
@@ -71,7 +71,7 @@ class UserRestControllerTest {
 
         //then:
         assertEquals(HttpStatus.NO_CONTENT.value(), result.getResponse().getStatus());
-        assertTrue(passwordEncoder.matches(requestDto.getNewPassword(), userRepository.getById(userToChangePassword.getId()).getPassword()));
+        assertTrue(passwordEncoder.matches(requestDto.newPassword(), userRepository.getReferenceById(userToChangePassword.getId()).getPassword()));
     }
 
     @Test

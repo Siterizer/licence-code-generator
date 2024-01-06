@@ -1,10 +1,9 @@
 package licence.code.generator.entities;
 
 
+import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
-
-import javax.persistence.*;
 
 @Entity
 @Table(name = "licence")

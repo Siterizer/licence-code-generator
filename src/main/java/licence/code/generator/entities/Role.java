@@ -1,8 +1,8 @@
 package licence.code.generator.entities;
 
+import jakarta.persistence.*;
 import lombok.Data;
 
-import javax.persistence.*;
 import java.util.Collection;
 
 @Entity

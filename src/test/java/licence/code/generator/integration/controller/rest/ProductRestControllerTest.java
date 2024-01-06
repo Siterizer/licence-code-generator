@@ -44,13 +44,13 @@ public class ProductRestControllerTest {
                 jpaProductEntityHelper.createRandomProduct(),
                 jpaProductEntityHelper.createRandomProduct(),
                 jpaProductEntityHelper.createRandomProduct());
-        List<Long> expectedIds = expected.stream().map(Product::getId).collect(Collectors.toList());
+        List<Long> expectedIds = expected.stream().map(Product::getId).toList();
 
         //when:
         MvcResult result = mvc.perform(get(PRODUCT_GET_ALL_PATH).with(user(jpaUserEntityHelper.createRandomUser()))
                 .contentType(MediaType.APPLICATION_JSON)).andReturn();
         List<ProductDto> resultDtoList = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
-        List<Long> resultIds = Objects.requireNonNull(resultDtoList).stream().map(ProductDto::getId).collect(Collectors.toList());
+        List<Long> resultIds = Objects.requireNonNull(resultDtoList).stream().map(ProductDto::id).toList();
 
         //then:
         assertTrue(resultIds.containsAll(expectedIds));

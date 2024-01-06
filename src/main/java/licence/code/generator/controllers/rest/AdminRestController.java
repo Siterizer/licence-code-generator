@@ -45,8 +45,8 @@ public class AdminRestController {
     public ResponseEntity<?> blockUser(@RequestBody IdRequestDto idRequestDto) {
         User requester = getRequester();
         LOGGER.info("Admin with id: {} attempts to block User with id: {}", requester.getId(), idRequestDto);
-        userService.blockUser(idRequestDto.getId(), requester);
-        LOGGER.info("User with id: {} blocked by Admin with id: {}", idRequestDto.getId(), requester.getId());
+        userService.blockUser(idRequestDto.id(), requester);
+        LOGGER.info("User with id: {} blocked by Admin with id: {}", idRequestDto.id(), requester.getId());
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
@@ -54,8 +54,8 @@ public class AdminRestController {
     public ResponseEntity<?> unblockUser(@RequestBody IdRequestDto idRequestDto) {
         User requester = getRequester();
         LOGGER.info("Admin with id: {} attempts to unblock User with id: {}", requester.getId(), idRequestDto);
-        userService.unblockUser(idRequestDto.getId(), requester);
-        LOGGER.info("User with id: {} unblocked by Admin with id: {}", idRequestDto.getId(), requester.getId());
+        userService.unblockUser(idRequestDto.id(), requester);
+        LOGGER.info("User with id: {} unblocked by Admin with id: {}", idRequestDto.id(), requester.getId());
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 

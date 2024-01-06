@@ -48,7 +48,7 @@ public class UserService implements IUserService {
         }
         return userRepository.findAll().stream()
                 .map(userDtoMapper::toDto)
-                .sorted((Comparator.comparing(UserDto::getId)))
+                .sorted((Comparator.comparing(UserDto::id)))
                 .collect(Collectors.toList());
     }
 
@@ -64,14 +64,14 @@ public class UserService implements IUserService {
 
     @Override
     public void registerUser(RegisterUserDto userDto) throws UserAlreadyExistException {
-        if (userExists(userDto.getEmail(), userDto.getUsername())) {
-            throw new UserAlreadyExistException("There is an account with that username/email: " + userDto.getEmail());
+        if (userExists(userDto.email(), userDto.username())) {
+            throw new UserAlreadyExistException("There is an account with that username/email: " + userDto.email());
         }
 
         User user = new User();
-        user.setUsername(userDto.getUsername());
-        user.setEmail(userDto.getEmail());
-        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        user.setUsername(userDto.username());
+        user.setEmail(userDto.email());
+        user.setPassword(passwordEncoder.encode(userDto.password()));
         user.setRoles(Collections.singletonList(roleRepository.findByName(RoleName.ROLE_USER)));
         user.setLocked(false);
         userRepository.save(user);
