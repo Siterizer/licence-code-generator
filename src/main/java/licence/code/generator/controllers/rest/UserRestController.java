@@ -48,7 +48,7 @@ public class UserRestController {
     public ResponseEntity<?> updateUserPassword(@Valid @RequestBody final UpdatePasswordDto passwordDto) {
         User requester = getRequester();
         LOGGER.info("Changing password for user with id: {}", requester.getId());
-        userService.changeUserPassword(requester, passwordDto.getOldPassword(), passwordDto.getNewPassword());
+        userService.changeUserPassword(requester, passwordDto.oldPassword(), passwordDto.newPassword());
         LOGGER.info("Password changed for User with id: {}", requester.getId());
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

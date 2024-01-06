@@ -12,6 +12,16 @@ public class DtoHelper {
         return new RegisterUserDto(RandomString.make(), RandomString.make() + "@email.com", password, password);
     }
 
+    public RegisterUserDto createRandomRegisterUserDtoFromEmail(String email) {
+        String password = RandomString.make() + "1";
+        return new RegisterUserDto(RandomString.make(), email, password, password);
+    }
+
+    public RegisterUserDto createRandomRegisterUserDtoFromUsername(String username) {
+        String password = RandomString.make() + "1";
+        return new RegisterUserDto(username, RandomString.make() + "@email.com", password, password);
+    }
+
     public UpdatePasswordDto createRandomUpdatePasswordDto(String oldPassword) {
         String newPassword = RandomString.make() + "1";
         return new UpdatePasswordDto(oldPassword, newPassword, newPassword);

@@ -26,6 +26,7 @@ public class RegistrationRestController {
 
     @PostMapping(value = {REGISTER_PATH})
     public ResponseEntity<?> registerUser(@Valid @RequestBody final RegisterUserDto userDto) {
+        System.out.println("halo123");
         LOGGER.info("Registering user with information: {}", userDto);
         userService.registerUser(userDto);
         LOGGER.info("User: {} registered", userDto);

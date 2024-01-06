@@ -24,7 +24,7 @@ public class JpaLicenceEntityHelper {
         return licence;
     }
 
-    public Licence addRandomLicenceToExistingUser(User user){
+    public Licence addRandomLicenceToExistingUser(User user) {
         Licence licence = new Licence();
         licence.setProduct(productEntityHelper.createRandomProduct());
         licence.setUser(user);

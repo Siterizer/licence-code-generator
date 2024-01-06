@@ -28,7 +28,7 @@ public class ProductService implements IProductService {
     public List<ProductDto> getAllProducts() {
         return productRepository.findAll().stream()
                 .map(productDtoMapper::toDto)
-                .sorted((Comparator.comparing(ProductDto::getId)))
+                .sorted((Comparator.comparing(ProductDto::id)))
                 .collect(Collectors.toList());
     }
 }

@@ -16,12 +16,12 @@ public class UpdatePasswordComplianceChecker implements ConstraintValidator<Matc
 
     @Override
     public boolean isValid(final UpdatePasswordDto passwordDto, final ConstraintValidatorContext context) {
-        if (Objects.isNull(passwordDto.getNewPassword()) || Objects.isNull(passwordDto.getNewMatchedPassword())) {
+        if (Objects.isNull(passwordDto.newPassword()) || Objects.isNull(passwordDto.newMatchedPassword())) {
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate("field must not be null").addConstraintViolation();
             return false;
         }
-        return passwordDto.getNewPassword().equals(passwordDto.getNewMatchedPassword());
+        return passwordDto.newPassword().equals(passwordDto.newMatchedPassword());
     }
 
 }

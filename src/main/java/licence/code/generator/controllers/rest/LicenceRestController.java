@@ -35,9 +35,9 @@ public class LicenceRestController {
     @PostMapping(value = {LICENCE_BUY_PATH})
     public ResponseEntity<?> buyLicence(@RequestBody IdRequestDto idRequestDto) {
         User requester = getRequester();
-        LOGGER.info("User with id: {} attempts to buy Licence for productId: {}", requester.getId(), idRequestDto.getId());
-        licenceService.createLicence(requester.getId(), idRequestDto.getId());
-        LOGGER.info("Created Licence for User with id: {} with productId: {}", requester.getId(), idRequestDto.getId());
+        LOGGER.info("User with id: {} attempts to buy Licence for productId: {}", requester.getId(), idRequestDto.id());
+        licenceService.createLicence(requester.getId(), idRequestDto.id());
+        LOGGER.info("Created Licence for User with id: {} with productId: {}", requester.getId(), idRequestDto.id());
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

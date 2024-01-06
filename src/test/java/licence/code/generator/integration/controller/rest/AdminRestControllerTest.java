@@ -43,14 +43,14 @@ class AdminRestControllerTest {
                 jpaUserEntityHelper.createRandomUser(),
                 jpaUserEntityHelper.createRandomUser(),
                 jpaUserEntityHelper.createRandomUser());
-        List<Long> expectedIds = expected.stream().map(User::getId).collect(Collectors.toList());
+        List<Long> expectedIds = expected.stream().map(User::getId).toList();
 
         //when:
         MvcResult result = mvc.perform(get(ADMIN_INFO_PATH).with(user(jpaUserEntityHelper.createNotBlockedAdmin()))
                 .contentType(MediaType.APPLICATION_JSON)).andReturn();
         List<UserDto> resultDtoList = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
         });
-        List<Long> resultIds = Objects.requireNonNull(resultDtoList).stream().map(UserDto::getId).collect(Collectors.toList());
+        List<Long> resultIds = Objects.requireNonNull(resultDtoList).stream().map(UserDto::id).toList();
 
         //then:
         assertTrue(resultIds.containsAll(expectedIds));

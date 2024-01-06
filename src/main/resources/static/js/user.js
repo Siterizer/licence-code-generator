@@ -48,12 +48,13 @@ function buy_licence(id) {
     var ajaxRequest;
     event.preventDefault();
     $("#result").html('');
+    var requestData = {id: id};
     var values = $(this).serialize();
        ajaxRequest= $.ajax({
             url: "licence/buy",
             type: "post",
             contentType : "application/json",
-            data: JSON.stringify(id)
+            data: JSON.stringify(requestData)
        });
     ajaxRequest.done(function (response){
          $("#result").html('Submitted successfully');

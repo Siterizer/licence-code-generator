@@ -46,12 +46,12 @@ class RegistrationRestControllerTest {
                 .andReturn();
 
         //then:
-        User registeredUser = userRepository.findByUsername(userToRegister.getUsername());
+        User registeredUser = userRepository.findByUsername(userToRegister.username());
 
         assertEquals(HttpStatus.CREATED.value(), result.getResponse().getStatus());
-        assertEquals(userToRegister.getEmail(), registeredUser.getEmail());
-        assertEquals(userToRegister.getUsername(), registeredUser.getUsername());
-        assertTrue(passwordEncoder.matches(userToRegister.getPassword(), registeredUser.getPassword()));
+        assertEquals(userToRegister.email(), registeredUser.getEmail());
+        assertEquals(userToRegister.username(), registeredUser.getUsername());
+        assertTrue(passwordEncoder.matches(userToRegister.password(), registeredUser.getPassword()));
         assertTrue(registeredUser.hasRole(RoleName.ROLE_USER));
         assertFalse(registeredUser.isLocked());
     }
@@ -60,10 +60,8 @@ class RegistrationRestControllerTest {
     void registerRequest_shouldReturnConflictOnTheSameEmailOrUsername() throws Exception {
         //given:
         RegisterUserDto userToRegister = dtoHelper.createRandomRegisterUserDto();
-        RegisterUserDto userWithDuplicatedEmail = dtoHelper.createRandomRegisterUserDto();
-        userWithDuplicatedEmail.setEmail(userToRegister.getEmail());
-        RegisterUserDto userWithDuplicatedUsername = dtoHelper.createRandomRegisterUserDto();
-        userWithDuplicatedUsername.setUsername(userToRegister.getUsername());
+        RegisterUserDto userWithDuplicatedEmail = dtoHelper.createRandomRegisterUserDtoFromEmail(userToRegister.email());
+        RegisterUserDto userWithDuplicatedUsername = dtoHelper.createRandomRegisterUserDtoFromUsername(userToRegister.username());
 
         //when-then:
         mvc.perform(post(REGISTER_PATH)

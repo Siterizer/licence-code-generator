@@ -5,8 +5,8 @@ function fill_table(){
     $.get("admin/info", function( data ) {
         for(let i = 0; i<data.length; i++){
             console.log(data[i]);
-            var isChecked = ((data[i].locked) ? 'checked' : '');
-            var url_to_use = ((data[i].locked) ? 'unblock' : 'block');
+            var isChecked = ((data[i].isLocked) ? 'checked' : '');
+            var url_to_use = ((data[i].isLocked) ? 'unblock' : 'block');
             $(users_array).find('tbody').append("<tr><td>" + data[i].id +"</td>" +
             "<td>" + data[i].username + "</td>" +
             "<td>" + data[i].email + "</td>" +
@@ -48,6 +48,7 @@ function toggle_visibility(id) {
 }
 function block_unblock(id, url) {
     var ajaxRequest;
+    var requestData = {id: id};
     event.preventDefault();
     $("#result").html('');
     var values = $(this).serialize();
@@ -55,7 +56,7 @@ function block_unblock(id, url) {
             url: "admin/"+ url,
             type: "post",
             contentType : "application/json",
-            data: JSON.stringify(id)
+            data: JSON.stringify(requestData)
        });
     ajaxRequest.done(function (response){
          $("#result").html('Submitted successfully');
