@@ -1,10 +1,10 @@
 package licence.code.generator.entities;
 
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Digits;
 import lombok.Data;
 
-import javax.persistence.*;
-import javax.validation.constraints.Digits;
 import java.math.BigDecimal;
 import java.util.Collection;
 

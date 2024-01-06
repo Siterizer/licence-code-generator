@@ -1,14 +1,13 @@
 package licence.code.generator.dto;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import licence.code.generator.security.validation.MatchedUserPassword;
 import licence.code.generator.security.validation.ValidEmail;
 import licence.code.generator.security.validation.ValidPassword;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 @Getter
 @Setter

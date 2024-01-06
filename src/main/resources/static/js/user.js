@@ -50,7 +50,7 @@ function buy_licence(id) {
     $("#result").html('');
     var values = $(this).serialize();
        ajaxRequest= $.ajax({
-            url: "licence/buy/",
+            url: "licence/buy",
             type: "post",
             contentType : "application/json",
             data: JSON.stringify(id)

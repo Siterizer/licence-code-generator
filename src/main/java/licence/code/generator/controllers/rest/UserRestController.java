@@ -1,5 +1,6 @@
 package licence.code.generator.controllers.rest;
 
+import jakarta.validation.Valid;
 import licence.code.generator.dto.UpdatePasswordDto;
 import licence.code.generator.dto.UserDto;
 import licence.code.generator.dto.mapper.UserDtoMapper;
@@ -16,7 +17,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.Objects;
 
 import static licence.code.generator.util.GeneratorStringUtils.USER_INFO_PATH;

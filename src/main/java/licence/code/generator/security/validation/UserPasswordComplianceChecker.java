@@ -1,10 +1,10 @@
 package licence.code.generator.security.validation;
 
 
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import licence.code.generator.dto.RegisterUserDto;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
 import java.util.Objects;
 
 public class UserPasswordComplianceChecker implements ConstraintValidator<MatchedUserPassword, RegisterUserDto> {

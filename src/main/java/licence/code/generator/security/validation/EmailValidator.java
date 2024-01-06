@@ -1,7 +1,8 @@
 package licence.code.generator.security.validation;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
+
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,7 +13,7 @@ public class EmailValidator implements ConstraintValidator<ValidEmail, String> {
 
     @Override
     public boolean isValid(final String email, final ConstraintValidatorContext context) {
-        if(Objects.isNull(email)){
+        if (Objects.isNull(email)) {
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate("must not be null").addConstraintViolation();
             return false;

@@ -1,5 +1,8 @@
 package licence.code.generator.unit.dto;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
 import licence.code.generator.dto.UpdatePasswordDto;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -7,9 +10,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -26,7 +26,7 @@ class UpdatePasswordDtoValidationTest {
 
     @ParameterizedTest
     @MethodSource("provideUpdatePasswordDtoValuesWithViolationNumber")
-    public void shouldValidate(UpdatePasswordDto dto, int violationNumber){
+    public void shouldValidate(UpdatePasswordDto dto, int violationNumber) {
         //when:
         Set<ConstraintViolation<UpdatePasswordDto>> validateResultSet = validator.validate(dto);
 

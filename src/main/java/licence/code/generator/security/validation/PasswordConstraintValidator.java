@@ -1,10 +1,10 @@
 package licence.code.generator.security.validation;
 
 import com.google.common.base.Joiner;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import org.passay.*;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -17,21 +17,21 @@ public class PasswordConstraintValidator implements ConstraintValidator<ValidPas
 
     @Override
     public boolean isValid(final String password, final ConstraintValidatorContext context) {
-        if(Objects.isNull(password)) {
+        if (Objects.isNull(password)) {
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate("must not be null").addConstraintViolation();
             return false;
         }
         final PasswordValidator validator = new PasswordValidator(Arrays.asList(
-            new LengthRule(6, 30),
-            new DigitCharacterRule(1),
-            //TODO to be added when I care about password difficulty
-            //new UppercaseCharacterRule(1),
-            //new SpecialCharacterRule(1),
-            //new NumericalSequenceRule(3,false),
-            //new AlphabeticalSequenceRule(3,false),
-            //new QwertySequenceRule(3,false),
-            new WhitespaceRule()));
+                new LengthRule(6, 30),
+                new DigitCharacterRule(1),
+                //TODO to be added when I care about password difficulty
+                //new UppercaseCharacterRule(1),
+                //new SpecialCharacterRule(1),
+                //new NumericalSequenceRule(3,false),
+                //new AlphabeticalSequenceRule(3,false),
+                //new QwertySequenceRule(3,false),
+                new WhitespaceRule()));
         final RuleResult result = validator.validate(new PasswordData(password));
         if (result.isValid()) {
             return true;

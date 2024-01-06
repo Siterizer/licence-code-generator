@@ -1,5 +1,6 @@
 package licence.code.generator.controllers.rest;
 
+import jakarta.validation.Valid;
 import licence.code.generator.dto.RegisterUserDto;
 import licence.code.generator.services.IUserService;
 import org.slf4j.Logger;
@@ -10,8 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-
-import javax.validation.Valid;
 
 import static licence.code.generator.util.GeneratorStringUtils.REGISTER_PATH;
 

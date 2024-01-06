@@ -29,15 +29,13 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     // API
 
     // 400
-    @Override
-    protected ResponseEntity<Object> handleBindException(final BindException ex, final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
+    public ResponseEntity<Object> handleBindException(final BindException ex, final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
         logger.error("400 Status Code", ex);
         final GenericResponse bodyOfResponse = new GenericResponse(messages.getMessage("message.validation.invalid.binding", null, request.getLocale()), ex.getBindingResult().getObjectName());
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
-    @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(final MethodArgumentNotValidException ex, final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
+    public ResponseEntity<Object> handleMethodArgumentNotValid(final MethodArgumentNotValidException ex, final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
         logger.error("400 Status Code", ex);
         final GenericResponse bodyOfResponse = new GenericResponse(messages.getMessage("message.validation.invalid.default", null, request.getLocale()), ex.getBindingResult().getObjectName());
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
