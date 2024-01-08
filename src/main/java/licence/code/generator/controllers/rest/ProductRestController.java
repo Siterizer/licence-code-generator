@@ -1,5 +1,9 @@
 package licence.code.generator.controllers.rest;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import licence.code.generator.dto.ProductDto;
 import licence.code.generator.entities.User;
 import licence.code.generator.services.IProductService;
@@ -19,6 +23,7 @@ import java.util.Objects;
 
 import static licence.code.generator.util.GeneratorStringUtils.PRODUCT_GET_ALL_PATH;
 
+@Tag(name = "Product", description = "Product Rest API")
 @RestController
 public class ProductRestController {
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
@@ -31,6 +36,12 @@ public class ProductRestController {
         this.userService = userService;
     }
 
+    @Operation(
+            summary = "Buy Licence for current user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Successful operation"),
+            @ApiResponse(responseCode = "401", description = "Requester is not logged-in"),
+    })
     @GetMapping(value = {PRODUCT_GET_ALL_PATH})
     public ResponseEntity<List<ProductDto>> getAllProducts() {
         User requester = getRequester();
