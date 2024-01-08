@@ -1,5 +1,9 @@
 package licence.code.generator.controllers.rest;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import licence.code.generator.dto.IdRequestDto;
 import licence.code.generator.entities.User;
 import licence.code.generator.services.ILicenceService;
@@ -20,6 +24,7 @@ import java.util.Objects;
 
 import static licence.code.generator.util.GeneratorStringUtils.LICENCE_BUY_PATH;
 
+@Tag(name = "Licence", description = "Licence Rest API")
 @RestController
 public class LicenceRestController {
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
@@ -32,6 +37,14 @@ public class LicenceRestController {
         this.licenceService = licenceService;
     }
 
+    @Operation(
+            summary = "Buy Licence for current user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Successful operation"),
+            @ApiResponse(responseCode = "400", description = "Null parameter"),
+            @ApiResponse(responseCode = "401", description = "Requester is not logged-in"),
+            @ApiResponse(responseCode = "404", description = "licence id does not exists")
+    })
     @PostMapping(value = {LICENCE_BUY_PATH})
     public ResponseEntity<?> buyLicence(@RequestBody IdRequestDto idRequestDto) {
         User requester = getRequester();

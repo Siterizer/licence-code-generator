@@ -1,5 +1,9 @@
 package licence.code.generator.controllers.rest;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import licence.code.generator.dto.IdRequestDto;
 import licence.code.generator.dto.UserDto;
 import licence.code.generator.entities.User;
@@ -23,6 +27,7 @@ import java.util.Objects;
 import static licence.code.generator.util.GeneratorStringUtils.*;
 
 
+@Tag(name = "Admin", description = "Rest API dedicated for Admin usage")
 @RestController
 public class AdminRestController {
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
@@ -33,6 +38,13 @@ public class AdminRestController {
         this.userService = userService;
     }
 
+    @Operation(
+            summary = "Returns info about all Users")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "401", description = "user is not logged-in"),
+            @ApiResponse(responseCode = "403", description = "Requester is not an admin"),
+    })
     @GetMapping(value = {ADMIN_INFO_PATH})
     public ResponseEntity<List<UserDto>> showAllUsers() {
         User requester = getRequester();
@@ -41,6 +53,15 @@ public class AdminRestController {
         return ResponseEntity.ok(usersDto);
     }
 
+    @Operation(
+            summary = "Blocks given user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Successful operation"),
+            @ApiResponse(responseCode = "401", description = "Requester is not logged-in"),
+            @ApiResponse(responseCode = "403", description = "Requester is not an admin"),
+            @ApiResponse(responseCode = "403", description = "Requester tried to block an admin"),
+            @ApiResponse(responseCode = "409", description = "User is already blocked"),
+    })
     @PostMapping(value = {ADMIN_BLOCK_PATH})
     public ResponseEntity<?> blockUser(@RequestBody IdRequestDto idRequestDto) {
         User requester = getRequester();
@@ -50,6 +71,15 @@ public class AdminRestController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    @Operation(
+            summary = "Unblocks given user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Successful operation"),
+            @ApiResponse(responseCode = "401", description = "Requester is not logged-in"),
+            @ApiResponse(responseCode = "403", description = "Requester is not an admin"),
+            @ApiResponse(responseCode = "403", description = "Requester tried to unblock an admin"),
+            @ApiResponse(responseCode = "409", description = "User is already unblocked"),
+    })
     @PostMapping(value = {ADMIN_UNBLOCK_PATH})
     public ResponseEntity<?> unblockUser(@RequestBody IdRequestDto idRequestDto) {
         User requester = getRequester();

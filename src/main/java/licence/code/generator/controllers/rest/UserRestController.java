@@ -1,6 +1,11 @@
 package licence.code.generator.controllers.rest;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import licence.code.generator.dto.RegisterUserDto;
 import licence.code.generator.dto.UpdatePasswordDto;
 import licence.code.generator.dto.UserDto;
 import licence.code.generator.dto.mapper.UserDtoMapper;
@@ -19,10 +24,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Objects;
 
-import static licence.code.generator.util.GeneratorStringUtils.USER_INFO_PATH;
-import static licence.code.generator.util.GeneratorStringUtils.USER_UPDATE_PASSWORD_PATH;
+import static licence.code.generator.util.GeneratorStringUtils.*;
 
 
+@Tag(name = "User", description = "User Rest API")
 @RestController
 public class UserRestController {
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
@@ -35,6 +40,27 @@ public class UserRestController {
         this.userDtoMapper = userDtoMapper;
     }
 
+    @Operation(
+            summary = "Create new User")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Successful operation"),
+            @ApiResponse(responseCode = "400", description = "Validation failed"),
+            @ApiResponse(responseCode = "409", description = "There is already an account with that username/email"),
+    })
+    @PostMapping(value = {REGISTER_PATH})
+    public ResponseEntity<?> registerUser(@Valid @RequestBody final RegisterUserDto userDto) {
+        LOGGER.info("Registering user with information: {}", userDto);
+        userService.registerUser(userDto);
+        LOGGER.info("User: {} registered", userDto);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @Operation(
+            summary = "Fetch User details")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "20", description = "Successful operation"),
+            @ApiResponse(responseCode = "401", description = "Requester is not logged-in")
+    })
     @RequestMapping(value = USER_INFO_PATH, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<UserDto> getCurrentUserDetails() {
@@ -44,6 +70,14 @@ public class UserRestController {
         return ResponseEntity.ok(dto);
     }
 
+    @Operation(
+            summary = "Update User password")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Successful operation"),
+            @ApiResponse(responseCode = "400", description = "Validation failed"),
+            @ApiResponse(responseCode = "401", description = "Requester is not logged-in"),
+            @ApiResponse(responseCode = "401", description = "old password is incorrect"),
+    })
     @PostMapping(value = {USER_UPDATE_PASSWORD_PATH})
     public ResponseEntity<?> updateUserPassword(@Valid @RequestBody final UpdatePasswordDto passwordDto) {
         User requester = getRequester();
@@ -53,7 +87,7 @@ public class UserRestController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @PostMapping("/user/resetPassword")
+    @PostMapping(value = {USER_RESET_PASSWORD_PATH})
     public String resetUserPassword() {
         //TODO create resetPassword functionality
         //userService.registerUser(user);
