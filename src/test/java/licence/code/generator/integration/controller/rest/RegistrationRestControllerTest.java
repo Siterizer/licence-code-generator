@@ -6,10 +6,12 @@ import licence.code.generator.entities.RoleName;
 import licence.code.generator.entities.User;
 import licence.code.generator.helper.DtoHelper;
 import licence.code.generator.repositories.UserRepository;
+import licence.code.generator.services.email.IEmailService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,7 +19,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import static licence.code.generator.util.GeneratorStringUtils.REGISTER_PATH;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -32,6 +37,8 @@ class RegistrationRestControllerTest {
     private DtoHelper dtoHelper;
     @Autowired
     private UserRepository userRepository;
+    @MockBean
+    private IEmailService emailService;
     ObjectMapper mapper = new ObjectMapper();
 
     @Test
@@ -40,6 +47,7 @@ class RegistrationRestControllerTest {
         RegisterUserDto userToRegister = dtoHelper.createRandomRegisterUserDto();
 
         //when:
+        doNothing().when(emailService).sendRegistrationConfirmEmail(anyString());
         MvcResult result = mvc.perform(post(REGISTER_PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(userToRegister)))
@@ -53,7 +61,7 @@ class RegistrationRestControllerTest {
         assertEquals(userToRegister.username(), registeredUser.getUsername());
         assertTrue(passwordEncoder.matches(userToRegister.password(), registeredUser.getPassword()));
         assertTrue(registeredUser.hasRole(RoleName.ROLE_USER));
-        assertFalse(registeredUser.isLocked());
+        assertTrue(registeredUser.isLocked());
     }
 
     @Test
@@ -64,6 +72,7 @@ class RegistrationRestControllerTest {
         RegisterUserDto userWithDuplicatedUsername = dtoHelper.createRandomRegisterUserDtoFromUsername(userToRegister.username());
 
         //when-then:
+        doNothing().when(emailService).sendRegistrationConfirmEmail(anyString());
         mvc.perform(post(REGISTER_PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(userToRegister)))

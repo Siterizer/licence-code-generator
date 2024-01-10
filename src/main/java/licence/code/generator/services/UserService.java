@@ -7,6 +7,7 @@ import licence.code.generator.entities.RoleName;
 import licence.code.generator.entities.User;
 import licence.code.generator.repositories.RoleRepository;
 import licence.code.generator.repositories.UserRepository;
+import licence.code.generator.services.email.IEmailService;
 import licence.code.generator.web.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,14 +28,16 @@ public class UserService implements IUserService {
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
     private final UserDtoMapper userDtoMapper;
+    private final IEmailService emailService;
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,
-                       RoleRepository roleRepository, UserDtoMapper userDtoMapper) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository,
+                       UserDtoMapper userDtoMapper, IEmailService emailService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.roleRepository = roleRepository;
         this.userDtoMapper = userDtoMapper;
+        this.emailService = emailService;
     }
 
     public List<User> getAllUsers() {
@@ -62,18 +65,23 @@ public class UserService implements IUserService {
         return userRepository.findByUsername(username);
     }
 
+
+    /**
+     * Keep in mind that User account is locked by default. It is unlocked until User confirms his email.
+     * Sending an emails is happening before database save() method in case of email sending error.
+     */
     @Override
     public void registerUser(RegisterUserDto userDto) throws UserAlreadyExistException {
         if (userExists(userDto.email(), userDto.username())) {
             throw new UserAlreadyExistException("There is an account with that username/email: " + userDto.email());
         }
-
         User user = new User();
         user.setUsername(userDto.username());
         user.setEmail(userDto.email());
         user.setPassword(passwordEncoder.encode(userDto.password()));
         user.setRoles(Collections.singletonList(roleRepository.findByName(RoleName.ROLE_USER)));
-        user.setLocked(false);
+        user.setLocked(true);
+        emailService.sendRegistrationConfirmEmail(userDto.email());
         userRepository.save(user);
     }
 

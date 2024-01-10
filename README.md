@@ -17,4 +17,5 @@ Application responsible for providing unique licenses for various commercial pro
 * install java 21 (pref Adoptium Eclipse Temurin 21) & Maven & docker & docker-compose
 * run command ```docker-compose -f compose-local.yml -p "local_postgres_container" up -d```
 * run application with following profile: ```spring.profiles.active=local```
+* remember to edit every configuration property that has 'placeholder' value with your own values
 * app can be accessed from http://localhost:8080/
