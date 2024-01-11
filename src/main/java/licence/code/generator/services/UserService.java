@@ -5,8 +5,10 @@ import licence.code.generator.dto.UserDto;
 import licence.code.generator.dto.mapper.UserDtoMapper;
 import licence.code.generator.entities.RoleName;
 import licence.code.generator.entities.User;
+import licence.code.generator.entities.VerificationToken;
 import licence.code.generator.repositories.RoleRepository;
 import licence.code.generator.repositories.UserRepository;
+import licence.code.generator.repositories.VerificationTokenRepository;
 import licence.code.generator.services.email.IEmailService;
 import licence.code.generator.web.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,15 +31,17 @@ public class UserService implements IUserService {
     private final RoleRepository roleRepository;
     private final UserDtoMapper userDtoMapper;
     private final IEmailService emailService;
+    private final IVerificationTokenService tokenService;
 
     @Autowired
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository,
-                       UserDtoMapper userDtoMapper, IEmailService emailService) {
+                       UserDtoMapper userDtoMapper, IEmailService emailService, IVerificationTokenService tokenService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.roleRepository = roleRepository;
         this.userDtoMapper = userDtoMapper;
         this.emailService = emailService;
+        this.tokenService = tokenService;
     }
 
     public List<User> getAllUsers() {
@@ -68,7 +72,6 @@ public class UserService implements IUserService {
 
     /**
      * Keep in mind that User account is locked by default. It is unlocked until User confirms his email.
-     * Sending an emails is happening before database save() method in case of email sending error.
      */
     @Override
     public void registerUser(RegisterUserDto userDto) throws UserAlreadyExistException {
@@ -81,8 +84,10 @@ public class UserService implements IUserService {
         user.setPassword(passwordEncoder.encode(userDto.password()));
         user.setRoles(Collections.singletonList(roleRepository.findByName(RoleName.ROLE_USER)));
         user.setLocked(true);
-        emailService.sendRegistrationConfirmEmail(userDto.email());
         userRepository.save(user);
+
+        VerificationToken generatedToken = tokenService.createVerificationToken(user);
+        emailService.sendRegistrationConfirmEmail(userDto.email(), generatedToken.getToken());
     }
 
     @Override

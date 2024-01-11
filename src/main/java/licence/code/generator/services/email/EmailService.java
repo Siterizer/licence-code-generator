@@ -14,7 +14,7 @@ public class EmailService implements IEmailService {
     private String mailUsername;
 
     @Override
-    public void sendRegistrationConfirmEmail(String setTo) {
+    public void sendRegistrationConfirmEmail(String setTo, String verificationToken) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(mailUsername);
         message.setTo(setTo);

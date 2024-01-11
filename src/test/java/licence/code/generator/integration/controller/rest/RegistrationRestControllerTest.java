@@ -47,7 +47,7 @@ class RegistrationRestControllerTest {
         RegisterUserDto userToRegister = dtoHelper.createRandomRegisterUserDto();
 
         //when:
-        doNothing().when(emailService).sendRegistrationConfirmEmail(anyString());
+        doNothing().when(emailService).sendRegistrationConfirmEmail(anyString(), anyString());
         MvcResult result = mvc.perform(post(REGISTER_PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(userToRegister)))
@@ -72,7 +72,7 @@ class RegistrationRestControllerTest {
         RegisterUserDto userWithDuplicatedUsername = dtoHelper.createRandomRegisterUserDtoFromUsername(userToRegister.username());
 
         //when-then:
-        doNothing().when(emailService).sendRegistrationConfirmEmail(anyString());
+        doNothing().when(emailService).sendRegistrationConfirmEmail(anyString(), anyString());
         mvc.perform(post(REGISTER_PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(userToRegister)))
