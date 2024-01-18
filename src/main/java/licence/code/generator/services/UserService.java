@@ -8,7 +8,6 @@ import licence.code.generator.entities.User;
 import licence.code.generator.entities.VerificationToken;
 import licence.code.generator.repositories.RoleRepository;
 import licence.code.generator.repositories.UserRepository;
-import licence.code.generator.repositories.VerificationTokenRepository;
 import licence.code.generator.services.email.IEmailService;
 import licence.code.generator.web.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;

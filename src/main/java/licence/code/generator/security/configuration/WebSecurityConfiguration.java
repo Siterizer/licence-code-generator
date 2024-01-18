@@ -43,7 +43,7 @@ public class WebSecurityConfiguration {
                         .requestMatchers("/users*").hasRole("USER")
                         .requestMatchers("/product*").hasRole("USER")
                         .requestMatchers("/licence*").hasRole("USER")
-                        .requestMatchers("/login*", "/logout*", "/mainPage*", "/register*", "/navbar*", "/").permitAll()
+                        .requestMatchers("/login*", "/logout*", "/mainPage*", "/registrationConfirm*", "/register*", "/navbar*", "/").permitAll()
                         .requestMatchers("/css/*").permitAll()
                         .requestMatchers("/js/*").permitAll()
                         .requestMatchers( "/favicon.ico").permitAll()

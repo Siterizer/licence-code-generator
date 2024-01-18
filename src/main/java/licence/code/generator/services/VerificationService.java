@@ -13,7 +13,6 @@ public class VerificationService implements IVerificationTokenService {
     private final VerificationTokenRepository verificationTokenRepository;
 
     @Autowired
-
     public VerificationService(VerificationTokenRepository verificationTokenRepository) {
         this.verificationTokenRepository = verificationTokenRepository;
     }

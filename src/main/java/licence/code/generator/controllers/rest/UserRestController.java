@@ -55,6 +55,13 @@ public class UserRestController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @GetMapping(value = {REGISTRATION_CONFIRM_PATH})
+    public ResponseEntity<?> registrationConfirm(@RequestParam("token") String token) {
+        LOGGER.info("Registering user with information: {}", token);
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
     @Operation(
             summary = "Fetch User details")
     @ApiResponses(value = {
