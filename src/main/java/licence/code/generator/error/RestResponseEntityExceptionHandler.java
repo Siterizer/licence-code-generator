@@ -96,6 +96,22 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.CONFLICT, request);
     }
 
+    //409
+    @ExceptionHandler({EmailAlreadyConfirmedException.class})
+    public ResponseEntity<Object> handleEmailAlreadyConfirmed(final RuntimeException ex, final WebRequest request) {
+        logger.error("409 Status Code", ex);
+        final GenericResponse bodyOfResponse = new GenericResponse(messages.getMessage("message.user.email.already.confirmed", null, request.getLocale()), "EmailAlreadyConfirmedException");
+        return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.CONFLICT, request);
+    }
+
+    //409
+    @ExceptionHandler({VerificationTokenExpiredException.class})
+    public ResponseEntity<Object> handleVerificationTokenExpired(final RuntimeException ex, final WebRequest request) {
+        logger.error("410 Status Code", ex);
+        final GenericResponse bodyOfResponse = new GenericResponse(messages.getMessage("message.user.email.token.expired", null, request.getLocale()), "VerificationTokenExpiredException");
+        return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.GONE, request);
+    }
+
     @ExceptionHandler({Exception.class})
     public ResponseEntity<Object> handleInternal(final RuntimeException ex, final WebRequest request) {
         logger.error("500 Status Code", ex);

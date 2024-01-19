@@ -25,6 +25,11 @@ public class VerificationToken {
 
     private Date expiryDate;
 
+    //Used by Hibernate
+    public VerificationToken(){
+
+    }
+
     public VerificationToken(final User user) {
         super();
 
@@ -32,15 +37,14 @@ public class VerificationToken {
         this.expiryDate = calculateExpiryDate(EXPIRATION);
     }
 
-
-
-
-
-
     private Date calculateExpiryDate(final int expiryTimeInMinutes) {
         final Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(new Date().getTime());
         cal.add(Calendar.MINUTE, expiryTimeInMinutes);
         return new Date(cal.getTime().getTime());
+    }
+
+    public boolean isExpired(){
+        return expiryDate.before(new Date());
     }
 }

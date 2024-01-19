@@ -55,17 +55,29 @@ public class UserRestController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @GetMapping(value = {REGISTRATION_CONFIRM_PATH})
+    @Operation(
+            summary = "Confirm registration using token")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "400", description = "Validation failed"),
+            @ApiResponse(responseCode = "404", description = "Verification Token does not exists"),
+            @ApiResponse(responseCode = "409", description = "User email is already confirmed"),
+            @ApiResponse(responseCode = "410", description = "Verification Token has expired")
+    })
+    @RequestMapping(value = REGISTRATION_CONFIRM_PATH, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
     public ResponseEntity<?> registrationConfirm(@RequestParam("token") String token) {
-        LOGGER.info("Registering user with information: {}", token);
+        LOGGER.info("Confirming registration for user with Verification Token: {}", token);
+        userService.confirmRegistration(token);
+        LOGGER.info("Confirmed registration for user with Verification Token: {}", token);
 
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @Operation(
             summary = "Fetch User details")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "20", description = "Successful operation"),
+            @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "401", description = "Requester is not logged-in")
     })
     @RequestMapping(value = USER_INFO_PATH, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)

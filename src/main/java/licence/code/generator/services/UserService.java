@@ -15,10 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -87,6 +84,23 @@ public class UserService implements IUserService {
 
         VerificationToken generatedToken = tokenService.createVerificationToken(user);
         emailService.sendRegistrationConfirmEmail(userDto.email(), generatedToken.getToken());
+    }
+    
+    @Override
+    public void confirmRegistration(String token){
+        VerificationToken verificationToken = tokenService.findByToken(token);
+        if(Objects.isNull(verificationToken)){
+            throw new NoSuchElementException("Provided Verification Token Does not exists: " + token);
+        }
+        User user = verificationToken.getUser();
+        if(!user.isLocked()){
+            throw new EmailAlreadyConfirmedException("For User with id:" + user.getId() + " email is already confirmed");
+        }
+        if(verificationToken.isExpired()){
+            throw new VerificationTokenExpiredException("Verification Token has Expired for User: " + user.getId());
+        }
+        user.setLocked(false);
+        userRepository.save(user);
     }
 
     @Override

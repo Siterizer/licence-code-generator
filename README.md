@@ -19,3 +19,4 @@ Application responsible for providing unique licenses for various commercial pro
 * run application with following profile: ```spring.profiles.active=local```
 * remember to edit every configuration property that has 'placeholder' value with your own values
 * app can be accessed from http://localhost:8080/
+* swagger can be accessed from http://localhost:8080/swagger-ui/index.html

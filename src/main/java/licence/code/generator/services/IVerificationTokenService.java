@@ -5,4 +5,6 @@ import licence.code.generator.entities.VerificationToken;
 
 public interface IVerificationTokenService {
     VerificationToken createVerificationToken(User user);
+
+    VerificationToken findByToken(String token);
 }
