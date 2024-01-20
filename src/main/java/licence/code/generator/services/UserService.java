@@ -5,18 +5,17 @@ import licence.code.generator.dto.UserDto;
 import licence.code.generator.dto.mapper.UserDtoMapper;
 import licence.code.generator.entities.RoleName;
 import licence.code.generator.entities.User;
+import licence.code.generator.entities.VerificationToken;
 import licence.code.generator.repositories.RoleRepository;
 import licence.code.generator.repositories.UserRepository;
+import licence.code.generator.services.email.IEmailService;
 import licence.code.generator.web.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,14 +26,18 @@ public class UserService implements IUserService {
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
     private final UserDtoMapper userDtoMapper;
+    private final IEmailService emailService;
+    private final IVerificationTokenService tokenService;
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,
-                       RoleRepository roleRepository, UserDtoMapper userDtoMapper) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository,
+                       UserDtoMapper userDtoMapper, IEmailService emailService, IVerificationTokenService tokenService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.roleRepository = roleRepository;
         this.userDtoMapper = userDtoMapper;
+        this.emailService = emailService;
+        this.tokenService = tokenService;
     }
 
     public List<User> getAllUsers() {
@@ -62,19 +65,43 @@ public class UserService implements IUserService {
         return userRepository.findByUsername(username);
     }
 
+
+    /**
+     * Keep in mind that User account is locked by default. It is unlocked until User confirms his email.
+     */
     @Override
     public void registerUser(RegisterUserDto userDto) throws UserAlreadyExistException {
         if (userExists(userDto.email(), userDto.username())) {
             throw new UserAlreadyExistException("There is an account with that username/email: " + userDto.email());
         }
-
         User user = new User();
         user.setUsername(userDto.username());
         user.setEmail(userDto.email());
         user.setPassword(passwordEncoder.encode(userDto.password()));
         user.setRoles(Collections.singletonList(roleRepository.findByName(RoleName.ROLE_USER)));
-        user.setLocked(false);
+        user.setLocked(true);
         userRepository.save(user);
+
+        VerificationToken generatedToken = tokenService.createVerificationToken(user);
+        emailService.sendRegistrationConfirmEmail(userDto.email(), generatedToken.getToken());
+    }
+
+    @Override
+    public void confirmRegistration(String token) {
+        System.out.println("siema2");
+        VerificationToken verificationToken = tokenService.findByToken(token);
+        System.out.println("siema3");
+        if (Objects.isNull(verificationToken)) {
+            throw new NoSuchElementException("Provided Verification Token Does not exists: " + token);
+        }
+        User user = verificationToken.getUser();
+        if (!user.isLocked()) {
+            throw new EmailAlreadyConfirmedException("For User with id:" + user.getId() + " email is already confirmed");
+        }
+        if (verificationToken.isExpired()) {
+            throw new VerificationTokenExpiredException("Verification Token has Expired for User: " + user.getId());
+        }
+        user.setLocked(false);
     }
 
     @Override
@@ -83,7 +110,6 @@ public class UserService implements IUserService {
             throw new InvalidOldPasswordException("Invalid Old Password for user with id: " + user.getId());
         }
         user.setPassword(passwordEncoder.encode(newPassword));
-        userRepository.save(user);
     }
 
     @Override
@@ -99,7 +125,6 @@ public class UserService implements IUserService {
             throw new InsufficientPrivilegesException("Admin with id: " + admin.getId() + " tried to block another admin with id:" + id);
         }
         user.setLocked(true);
-        userRepository.save(user);
     }
 
     @Override
@@ -115,7 +140,6 @@ public class UserService implements IUserService {
             throw new InsufficientPrivilegesException("Admin with id: " + admin.getId() + " tried to unblock another admin with id:" + id);
         }
         user.setLocked(false);
-        userRepository.save(user);
     }
 
     private boolean userExists(String email, String username) {

@@ -86,6 +86,13 @@
 			<version>2.2.0</version>
 		</dependency>
 
+		<!-- Email sender -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+			<version>3.2.1</version>
+		</dependency>
+
 		<!-- Test -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

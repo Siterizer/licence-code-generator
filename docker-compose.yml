@@ -12,6 +12,8 @@ services:
       - SETUP_ADMIN_USERNAME=super_secret_username
       - SETUP_ADMIN_EMAIL=super_secret_email
       - SETUP_ADMIN_PASSWORD=super_secret_password
+      - SPRING_MAIL_USERNAME=super_secret_email
+      - SPRING_MAIL_PASSWORD=super_secret_email_password
     depends_on:
       - postgres
     volumes:

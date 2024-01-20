@@ -9,6 +9,7 @@ import java.util.List;
 public interface IUserService {
 
     void registerUser(RegisterUserDto userDto);
+    void confirmRegistration(String token);
 
     List<User> getAllUsers();
 

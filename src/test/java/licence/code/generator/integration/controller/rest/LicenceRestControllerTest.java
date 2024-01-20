@@ -119,7 +119,6 @@ public class LicenceRestControllerTest {
         //when-then:
         mvc.perform(post(LICENCE_BUY_PATH).with(user(user))
                         .contentType(MediaType.APPLICATION_JSON)
-                        //some "random" Id
                         .content(mapper.writeValueAsString(null)))
                 .andExpect(status().isBadRequest());
     }
