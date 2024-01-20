@@ -8,13 +8,14 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.web.servlet.LocaleResolver;
+
+import static licence.code.generator.util.GeneratorStringUtils.LOGIN_PATH;
 
 @Configuration
 @EnableWebSecurity
@@ -46,11 +47,11 @@ public class WebSecurityConfiguration {
                         .requestMatchers("/login*", "/logout*", "/mainPage*", "/registrationConfirm*", "/register*", "/navbar*", "/").permitAll()
                         .requestMatchers("/css/*").permitAll()
                         .requestMatchers("/js/*").permitAll()
-                        .requestMatchers( "/favicon.ico").permitAll()
+                        .requestMatchers("/favicon.ico").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
-                        .loginPage("/login")
+                        .loginPage(LOGIN_PATH)
                         .defaultSuccessUrl("/user")
                         .successHandler(myAuthenticationSuccessHandler)
                         .failureHandler(myAuthenticationFailureHandler)

@@ -85,22 +85,23 @@ public class UserService implements IUserService {
         VerificationToken generatedToken = tokenService.createVerificationToken(user);
         emailService.sendRegistrationConfirmEmail(userDto.email(), generatedToken.getToken());
     }
-    
+
     @Override
-    public void confirmRegistration(String token){
+    public void confirmRegistration(String token) {
+        System.out.println("siema2");
         VerificationToken verificationToken = tokenService.findByToken(token);
-        if(Objects.isNull(verificationToken)){
+        System.out.println("siema3");
+        if (Objects.isNull(verificationToken)) {
             throw new NoSuchElementException("Provided Verification Token Does not exists: " + token);
         }
         User user = verificationToken.getUser();
-        if(!user.isLocked()){
+        if (!user.isLocked()) {
             throw new EmailAlreadyConfirmedException("For User with id:" + user.getId() + " email is already confirmed");
         }
-        if(verificationToken.isExpired()){
+        if (verificationToken.isExpired()) {
             throw new VerificationTokenExpiredException("Verification Token has Expired for User: " + user.getId());
         }
         user.setLocked(false);
-        userRepository.save(user);
     }
 
     @Override
@@ -109,7 +110,6 @@ public class UserService implements IUserService {
             throw new InvalidOldPasswordException("Invalid Old Password for user with id: " + user.getId());
         }
         user.setPassword(passwordEncoder.encode(newPassword));
-        userRepository.save(user);
     }
 
     @Override
@@ -125,7 +125,6 @@ public class UserService implements IUserService {
             throw new InsufficientPrivilegesException("Admin with id: " + admin.getId() + " tried to block another admin with id:" + id);
         }
         user.setLocked(true);
-        userRepository.save(user);
     }
 
     @Override
@@ -141,7 +140,6 @@ public class UserService implements IUserService {
             throw new InsufficientPrivilegesException("Admin with id: " + admin.getId() + " tried to unblock another admin with id:" + id);
         }
         user.setLocked(false);
-        userRepository.save(user);
     }
 
     private boolean userExists(String email, String username) {

@@ -7,4 +7,6 @@ public interface IVerificationTokenService {
     VerificationToken createVerificationToken(User user);
 
     VerificationToken findByToken(String token);
+
+    VerificationToken findByUser(User user);
 }

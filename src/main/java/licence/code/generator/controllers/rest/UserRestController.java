@@ -58,7 +58,7 @@ public class UserRestController {
     @Operation(
             summary = "Confirm registration using token")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "204", description = "Successful operation"),
             @ApiResponse(responseCode = "400", description = "Validation failed"),
             @ApiResponse(responseCode = "404", description = "Verification Token does not exists"),
             @ApiResponse(responseCode = "409", description = "User email is already confirmed"),
@@ -68,10 +68,11 @@ public class UserRestController {
     @ResponseBody
     public ResponseEntity<?> registrationConfirm(@RequestParam("token") String token) {
         LOGGER.info("Confirming registration for user with Verification Token: {}", token);
+        System.out.println("siema");
         userService.confirmRegistration(token);
         LOGGER.info("Confirmed registration for user with Verification Token: {}", token);
 
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @Operation(
