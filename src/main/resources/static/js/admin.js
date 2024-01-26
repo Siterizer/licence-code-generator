@@ -2,9 +2,8 @@ $(document).ready(function() {
     fill_table()
 });
 function fill_table(){
-    $.get("admin/info", function( data ) {
+    $.get("api/admin/info", function( data ) {
         for(let i = 0; i<data.length; i++){
-            console.log(data[i]);
             var isChecked = ((data[i].isLocked) ? 'checked' : '');
             var url_to_use = ((data[i].isLocked) ? 'unblock' : 'block');
             $(users_array).find('tbody').append("<tr><td>" + data[i].id +"</td>" +
@@ -31,7 +30,6 @@ function generate_licences(licences){
         "<div id=\"div_" + licences[i].licence + "\" style=\"display: none;\">" + licences[i].licence + "</div><br>"
         );
     }
-    console.log(result);
     return result;
 }
 function toggle_visibility(id) {
@@ -53,7 +51,7 @@ function block_unblock(id, url) {
     $("#result").html('');
     var values = $(this).serialize();
        ajaxRequest= $.ajax({
-            url: "admin/"+ url,
+            url: "api/admin/"+ url,
             type: "post",
             contentType : "application/json",
             data: JSON.stringify(requestData)

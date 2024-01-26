@@ -14,12 +14,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Objects;
@@ -29,6 +27,7 @@ import static licence.code.generator.util.GeneratorStringUtils.*;
 
 @Tag(name = "Admin", description = "Rest API dedicated for Admin usage")
 @RestController
+@RequestMapping(API_PATH)
 public class AdminRestController {
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
     private final IUserService userService;
@@ -45,6 +44,7 @@ public class AdminRestController {
             @ApiResponse(responseCode = "401", description = "user is not logged-in"),
             @ApiResponse(responseCode = "403", description = "Requester is not an admin"),
     })
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(value = {ADMIN_INFO_PATH})
     public ResponseEntity<List<UserDto>> showAllUsers() {
         User requester = getRequester();
@@ -62,6 +62,7 @@ public class AdminRestController {
             @ApiResponse(responseCode = "403", description = "Requester tried to block an admin"),
             @ApiResponse(responseCode = "409", description = "User is already blocked"),
     })
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(value = {ADMIN_BLOCK_PATH})
     public ResponseEntity<?> blockUser(@RequestBody IdRequestDto idRequestDto) {
         User requester = getRequester();
@@ -80,6 +81,7 @@ public class AdminRestController {
             @ApiResponse(responseCode = "403", description = "Requester tried to unblock an admin"),
             @ApiResponse(responseCode = "409", description = "User is already unblocked"),
     })
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(value = {ADMIN_UNBLOCK_PATH})
     public ResponseEntity<?> unblockUser(@RequestBody IdRequestDto idRequestDto) {
         User requester = getRequester();

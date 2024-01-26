@@ -14,18 +14,22 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Objects;
 
+import static licence.code.generator.util.GeneratorStringUtils.API_PATH;
 import static licence.code.generator.util.GeneratorStringUtils.LICENCE_BUY_PATH;
 
 @Tag(name = "Licence", description = "Licence Rest API")
 @RestController
+@RequestMapping(API_PATH)
 public class LicenceRestController {
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
     private final IUserService userService;
@@ -45,6 +49,7 @@ public class LicenceRestController {
             @ApiResponse(responseCode = "401", description = "Requester is not logged-in"),
             @ApiResponse(responseCode = "404", description = "licence id does not exists")
     })
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @PostMapping(value = {LICENCE_BUY_PATH})
     public ResponseEntity<?> buyLicence(@RequestBody IdRequestDto idRequestDto) {
         User requester = getRequester();

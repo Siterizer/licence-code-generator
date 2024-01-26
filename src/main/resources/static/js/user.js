@@ -9,7 +9,7 @@ $("#changePassword").submit(function(event) {
     var formData = {oldPassword: $("#oldPassword").val(), newPassword: $("#newPassword").val(),
                     newMatchedPassword: $("#newMatchedPassword").val()};
     ajaxRequest= $.ajax({
-        url: "user/updatePassword",
+        url: "api/user/updatePassword",
         type: "post",
         contentType : "application/json",
         data: JSON.stringify(formData)
@@ -22,7 +22,7 @@ $("#changePassword").submit(function(event) {
     });
 });
 function show_user_info(){
-    $.get("user/info", function( data ) {
+    $.get("api/user/info", function( data ) {
         $("#user_email").html(data.email);
 
         for(let i = 0; i<data.licences.length; i++){
@@ -33,7 +33,7 @@ function show_user_info(){
     });
 }
 function fill_products_table(){
-    $.get("products", function( data ) {
+    $.get("api/products", function( data ) {
         for(let i = 0; i<data.length; i++){
             $(products_array).find('tbody').append("<tr><td>" + data[i].id +"</td>" +
             "<td>" + data[i].name + "</td>" +
@@ -51,7 +51,7 @@ function buy_licence(id) {
     var requestData = {id: id};
     var values = $(this).serialize();
        ajaxRequest= $.ajax({
-            url: "licence/buy",
+            url: "api/licence/buy",
             type: "post",
             contentType : "application/json",
             data: JSON.stringify(requestData)

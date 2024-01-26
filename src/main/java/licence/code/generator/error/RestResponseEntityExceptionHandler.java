@@ -7,6 +7,8 @@ import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -41,6 +43,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
+    //401
     @ExceptionHandler({InvalidOldPasswordException.class})
     public ResponseEntity<Object> handleInvalidOldPassword(final RuntimeException ex, final WebRequest request) {
         logger.error("401 Status Code", ex);
@@ -48,11 +51,17 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.UNAUTHORIZED, request);
     }
 
-    //401
     @ExceptionHandler({UnauthorizedUserException.class})
     public ResponseEntity<Object> handleUnauthorizedUser(final RuntimeException ex, final WebRequest request) {
         logger.error("401 Status Code", ex);
         final GenericResponse bodyOfResponse = new GenericResponse(messages.getMessage("message.user.unauthorized", null, request.getLocale()), "UnauthorizedUser");
+        return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.UNAUTHORIZED, request);
+    }
+
+    @ExceptionHandler({BadCredentialsException.class})
+    public ResponseEntity<Object> handleBadCredentials(final RuntimeException ex, final WebRequest request) {
+        logger.error("401 Status Code", ex);
+        final GenericResponse bodyOfResponse = new GenericResponse(messages.getMessage("message.user.bad.credentials", null, request.getLocale()), "BadCredentialsException");
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.UNAUTHORIZED, request);
     }
 
@@ -61,6 +70,19 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     public ResponseEntity<Object> handleInsufficientPrivileges(final RuntimeException ex, final WebRequest request) {
         logger.error("403 Status Code", ex);
         final GenericResponse bodyOfResponse = new GenericResponse(messages.getMessage("message.user.insufficient.privileges", null, request.getLocale()), "InsufficientPrivileges");
+        return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.FORBIDDEN, request);
+    }
+
+    /**
+     * Not that typically this Exception represents 401 Status. But in this case every request is checked on authorization
+     * with WebSecurityConfiguration#filterChain .requestMatchers("anyString()").authenticated().
+     * And in case of an error is caught with UnauthorizedUserException. That leaves AccessDeniedException to check on
+     * @PreAuthorize("hasRole(anyString())") annotation and that is a 403.
+     */
+    @ExceptionHandler({AccessDeniedException.class})
+    public ResponseEntity<Object> handleAccessDeniedException(final RuntimeException ex, final WebRequest request) {
+        logger.error("403 Status Code", ex);
+        final GenericResponse bodyOfResponse = new GenericResponse(messages.getMessage("message.user.insufficient.privileges", null, request.getLocale()), "AccessDeniedException");
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.FORBIDDEN, request);
     }
 
