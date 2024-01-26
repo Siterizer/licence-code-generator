@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static licence.code.generator.util.GeneratorStringUtils.API_PATH;
 import static licence.code.generator.util.GeneratorStringUtils.PRODUCT_GET_ALL_PATH;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -47,7 +48,7 @@ public class ProductRestControllerTest {
         List<Long> expectedIds = expected.stream().map(Product::getId).toList();
 
         //when:
-        MvcResult result = mvc.perform(get(PRODUCT_GET_ALL_PATH).with(user(jpaUserEntityHelper.createRandomUser()))
+        MvcResult result = mvc.perform(get(API_PATH + PRODUCT_GET_ALL_PATH).with(user(jpaUserEntityHelper.createRandomUser()))
                 .contentType(MediaType.APPLICATION_JSON)).andReturn();
         List<ProductDto> resultDtoList = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
         List<Long> resultIds = Objects.requireNonNull(resultDtoList).stream().map(ProductDto::id).toList();
@@ -60,7 +61,7 @@ public class ProductRestControllerTest {
     @Test
     void getAllProducts_shouldReturn401nOnNonLoggedInUse() throws Exception {
         //when-then:
-        mvc.perform(get(PRODUCT_GET_ALL_PATH).contentType(MediaType.APPLICATION_JSON))
+        mvc.perform(get(API_PATH + PRODUCT_GET_ALL_PATH).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized());
     }
 }

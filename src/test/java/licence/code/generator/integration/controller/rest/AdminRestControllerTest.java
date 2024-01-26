@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static licence.code.generator.util.GeneratorStringUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -46,7 +45,7 @@ class AdminRestControllerTest {
         List<Long> expectedIds = expected.stream().map(User::getId).toList();
 
         //when:
-        MvcResult result = mvc.perform(get(ADMIN_INFO_PATH).with(user(jpaUserEntityHelper.createNotBlockedAdmin()))
+        MvcResult result = mvc.perform(get(API_PATH + ADMIN_INFO_PATH).with(user(jpaUserEntityHelper.createNotBlockedAdmin()))
                 .contentType(MediaType.APPLICATION_JSON)).andReturn();
         List<UserDto> resultDtoList = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
         });
@@ -69,7 +68,7 @@ class AdminRestControllerTest {
                 jpaUserEntityHelper.createNotBlockedUser());
 
         //when:
-        MvcResult result = mvc.perform(post(ADMIN_BLOCK_PATH).with(user(jpaUserEntityHelper.createNotBlockedAdmin()))
+        MvcResult result = mvc.perform(post(API_PATH + ADMIN_BLOCK_PATH).with(user(jpaUserEntityHelper.createNotBlockedAdmin()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(new IdRequestDto(userToBeBlocked.getId()))))
                 .andReturn();
@@ -86,7 +85,7 @@ class AdminRestControllerTest {
         User userToBeBlocked = jpaUserEntityHelper.createBlockedUser();
 
         //when-then:
-        mvc.perform(post(ADMIN_BLOCK_PATH)
+        mvc.perform(post(API_PATH + ADMIN_BLOCK_PATH)
                         .contentType(MediaType.APPLICATION_JSON).with(user(jpaUserEntityHelper.createNotBlockedAdmin()))
                         .content(mapper.writeValueAsString(new IdRequestDto(userToBeBlocked.getId()))))
                 .andExpect(status().isConflict());
@@ -98,7 +97,7 @@ class AdminRestControllerTest {
         User adminToBeBlocked = jpaUserEntityHelper.createNotBlockedAdmin();
 
         //when-then:
-        mvc.perform(post(ADMIN_BLOCK_PATH)
+        mvc.perform(post(API_PATH + ADMIN_BLOCK_PATH)
                         .contentType(MediaType.APPLICATION_JSON).with(user(jpaUserEntityHelper.createNotBlockedAdmin()))
                         .content(mapper.writeValueAsString(new IdRequestDto(adminToBeBlocked.getId()))))
                 .andExpect(status().isForbidden());
@@ -115,7 +114,7 @@ class AdminRestControllerTest {
                 jpaUserEntityHelper.createBlockedUser());
 
         //when:
-        MvcResult result = mvc.perform(post(ADMIN_UNBLOCK_PATH).with(user(jpaUserEntityHelper.createNotBlockedAdmin()))
+        MvcResult result = mvc.perform(post(API_PATH + ADMIN_UNBLOCK_PATH).with(user(jpaUserEntityHelper.createNotBlockedAdmin()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(new IdRequestDto(userToBeUnblocked.getId()))))
                 .andReturn();
@@ -132,7 +131,7 @@ class AdminRestControllerTest {
         User userToBeUnblocked = jpaUserEntityHelper.createNotBlockedUser();
 
         //when-then:
-        mvc.perform(post(ADMIN_UNBLOCK_PATH).with(user(jpaUserEntityHelper.createNotBlockedAdmin()))
+        mvc.perform(post(API_PATH + ADMIN_UNBLOCK_PATH).with(user(jpaUserEntityHelper.createNotBlockedAdmin()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(new IdRequestDto(userToBeUnblocked.getId()))))
                 .andExpect(status().isConflict());
@@ -144,7 +143,7 @@ class AdminRestControllerTest {
         User adminToBeUnblocked = jpaUserEntityHelper.createBlockedAdmin();
 
         //when-then:
-        mvc.perform(post(ADMIN_UNBLOCK_PATH).with(user(jpaUserEntityHelper.createNotBlockedAdmin()))
+        mvc.perform(post(API_PATH + ADMIN_UNBLOCK_PATH).with(user(jpaUserEntityHelper.createNotBlockedAdmin()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(new IdRequestDto(adminToBeUnblocked.getId()))))
                 .andExpect(status().isForbidden());
@@ -160,16 +159,16 @@ class AdminRestControllerTest {
         User userToBeUnblocked = jpaUserEntityHelper.createBlockedUser();
 
         //when-then:
-        mvc.perform(get(ADMIN_INFO_PATH).with(user(requester))
+        mvc.perform(get(API_PATH + ADMIN_INFO_PATH).with(user(requester))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isForbidden());
 
-        mvc.perform(post(ADMIN_BLOCK_PATH).with(user(requester))
+        mvc.perform(post(API_PATH + ADMIN_BLOCK_PATH).with(user(requester))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(new IdRequestDto(userToBeBlocked.getId()))))
                 .andExpect(status().isForbidden());
 
-        mvc.perform(post(ADMIN_UNBLOCK_PATH).with(user(requester))
+        mvc.perform(post(API_PATH + ADMIN_UNBLOCK_PATH).with(user(requester))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(new IdRequestDto(userToBeUnblocked.getId()))))
                 .andExpect(status().isForbidden());
@@ -183,16 +182,16 @@ class AdminRestControllerTest {
         User userToBeUnblocked = jpaUserEntityHelper.createBlockedUser();
 
         //when-then:
-        mvc.perform(get(ADMIN_INFO_PATH)
+        mvc.perform(get(API_PATH + ADMIN_INFO_PATH)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized());
 
-        mvc.perform(post(ADMIN_BLOCK_PATH)
+        mvc.perform(post(API_PATH + ADMIN_BLOCK_PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(new IdRequestDto(userToBeBlocked.getId()))))
                 .andExpect(status().isUnauthorized());
 
-        mvc.perform(post(ADMIN_UNBLOCK_PATH)
+        mvc.perform(post(API_PATH + ADMIN_UNBLOCK_PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(new IdRequestDto(userToBeUnblocked.getId()))))
                 .andExpect(status().isUnauthorized());

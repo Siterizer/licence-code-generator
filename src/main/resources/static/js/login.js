@@ -1,13 +1,14 @@
 $("#login").submit(function(event) {
-    var ajaxRequest;
     event.preventDefault();
+    var ajaxRequest;
+    var formData = {username: $("#username").val(), password: $("#password").val()};
     $("#result").html('');
-    var values = $(this).serialize();
-       ajaxRequest= $.ajax({
-            url: "login",
-            type: "post",
-            data: values
-       });
+    ajaxRequest= $.ajax({
+        url: "api/login",
+        type: "post",
+        contentType : "application/json",
+        data: JSON.stringify(formData)
+    });
     ajaxRequest.done(function (response){
          $("#result").html('Submitted successfully');
     });

@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.List;
 
+import static licence.code.generator.util.GeneratorStringUtils.API_PATH;
 import static licence.code.generator.util.GeneratorStringUtils.LICENCE_BUY_PATH;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
@@ -45,7 +46,7 @@ public class LicenceRestControllerTest {
         Product product = jpaProductEntityHelper.createRandomProduct();
 
         //when:
-        MvcResult result = mvc.perform(post(LICENCE_BUY_PATH).with(user(user))
+        MvcResult result = mvc.perform(post(API_PATH + LICENCE_BUY_PATH).with(user(user))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(new IdRequestDto(product.getId()))))
                 .andReturn();
@@ -64,9 +65,9 @@ public class LicenceRestControllerTest {
         Product product = jpaProductEntityHelper.createRandomProduct();
 
         //when:
-        mvc.perform(post(LICENCE_BUY_PATH).with(user(user)).contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(new IdRequestDto(product.getId()))));
-        mvc.perform(post(LICENCE_BUY_PATH).with(user(user)).contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(new IdRequestDto(product.getId()))));
-        mvc.perform(post(LICENCE_BUY_PATH).with(user(user)).contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(new IdRequestDto(product.getId()))));
+        mvc.perform(post(API_PATH + LICENCE_BUY_PATH).with(user(user)).contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(new IdRequestDto(product.getId()))));
+        mvc.perform(post(API_PATH + LICENCE_BUY_PATH).with(user(user)).contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(new IdRequestDto(product.getId()))));
+        mvc.perform(post(API_PATH + LICENCE_BUY_PATH).with(user(user)).contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(new IdRequestDto(product.getId()))));
 
         //then:
         List<Licence> createdLicences = licenceRepository.findByUser(user);
@@ -85,12 +86,12 @@ public class LicenceRestControllerTest {
         Product product3 = jpaProductEntityHelper.createRandomProduct();
 
         //when:
-        mvc.perform(post(LICENCE_BUY_PATH).with(user(user1)).contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(new IdRequestDto(product1.getId()))));
-        mvc.perform(post(LICENCE_BUY_PATH).with(user(user1)).contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(new IdRequestDto(product2.getId()))));
-        mvc.perform(post(LICENCE_BUY_PATH).with(user(user1)).contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(new IdRequestDto(product3.getId()))));
-        mvc.perform(post(LICENCE_BUY_PATH).with(user(user2)).contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(new IdRequestDto(product1.getId()))));
-        mvc.perform(post(LICENCE_BUY_PATH).with(user(user3)).contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(new IdRequestDto(product2.getId()))));
-        mvc.perform(post(LICENCE_BUY_PATH).with(user(user3)).contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(new IdRequestDto(product3.getId()))));
+        mvc.perform(post(API_PATH + LICENCE_BUY_PATH).with(user(user1)).contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(new IdRequestDto(product1.getId()))));
+        mvc.perform(post(API_PATH + LICENCE_BUY_PATH).with(user(user1)).contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(new IdRequestDto(product2.getId()))));
+        mvc.perform(post(API_PATH + LICENCE_BUY_PATH).with(user(user1)).contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(new IdRequestDto(product3.getId()))));
+        mvc.perform(post(API_PATH + LICENCE_BUY_PATH).with(user(user2)).contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(new IdRequestDto(product1.getId()))));
+        mvc.perform(post(API_PATH + LICENCE_BUY_PATH).with(user(user3)).contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(new IdRequestDto(product2.getId()))));
+        mvc.perform(post(API_PATH + LICENCE_BUY_PATH).with(user(user3)).contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(new IdRequestDto(product3.getId()))));
 
         //then:
         assertEquals(3, licenceRepository.findByUser(user1).size());
@@ -104,7 +105,7 @@ public class LicenceRestControllerTest {
         User user = jpaUserEntityHelper.createRandomUser();
 
         //when-then:
-        mvc.perform(post(LICENCE_BUY_PATH).with(user(user))
+        mvc.perform(post(API_PATH + LICENCE_BUY_PATH).with(user(user))
                         .contentType(MediaType.APPLICATION_JSON)
                         //some "random" Id
                         .content(mapper.writeValueAsString(new IdRequestDto(3465713455L))))
@@ -117,7 +118,7 @@ public class LicenceRestControllerTest {
         User user = jpaUserEntityHelper.createRandomUser();
 
         //when-then:
-        mvc.perform(post(LICENCE_BUY_PATH).with(user(user))
+        mvc.perform(post(API_PATH + LICENCE_BUY_PATH).with(user(user))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(null)))
                 .andExpect(status().isBadRequest());
@@ -126,7 +127,7 @@ public class LicenceRestControllerTest {
     @Test
     void buyLicence_shouldReturn401nOnNonLoggedInUse() throws Exception {
         //when-then:
-        mvc.perform(post(LICENCE_BUY_PATH)
+        mvc.perform(post(API_PATH + LICENCE_BUY_PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(new IdRequestDto(3465713455L))))
                 .andExpect(status().isUnauthorized());

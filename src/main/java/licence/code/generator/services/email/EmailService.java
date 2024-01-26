@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.net.InetAddress;
 
+import static licence.code.generator.util.GeneratorStringUtils.API_PATH;
 import static licence.code.generator.util.GeneratorStringUtils.REGISTRATION_CONFIRM_PATH;
 
 
@@ -28,8 +29,8 @@ public class EmailService implements IEmailService {
 
     @Override
     public void sendRegistrationConfirmEmail(String setTo, String verificationToken) {
-        String url = String.format("%s:%d%s?token=%s", InetAddress.getLoopbackAddress().getHostAddress(),
-                port, REGISTRATION_CONFIRM_PATH, verificationToken);
+        String url = String.format("%s:%d%s%s?token=%s", InetAddress.getLoopbackAddress().getHostAddress(),
+                port, API_PATH, REGISTRATION_CONFIRM_PATH, verificationToken);
 
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(mailUsername);

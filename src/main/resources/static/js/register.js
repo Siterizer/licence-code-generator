@@ -6,7 +6,7 @@ $("#register").submit(function(event) {
     $("#result").html('');
     ajaxRequest= $.ajax({
         type: "post",
-        url: "register",
+        url: "api/register",
         contentType : "application/json",
         data: JSON.stringify(formData)
     });

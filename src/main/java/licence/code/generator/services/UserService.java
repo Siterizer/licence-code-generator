@@ -88,9 +88,7 @@ public class UserService implements IUserService {
 
     @Override
     public void confirmRegistration(String token) {
-        System.out.println("siema2");
         VerificationToken verificationToken = tokenService.findByToken(token);
-        System.out.println("siema3");
         if (Objects.isNull(verificationToken)) {
             throw new NoSuchElementException("Provided Verification Token Does not exists: " + token);
         }

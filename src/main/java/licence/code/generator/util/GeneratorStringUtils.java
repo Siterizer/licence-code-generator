@@ -1,6 +1,7 @@
 package licence.code.generator.util;
 
 public class GeneratorStringUtils {
+    public static final String API_PATH = "/api";
     public static final String LOGIN_PATH = "/login";
     public static final String REGISTER_PATH = "/register";
     public static final String REGISTRATION_CONFIRM_PATH = "/registrationConfirm";

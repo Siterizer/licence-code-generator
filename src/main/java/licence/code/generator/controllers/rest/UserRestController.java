@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import licence.code.generator.dto.RegisterUserDto;
 import licence.code.generator.dto.UpdatePasswordDto;
 import licence.code.generator.dto.UserDto;
 import licence.code.generator.dto.mapper.UserDtoMapper;
@@ -18,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +29,7 @@ import static licence.code.generator.util.GeneratorStringUtils.*;
 
 @Tag(name = "User", description = "User Rest API")
 @RestController
+@RequestMapping(API_PATH)
 public class UserRestController {
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
     private final IUserService userService;
@@ -41,46 +42,12 @@ public class UserRestController {
     }
 
     @Operation(
-            summary = "Create new User")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Successful operation"),
-            @ApiResponse(responseCode = "400", description = "Validation failed"),
-            @ApiResponse(responseCode = "409", description = "There is already an account with that username/email"),
-    })
-    @PostMapping(value = {REGISTER_PATH})
-    public ResponseEntity<?> registerUser(@Valid @RequestBody final RegisterUserDto userDto) {
-        LOGGER.info("Registering user with information: {}", userDto);
-        userService.registerUser(userDto);
-        LOGGER.info("User: {} registered", userDto);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
-    }
-
-    @Operation(
-            summary = "Confirm registration using token")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Successful operation"),
-            @ApiResponse(responseCode = "400", description = "Validation failed"),
-            @ApiResponse(responseCode = "404", description = "Verification Token does not exists"),
-            @ApiResponse(responseCode = "409", description = "User email is already confirmed"),
-            @ApiResponse(responseCode = "410", description = "Verification Token has expired")
-    })
-    @RequestMapping(value = REGISTRATION_CONFIRM_PATH, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<?> registrationConfirm(@RequestParam("token") String token) {
-        LOGGER.info("Confirming registration for user with Verification Token: {}", token);
-        System.out.println("siema");
-        userService.confirmRegistration(token);
-        LOGGER.info("Confirmed registration for user with Verification Token: {}", token);
-
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-    }
-
-    @Operation(
             summary = "Fetch User details")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "401", description = "Requester is not logged-in")
     })
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @RequestMapping(value = USER_INFO_PATH, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<UserDto> getCurrentUserDetails() {
@@ -98,6 +65,7 @@ public class UserRestController {
             @ApiResponse(responseCode = "401", description = "Requester is not logged-in"),
             @ApiResponse(responseCode = "401", description = "old password is incorrect"),
     })
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @PostMapping(value = {USER_UPDATE_PASSWORD_PATH})
     public ResponseEntity<?> updateUserPassword(@Valid @RequestBody final UpdatePasswordDto passwordDto) {
         User requester = getRequester();

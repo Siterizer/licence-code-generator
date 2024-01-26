@@ -18,8 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
-import static licence.code.generator.util.GeneratorStringUtils.USER_INFO_PATH;
-import static licence.code.generator.util.GeneratorStringUtils.USER_UPDATE_PASSWORD_PATH;
+import static licence.code.generator.util.GeneratorStringUtils.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
@@ -46,7 +45,7 @@ class UserRestControllerTest {
     void getCurrentUserDetails_shouldReturnDetails() throws Exception {
         //when:
         User user = jpaUserEntityHelper.createRandomUser();
-        MvcResult result = mvc.perform(get(USER_INFO_PATH).with(user(user)).contentType(MediaType.APPLICATION_JSON)).andReturn();
+        MvcResult result = mvc.perform(get(API_PATH + USER_INFO_PATH).with(user(user)).contentType(MediaType.APPLICATION_JSON)).andReturn();
         UserDto resultDto = mapper.readValue(result.getResponse().getContentAsString(), UserDto.class);
 
         //then:
@@ -64,7 +63,7 @@ class UserRestControllerTest {
         userToChangePassword.setPassword(passwordEncoder.encode(userToChangePassword.getPassword()));
 
         //when:
-        MvcResult result = mvc.perform(post(USER_UPDATE_PASSWORD_PATH).with(user(userToChangePassword))
+        MvcResult result = mvc.perform(post(API_PATH + USER_UPDATE_PASSWORD_PATH).with(user(userToChangePassword))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(requestDto)))
                 .andReturn();
@@ -82,7 +81,7 @@ class UserRestControllerTest {
         userToChangePassword.setPassword("321");
 
         //when-then:
-        mvc.perform(post(USER_UPDATE_PASSWORD_PATH).with(user(userToChangePassword))
+        mvc.perform(post(API_PATH + USER_UPDATE_PASSWORD_PATH).with(user(userToChangePassword))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(requestDto)))
                 .andExpect(status().isUnauthorized());
@@ -95,7 +94,7 @@ class UserRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized());
 
-        mvc.perform(post(USER_UPDATE_PASSWORD_PATH)
+        mvc.perform(post(API_PATH + USER_UPDATE_PASSWORD_PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(dtoHelper.createRandomUpdatePasswordDto("123"))))
                 .andExpect(status().isUnauthorized());

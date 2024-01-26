@@ -13,18 +13,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Objects;
 
+import static licence.code.generator.util.GeneratorStringUtils.API_PATH;
 import static licence.code.generator.util.GeneratorStringUtils.PRODUCT_GET_ALL_PATH;
 
 @Tag(name = "Product", description = "Product Rest API")
 @RestController
+@RequestMapping(API_PATH)
 public class ProductRestController {
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
     private final IProductService productService;
@@ -42,6 +46,7 @@ public class ProductRestController {
             @ApiResponse(responseCode = "201", description = "Successful operation"),
             @ApiResponse(responseCode = "401", description = "Requester is not logged-in"),
     })
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @GetMapping(value = {PRODUCT_GET_ALL_PATH})
     public ResponseEntity<List<ProductDto>> getAllProducts() {
         User requester = getRequester();

@@ -1,17 +1,19 @@
 package licence.code.generator.integration.controller.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import licence.code.generator.dto.LoginDto;
 import licence.code.generator.dto.RegisterUserDto;
 import licence.code.generator.entities.RoleName;
 import licence.code.generator.entities.User;
 import licence.code.generator.entities.VerificationToken;
 import licence.code.generator.helper.DtoHelper;
 import licence.code.generator.helper.JpaUserEntityHelper;
-import licence.code.generator.repositories.UserRepository;
+import licence.code.generator.services.IUserService;
 import licence.code.generator.services.IVerificationTokenService;
 import licence.code.generator.services.email.IEmailService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -27,32 +29,34 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Calendar;
 import java.util.Date;
 
-import static licence.code.generator.util.GeneratorStringUtils.REGISTER_PATH;
-import static licence.code.generator.util.GeneratorStringUtils.REGISTRATION_CONFIRM_PATH;
+import static licence.code.generator.util.GeneratorStringUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-class RegistrationRestControllerTest {
+public class SessionManagementRestControllerTest {
     @Autowired
     private MockMvc mvc;
     @Autowired
-    private PasswordEncoder passwordEncoder;
-    @Autowired
     private DtoHelper dtoHelper;
     @Autowired
-    private UserRepository userRepository;
+    private IUserService userService;
     @Autowired
     private IVerificationTokenService tokenService;
-    @Autowired
-    private JpaUserEntityHelper jpaUserEntityHelper;
     @MockBean
     private JavaMailSender mailSender;
+    @Autowired
+    private JpaUserEntityHelper jpaUserEntityHelper;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Value("${generator.app.jwtCookieName}")
+    private String jwtCookie;
     @MockBean
     private IEmailService emailService;
     ObjectMapper mapper = new ObjectMapper();
@@ -64,13 +68,13 @@ class RegistrationRestControllerTest {
 
         //when:
         doNothing().when(mailSender).send(any(SimpleMailMessage.class));
-        MvcResult result = mvc.perform(post(REGISTER_PATH)
+        MvcResult result = mvc.perform(post(API_PATH + REGISTER_PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(userToRegister)))
                 .andReturn();
 
         //then:
-        User registeredUser = userRepository.findByUsername(userToRegister.username());
+        User registeredUser = userService.findUserByUsername(userToRegister.username());
 
         assertEquals(HttpStatus.CREATED.value(), result.getResponse().getStatus());
         assertEquals(userToRegister.email(), registeredUser.getEmail());
@@ -88,13 +92,13 @@ class RegistrationRestControllerTest {
 
         //when:
         doNothing().when(mailSender).send(any(SimpleMailMessage.class));
-        mvc.perform(post(REGISTER_PATH)
+        mvc.perform(post(API_PATH + REGISTER_PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(userToRegister)))
                 .andReturn();
 
         //then:
-        User registeredUser = userRepository.findByUsername(userToRegister.username());
+        User registeredUser = userService.findUserByUsername(userToRegister.username());
         VerificationToken verificationToken = tokenService.findByUser(registeredUser);
 
         assertNotNull(verificationToken.getToken());
@@ -111,17 +115,17 @@ class RegistrationRestControllerTest {
 
         //when-then:
         doNothing().when(mailSender).send(any(SimpleMailMessage.class));
-        mvc.perform(post(REGISTER_PATH)
+        mvc.perform(post(API_PATH + REGISTER_PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(userToRegister)))
                 .andExpect(status().isCreated());
 
-        mvc.perform(post(REGISTER_PATH)
+        mvc.perform(post(API_PATH + REGISTER_PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(userWithDuplicatedEmail)))
                 .andExpect(status().isConflict());
 
-        mvc.perform(post(REGISTER_PATH)
+        mvc.perform(post(API_PATH + REGISTER_PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(userWithDuplicatedUsername)))
                 .andExpect(status().isConflict());
@@ -135,7 +139,7 @@ class RegistrationRestControllerTest {
         VerificationToken verificationToken = tokenService.createVerificationToken(user);
 
         //when:
-        MvcResult result = mvc.perform(get(REGISTRATION_CONFIRM_PATH + "?token=" + verificationToken.getToken())
+        MvcResult result = mvc.perform(get(API_PATH + REGISTRATION_CONFIRM_PATH + "?token=" + verificationToken.getToken())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
 
@@ -151,7 +155,7 @@ class RegistrationRestControllerTest {
         VerificationToken verificationToken = tokenService.createVerificationToken(user);
 
         //when-then:
-        mvc.perform(get(REGISTRATION_CONFIRM_PATH + "?toke=" //Typo
+        mvc.perform(get(API_PATH + REGISTRATION_CONFIRM_PATH + "?toke=" //Typo
                 + verificationToken.getToken())
                 .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest());
     }
@@ -163,7 +167,7 @@ class RegistrationRestControllerTest {
         VerificationToken verificationToken = tokenService.createVerificationToken(user);
 
         //when-then:
-        mvc.perform(get(REGISTRATION_CONFIRM_PATH + "?token=" + verificationToken.getToken() + "123")
+        mvc.perform(get(API_PATH + REGISTRATION_CONFIRM_PATH + "?token=" + verificationToken.getToken() + "123")
                 .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound());
 
     }
@@ -175,7 +179,7 @@ class RegistrationRestControllerTest {
         VerificationToken verificationToken = tokenService.createVerificationToken(user);
 
         //when-then:
-        mvc.perform(get(REGISTRATION_CONFIRM_PATH + "?token=" + verificationToken.getToken())
+        mvc.perform(get(API_PATH + REGISTRATION_CONFIRM_PATH + "?token=" + verificationToken.getToken())
                 .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isConflict());
 
     }
@@ -192,8 +196,86 @@ class RegistrationRestControllerTest {
         verificationToken.setExpiryDate(cal.getTime());
 
         //when-then:
-        mvc.perform(get(REGISTRATION_CONFIRM_PATH + "?token=" + verificationToken.getToken())
+        mvc.perform(get(API_PATH + REGISTRATION_CONFIRM_PATH + "?token=" + verificationToken.getToken())
                 .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isGone());
 
+    }
+
+    @Test
+    @Transactional
+    void loginUser_shouldReturnJWTTokenOnSuccess() throws Exception {
+        //given:
+        User notBlockedUser = jpaUserEntityHelper.createNotBlockedUser();
+        LoginDto loginDto = new LoginDto(notBlockedUser.getUsername(), notBlockedUser.getPassword());
+        notBlockedUser.setPassword(passwordEncoder.encode(notBlockedUser.getPassword()));
+
+        //when-then:
+        mvc.perform(post(API_PATH + LOGIN_PATH)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(loginDto)))
+                .andExpect(cookie().exists(jwtCookie))
+                .andExpect(status().isOk());
+
+    }
+
+    @Test
+    @Transactional
+    void loginUser_shouldReturn400WhenValidationFails() throws Exception {
+        //given:
+        User notBlockedUser = jpaUserEntityHelper.createNotBlockedUser();
+        LoginDto loginDto = new LoginDto(null, null);
+        notBlockedUser.setPassword(passwordEncoder.encode(notBlockedUser.getPassword()));
+
+        //when-then:
+        mvc.perform(post(API_PATH + LOGIN_PATH)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(loginDto)))
+                .andExpect(cookie().doesNotExist(jwtCookie))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @Transactional
+    void loginUser_shouldReturn401CodeForBadCredentials() throws Exception {
+        //given:
+        User notBlockedUser = jpaUserEntityHelper.createNotBlockedUser();
+        LoginDto loginDto = new LoginDto(notBlockedUser.getUsername(), notBlockedUser.getPassword() + "error");
+        notBlockedUser.setPassword(passwordEncoder.encode(notBlockedUser.getPassword()));
+
+        //when-then:
+        mvc.perform(post(API_PATH + LOGIN_PATH)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(loginDto)))
+                .andExpect(cookie().doesNotExist(jwtCookie))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @Transactional
+    void userShouldBeAbleToPerformFullCycleCreateAccount() throws Exception {
+        //given (register):
+        RegisterUserDto userToRegister = dtoHelper.createRandomRegisterUserDto();
+
+        //when-then (register):
+        doNothing().when(mailSender).send(any(SimpleMailMessage.class));
+        mvc.perform(post(API_PATH + REGISTER_PATH)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(userToRegister)))
+                .andExpect(status().isCreated());
+
+        //given (registrationConfirm):
+        User registeredUser = userService.findUserByUsername(userToRegister.username());
+        VerificationToken verificationToken = tokenService.findByUser(registeredUser);
+
+        //when-then (registrationConfirm):
+        mvc.perform(get(API_PATH + REGISTRATION_CONFIRM_PATH + "?token=" + verificationToken.getToken())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+
+        //when-then (login)
+        mvc.perform(post(API_PATH + LOGIN_PATH)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(new LoginDto(userToRegister.username(), userToRegister.password()))))
+                .andExpect(status().isOk());
     }
 }
