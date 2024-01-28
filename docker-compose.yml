@@ -3,9 +3,10 @@ services:
   web:
     image: licence-code-generator
     ports:
-      - "8081:8080"
+      - "8081:8081"
     environment:
       - "SPRING_PROFILES_ACTIVE=prod"
+      - SERVER_PORT=8081
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_container/postgres
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=super_secret_password
@@ -14,6 +15,7 @@ services:
       - SETUP_ADMIN_PASSWORD=super_secret_password
       - SPRING_MAIL_USERNAME=super_secret_email
       - SPRING_MAIL_PASSWORD=super_secret_email_password
+      - GENERATOR_APP_JWTSECRET=======================Siterizer=Spring==========================
     depends_on:
       - postgres
     volumes:
