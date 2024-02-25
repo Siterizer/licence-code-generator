@@ -19,14 +19,14 @@ public class VerificationToken {
     @Column(name = "token", unique = true)
     private String token;
 
-    @OneToOne(targetEntity = User.class, fetch = FetchType.EAGER)
+    @OneToOne(targetEntity = User.class, fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "user_id", foreignKey = @ForeignKey(name = "FK_VERIFY_USER"))
     private User user;
 
     private Date expiryDate;
 
     //Used by Hibernate
-    public VerificationToken(){
+    public VerificationToken() {
 
     }
 
@@ -44,7 +44,7 @@ public class VerificationToken {
         return new Date(cal.getTime().getTime());
     }
 
-    public boolean isExpired(){
+    public boolean isExpired() {
         return expiryDate.before(new Date());
     }
 }

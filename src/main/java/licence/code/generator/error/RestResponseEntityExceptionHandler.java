@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -77,6 +78,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
      * Not that typically this Exception represents 401 Status. But in this case every request is checked on authorization
      * with WebSecurityConfiguration#filterChain .requestMatchers("anyString()").authenticated().
      * And in case of an error is caught with UnauthorizedUserException. That leaves AccessDeniedException to check on
+     *
      * @PreAuthorize("hasRole(anyString())") annotation and that is a 403.
      */
     @ExceptionHandler({AccessDeniedException.class})
@@ -95,7 +97,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     }
 
     //409
-    @ExceptionHandler({UserAlreadyBlockedException.class})
+    @ExceptionHandler({UserAlreadyBlockedException.class, LockedException.class})
     public ResponseEntity<Object> handleUserAlreadyBlocked(final RuntimeException ex, final WebRequest request) {
         logger.error("409 Status Code", ex);
         final GenericResponse bodyOfResponse = new GenericResponse(messages.getMessage("message.user.already.blocked", null, request.getLocale()), "UserAlreadyBlocked");

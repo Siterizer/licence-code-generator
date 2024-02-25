@@ -8,9 +8,9 @@ import licence.code.generator.entities.User;
 import licence.code.generator.entities.VerificationToken;
 import licence.code.generator.helper.DtoHelper;
 import licence.code.generator.helper.JpaUserEntityHelper;
-import licence.code.generator.services.IUserService;
 import licence.code.generator.services.IVerificationTokenService;
 import licence.code.generator.services.email.IEmailService;
+import licence.code.generator.services.user.IUserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -74,7 +74,7 @@ public class SessionManagementRestControllerTest {
                 .andReturn();
 
         //then:
-        User registeredUser = userService.findUserByUsername(userToRegister.username());
+        User registeredUser = userService.loadUserWithRelatedEntitiesByUsername(userToRegister.username());
 
         assertEquals(HttpStatus.CREATED.value(), result.getResponse().getStatus());
         assertEquals(userToRegister.email(), registeredUser.getEmail());
@@ -98,7 +98,7 @@ public class SessionManagementRestControllerTest {
                 .andReturn();
 
         //then:
-        User registeredUser = userService.findUserByUsername(userToRegister.username());
+        User registeredUser = userService.loadUserWithRelatedEntitiesByUsername(userToRegister.username());
         VerificationToken verificationToken = tokenService.findByUser(registeredUser);
 
         assertNotNull(verificationToken.getToken());
@@ -264,7 +264,7 @@ public class SessionManagementRestControllerTest {
                 .andExpect(status().isCreated());
 
         //given (registrationConfirm):
-        User registeredUser = userService.findUserByUsername(userToRegister.username());
+        User registeredUser = userService.loadUserWithRelatedEntitiesByUsername(userToRegister.username());
         VerificationToken verificationToken = tokenService.findByUser(registeredUser);
 
         //when-then (registrationConfirm):

@@ -1,4 +1,4 @@
-package licence.code.generator.services;
+package licence.code.generator.services.user;
 
 import licence.code.generator.dto.RegisterUserDto;
 import licence.code.generator.dto.UserDto;
@@ -8,9 +8,12 @@ import licence.code.generator.entities.User;
 import licence.code.generator.entities.VerificationToken;
 import licence.code.generator.repositories.RoleRepository;
 import licence.code.generator.repositories.UserRepository;
+import licence.code.generator.services.IVerificationTokenService;
 import licence.code.generator.services.email.IEmailService;
 import licence.code.generator.web.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,8 +64,13 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public User findUserByUsername(String username) {
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUsername(username);
+    }
+
+    @Override
+    public User loadUserWithRelatedEntitiesByUsername(String username) {
+        return userRepository.findByUsernameWithRelatedEntities(username);
     }
 
 
@@ -78,7 +86,7 @@ public class UserService implements IUserService {
         user.setUsername(userDto.username());
         user.setEmail(userDto.email());
         user.setPassword(passwordEncoder.encode(userDto.password()));
-        user.setRoles(Collections.singletonList(roleRepository.findByName(RoleName.ROLE_USER)));
+        user.setRoles(Collections.singleton(roleRepository.findByName(RoleName.ROLE_USER)));
         user.setLocked(true);
         userRepository.save(user);
 
@@ -103,7 +111,8 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public void changeUserPassword(final User user, final String oldPassword, final String newPassword) {
+    public void changeUserPassword(Long userId, final String oldPassword, final String newPassword) {
+        User user = userRepository.findById(userId).orElseThrow();
         if (!validCurrentPassword(oldPassword, user.getPassword())) {
             throw new InvalidOldPasswordException("Invalid Old Password for user with id: " + user.getId());
         }
@@ -123,6 +132,7 @@ public class UserService implements IUserService {
             throw new InsufficientPrivilegesException("Admin with id: " + admin.getId() + " tried to block another admin with id:" + id);
         }
         user.setLocked(true);
+        userRepository.save(user);
     }
 
     @Override
