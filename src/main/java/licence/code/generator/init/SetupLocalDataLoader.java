@@ -11,10 +11,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Component
 @Profile("local")
@@ -50,8 +50,8 @@ public class SetupLocalDataLoader implements ApplicationListener<ContextRefreshe
         final Privilege users = createPrivilegeIfNotFound("WRITE_PRIVILEGE");
 
         // == create initial roles
-        final List<Privilege> userPrivileges = new ArrayList<>(Collections.singletonList(mainPage));
-        final List<Privilege> adminPrivileges = new ArrayList<>(Collections.singletonList(users));
+        final Set<Privilege> userPrivileges = new HashSet<>(Collections.singletonList(mainPage));
+        final Set<Privilege> adminPrivileges = new HashSet<>(Collections.singletonList(users));
         final Role adminRole = createRoleIfNotFound(RoleName.ROLE_ADMIN, adminPrivileges);
         final Role userRole = createRoleIfNotFound(RoleName.ROLE_USER, userPrivileges);
 
@@ -61,10 +61,10 @@ public class SetupLocalDataLoader implements ApplicationListener<ContextRefreshe
         final Product fightingBot = createProductIfNotFound("Fighting Bot", new BigDecimal("2.50"));
 
         // == create initial user
-        final User locked = createUserIfNotFound("locked@test.com", "locked", "locked", new ArrayList<>(Collections.singletonList(userRole)), true);
-        final User user1 = createUserIfNotFound("asd1@test.com", "asd", "asd1", new ArrayList<>(Collections.singletonList(userRole)), false);
-        final User user2 = createUserIfNotFound("asd2@test.com", "asd", "asd2", new ArrayList<>(Collections.singletonList(userRole)), false);
-        final User admin = createUserIfNotFound("test@test.com", "test", "test", new ArrayList<>(List.of(adminRole, userRole)), false);
+        final User locked = createUserIfNotFound("locked@test.com", "locked", "locked", new HashSet<>(Collections.singletonList(userRole)), true);
+        final User user1 = createUserIfNotFound("asd1@test.com", "asd", "asd1", new HashSet<>(Collections.singletonList(userRole)), false);
+        final User user2 = createUserIfNotFound("asd2@test.com", "asd", "asd2", new HashSet<>(Collections.singletonList(userRole)), false);
+        final User admin = createUserIfNotFound("test@test.com", "test", "test", new HashSet<>(List.of(adminRole, userRole)), false);
 
         // == create initial licences
         createLicenceIfNotFound(user1, fishBot);
@@ -88,7 +88,7 @@ public class SetupLocalDataLoader implements ApplicationListener<ContextRefreshe
     }
 
     @Transactional
-    Role createRoleIfNotFound(final RoleName name, final Collection<Privilege> privileges) {
+    Role createRoleIfNotFound(final RoleName name, final Set<Privilege> privileges) {
         Role role = roleRepository.findByName(name);
         if (role == null) {
             role = new Role();
@@ -112,7 +112,7 @@ public class SetupLocalDataLoader implements ApplicationListener<ContextRefreshe
     }
 
     @Transactional
-    User createUserIfNotFound(final String email, final String password, final String username, final Collection<Role> roles, boolean locked) {
+    User createUserIfNotFound(final String email, final String password, final String username, final Set<Role> roles, boolean locked) {
         User user = userRepository.findByEmail(email) == null ? userRepository.findByUsername(username) : userRepository.findByEmail(email);
         if (user == null) {
             user = new User();

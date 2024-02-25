@@ -1,9 +1,10 @@
 package licence.code.generator.entities;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.Data;
-
-import java.util.Collection;
 
 @Entity
 @Data
@@ -14,9 +15,6 @@ public class Privilege {
     private Long id;
 
     private String name;
-
-    @ManyToMany(mappedBy = "privileges")
-    private Collection<Role> roles;
 
     @Override
     public String toString() {

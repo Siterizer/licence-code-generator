@@ -7,13 +7,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.toList;
 
 @Entity
 @Table(name = "user_account")
@@ -33,9 +30,11 @@ public class User implements UserDetails {
 
     private boolean isLocked;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
-    private Collection<Role> roles;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "users_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles;
 
     @OneToMany(mappedBy = "user")
     private Collection<Licence> licences;
@@ -79,18 +78,18 @@ public class User implements UserDetails {
 
     @Override
     public String toString() {
-        List<String> roles = Stream.ofNullable(this.roles)
+        Set<String> roles = Stream.ofNullable(this.roles)
                 .flatMap(Collection::stream)
                 .filter(Objects::nonNull)
                 .map(Role::getName)
                 .map(Enum::name)
-                .collect(toList());
-        List<String> products = Stream.ofNullable(this.licences)
+                .collect(Collectors.toSet());
+        Set<String> products = Stream.ofNullable(this.licences)
                 .flatMap(Collection::stream)
                 .filter(Objects::nonNull)
                 .map(Licence::getProduct)
                 .map(Product::getName)
-                .collect(toList());
+                .collect(Collectors.toSet());
         return "User [username=" +
                 username +
                 ", id=" +

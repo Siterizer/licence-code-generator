@@ -1,7 +1,12 @@
 package licence.code.generator.init;
 
-import licence.code.generator.entities.*;
-import licence.code.generator.repositories.*;
+import licence.code.generator.entities.Privilege;
+import licence.code.generator.entities.Role;
+import licence.code.generator.entities.RoleName;
+import licence.code.generator.entities.User;
+import licence.code.generator.repositories.PrivilegeRepository;
+import licence.code.generator.repositories.RoleRepository;
+import licence.code.generator.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
@@ -11,10 +16,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Component
 @Profile("prod")
@@ -52,13 +56,13 @@ public class SetupProdDataLoader implements ApplicationListener<ContextRefreshed
         final Privilege users = createPrivilegeIfNotFound("WRITE_PRIVILEGE");
 
         // == create initial roles
-        final List<Privilege> userPrivileges = new ArrayList<>(Collections.singletonList(mainPage));
-        final List<Privilege> adminPrivileges = new ArrayList<>(Collections.singletonList(users));
+        final Set<Privilege> userPrivileges = new HashSet<>(Collections.singletonList(mainPage));
+        final Set<Privilege> adminPrivileges = new HashSet<>(Collections.singletonList(users));
         final Role adminRole = createRoleIfNotFound(RoleName.ROLE_ADMIN, adminPrivileges);
         final Role userRole = createRoleIfNotFound(RoleName.ROLE_USER, userPrivileges);
 
         // == create initial admin
-        createUserIfNotFound(adminEmail, adminPassword, adminUsername, new ArrayList<>(List.of(adminRole, userRole)), false);
+        createUserIfNotFound(adminEmail, adminPassword, adminUsername, Set.of(adminRole, userRole), false);
 
 
         alreadySetup = true;
@@ -76,7 +80,7 @@ public class SetupProdDataLoader implements ApplicationListener<ContextRefreshed
     }
 
     @Transactional
-    Role createRoleIfNotFound(final RoleName name, final Collection<Privilege> privileges) {
+    Role createRoleIfNotFound(final RoleName name, final Set<Privilege> privileges) {
         Role role = roleRepository.findByName(name);
         if (role == null) {
             role = new Role();
@@ -88,7 +92,7 @@ public class SetupProdDataLoader implements ApplicationListener<ContextRefreshed
     }
 
     @Transactional
-    User createUserIfNotFound(final String email, final String password, final String username, final Collection<Role> roles, boolean locked) {
+    User createUserIfNotFound(final String email, final String password, final String username, final Set<Role> roles, boolean locked) {
         User user = userRepository.findByEmail(email) == null ? userRepository.findByUsername(username) : userRepository.findByEmail(email);
         if (user == null) {
             user = new User();

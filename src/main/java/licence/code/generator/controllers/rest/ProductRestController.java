@@ -7,7 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import licence.code.generator.dto.ProductDto;
 import licence.code.generator.entities.User;
 import licence.code.generator.services.IProductService;
-import licence.code.generator.services.IUserService;
+import licence.code.generator.services.user.IUserService;
 import licence.code.generator.web.exception.UnauthorizedUserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +62,7 @@ public class ProductRestController {
             //entrance with RestAuthenticationEntryPoint class
             throw new UnauthorizedUserException("Unauthorized User wanted to access /product endpoint");
         }
-        return userService.findUserByUsername(authentication.getName());
+        return (User) authentication.getPrincipal();
     }
 
 }

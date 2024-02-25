@@ -9,7 +9,7 @@ import licence.code.generator.dto.LoginDto;
 import licence.code.generator.dto.RegisterUserDto;
 import licence.code.generator.entities.User;
 import licence.code.generator.security.jwt.JwtUtils;
-import licence.code.generator.services.IUserService;
+import licence.code.generator.services.user.IUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +53,7 @@ public class SessionManagementRestController {
 
         User userDetails = (User) authentication.getPrincipal();
         ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
+        LOGGER.debug("Setting jwt cookie for user with: {} username", loginDto.username());
 
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString()).build();
     }

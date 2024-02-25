@@ -1,14 +1,16 @@
-package licence.code.generator.services;
+package licence.code.generator.services.user;
 
 import licence.code.generator.dto.RegisterUserDto;
 import licence.code.generator.dto.UserDto;
 import licence.code.generator.entities.User;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.List;
 
-public interface IUserService {
+public interface IUserService extends UserDetailsService {
 
     void registerUser(RegisterUserDto userDto);
+
     void confirmRegistration(String token);
 
     List<User> getAllUsers();
@@ -17,11 +19,11 @@ public interface IUserService {
 
     User findUserByEmail(String email);
 
-    User findUserByUsername(String username);
+    User loadUserWithRelatedEntitiesByUsername(String username);
 
     void blockUser(Long id, User admin);
 
     void unblockUser(Long id, User admin);
 
-    void changeUserPassword(User user, String oldPassword, String newPassword);
+    void changeUserPassword(Long userId, String oldPassword, String newPassword);
 }

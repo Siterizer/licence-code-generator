@@ -9,7 +9,7 @@ import licence.code.generator.dto.UpdatePasswordDto;
 import licence.code.generator.dto.UserDto;
 import licence.code.generator.dto.mapper.UserDtoMapper;
 import licence.code.generator.entities.User;
-import licence.code.generator.services.IUserService;
+import licence.code.generator.services.user.IUserService;
 import licence.code.generator.web.exception.UnauthorizedUserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +53,7 @@ public class UserRestController {
     public ResponseEntity<UserDto> getCurrentUserDetails() {
         User requester = getRequester();
         LOGGER.info("Showing user info for user with id: {}", requester.getId());
-        UserDto dto = userDtoMapper.toDto(requester);
+        UserDto dto = userDtoMapper.toDto(userService.loadUserWithRelatedEntitiesByUsername(requester.getUsername()));
         return ResponseEntity.ok(dto);
     }
 
@@ -70,7 +70,7 @@ public class UserRestController {
     public ResponseEntity<?> updateUserPassword(@Valid @RequestBody final UpdatePasswordDto passwordDto) {
         User requester = getRequester();
         LOGGER.info("Changing password for user with id: {}", requester.getId());
-        userService.changeUserPassword(requester, passwordDto.oldPassword(), passwordDto.newPassword());
+        userService.changeUserPassword(requester.getId(), passwordDto.oldPassword(), passwordDto.newPassword());
         LOGGER.info("Password changed for User with id: {}", requester.getId());
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
@@ -89,7 +89,7 @@ public class UserRestController {
             //entrance with RestAuthenticationEntryPoint class
             throw new UnauthorizedUserException("Unauthorized User wanted to access /user/ GET request");
         }
-        return userService.findUserByUsername(authentication.getName());
+        return (User) authentication.getPrincipal();
     }
 }
 
