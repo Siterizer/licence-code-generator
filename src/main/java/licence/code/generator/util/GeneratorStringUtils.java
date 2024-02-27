@@ -13,5 +13,6 @@ public class GeneratorStringUtils {
     public static final String USER_RESET_PASSWORD_PATH = "/user/resetPassword";
     public static final String PRODUCT_GET_ALL_PATH = "/products";
     public static final String LICENCE_BUY_PATH = "/licence/buy";
+    public static final String LICENCE_ACCORDANCE_PATH = "/licence/accordanceCheck";
 
 }

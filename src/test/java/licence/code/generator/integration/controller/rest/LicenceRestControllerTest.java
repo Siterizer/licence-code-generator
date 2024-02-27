@@ -2,9 +2,11 @@ package licence.code.generator.integration.controller.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import licence.code.generator.dto.IdRequestDto;
+import licence.code.generator.dto.LicenceKeyDto;
 import licence.code.generator.entities.Licence;
 import licence.code.generator.entities.Product;
 import licence.code.generator.entities.User;
+import licence.code.generator.helper.JpaLicenceEntityHelper;
 import licence.code.generator.helper.JpaProductEntityHelper;
 import licence.code.generator.helper.JpaUserEntityHelper;
 import licence.code.generator.repositories.LicenceRepository;
@@ -18,9 +20,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.List;
+import java.util.UUID;
 
-import static licence.code.generator.util.GeneratorStringUtils.API_PATH;
-import static licence.code.generator.util.GeneratorStringUtils.LICENCE_BUY_PATH;
+import static licence.code.generator.util.GeneratorStringUtils.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -37,6 +39,8 @@ public class LicenceRestControllerTest {
     private JpaUserEntityHelper jpaUserEntityHelper;
     @Autowired
     private LicenceRepository licenceRepository;
+    @Autowired
+    private JpaLicenceEntityHelper jpaLicenceEntityHelper;
     ObjectMapper mapper = new ObjectMapper();
 
     @Test
@@ -122,6 +126,45 @@ public class LicenceRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(null)))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void checkLicenceAccordance_shouldSuccessfullyCheckValidLicence() throws Exception {
+        //given:
+        Licence licence = jpaLicenceEntityHelper.createRandomLicence();
+
+        //when-then:
+        mvc.perform(post(API_PATH + LICENCE_ACCORDANCE_PATH)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(new LicenceKeyDto(licence.getId()))))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void checkLicenceAccordance_shouldFailOnInvalidLicence() throws Exception {
+        //given:
+        String uuid = UUID.randomUUID().toString();
+
+        //when-then:
+        mvc.perform(post(API_PATH + LICENCE_ACCORDANCE_PATH)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(new LicenceKeyDto(uuid))))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void checkLicenceAccordance_shouldReturn400OnInvalidRequestStructure() throws Exception {
+
+        //when-then:
+        mvc.perform(post(API_PATH + LICENCE_ACCORDANCE_PATH)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(new LicenceKeyDto("12345"))))
+                .andExpect(status().isBadRequest());//Invalid value structure
+
+        mvc.perform(post(API_PATH + LICENCE_ACCORDANCE_PATH)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("12345"))
+                .andExpect(status().isBadRequest());//don't have proper key
     }
 
     @Test

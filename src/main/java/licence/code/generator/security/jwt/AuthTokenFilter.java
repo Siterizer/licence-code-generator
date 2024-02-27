@@ -28,7 +28,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
     private static List<String> skipFilterUrls = Arrays.asList(
-            "/api/login*", "/api/register*", "/api/registrationConfirm*",
+            "/api/login*", "/api/register*", "/api/registrationConfirm*", "/api/licence/accordanceCheck",
             "/css/*", "/js/*", "/favicon.ico", "/mainPage", "/", "/navbar",
             "/admin", "/login", "/register", "/user");
 

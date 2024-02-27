@@ -4,10 +4,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import licence.code.generator.dto.IdRequestDto;
+import licence.code.generator.dto.LicenceKeyDto;
 import licence.code.generator.entities.User;
 import licence.code.generator.services.ILicenceService;
-import licence.code.generator.services.user.IUserService;
 import licence.code.generator.web.exception.UnauthorizedUserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,20 +25,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Objects;
 
-import static licence.code.generator.util.GeneratorStringUtils.API_PATH;
-import static licence.code.generator.util.GeneratorStringUtils.LICENCE_BUY_PATH;
+import static licence.code.generator.util.GeneratorStringUtils.*;
 
 @Tag(name = "Licence", description = "Licence Rest API")
 @RestController
 @RequestMapping(API_PATH)
 public class LicenceRestController {
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
-    private final IUserService userService;
     private final ILicenceService licenceService;
 
     @Autowired
-    public LicenceRestController(IUserService userService, ILicenceService licenceService) {
-        this.userService = userService;
+    public LicenceRestController(ILicenceService licenceService) {
         this.licenceService = licenceService;
     }
 
@@ -57,6 +55,24 @@ public class LicenceRestController {
         licenceService.createLicence(requester.getId(), idRequestDto.id());
         LOGGER.info("Created Licence for User with id: {} with productId: {}", requester.getId(), idRequestDto.id());
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @Operation(
+            summary = "Check correctness of a given licence")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Licence is valid"),
+            @ApiResponse(responseCode = "400", description = "Licence is not present"),
+            @ApiResponse(responseCode = "400", description = "Licence has not valid structure"),
+            @ApiResponse(responseCode = "404", description = "licence does not exists (is not valid)")
+    })
+    @PostMapping(value = {LICENCE_ACCORDANCE_PATH})
+    public ResponseEntity<?> checkLicenceAccordance(@Valid @RequestBody LicenceKeyDto keyDto) {
+        //Note UUID has following 32 character structure: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+        // and we do not want to log the last 13 characters of this ID
+        LOGGER.info("Checking accordance of licence with key: {}-xxxxxxxxxxxx ", keyDto.key().substring(0, 23));
+        licenceService.checkLicenceAccordance(keyDto.key());
+        LOGGER.info("Licence with key: {}-xxxxxxxxxxxx is valid", keyDto.key().substring(0, 23));
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     private User getRequester() {
