@@ -7,7 +7,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import licence.code.generator.dto.ProductDto;
 import licence.code.generator.entities.User;
 import licence.code.generator.services.IProductService;
-import licence.code.generator.services.user.IUserService;
 import licence.code.generator.web.exception.UnauthorizedUserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,12 +31,10 @@ import static licence.code.generator.util.GeneratorStringUtils.PRODUCT_GET_ALL_P
 public class ProductRestController {
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
     private final IProductService productService;
-    private final IUserService userService;
 
     @Autowired
-    ProductRestController(IProductService productService, IUserService userService) {
+    ProductRestController(IProductService productService) {
         this.productService = productService;
-        this.userService = userService;
     }
 
     @Operation(

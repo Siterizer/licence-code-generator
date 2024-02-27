@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface LicenceRepository extends JpaRepository<Licence, Long> {
+public interface LicenceRepository extends JpaRepository<Licence, String> {
 
     List<Licence> findByUser(User user);
 

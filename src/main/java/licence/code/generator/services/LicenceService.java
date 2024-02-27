@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 @Service
 @Transactional
@@ -34,5 +35,13 @@ public class LicenceService implements ILicenceService {
                 "Unable to create licence for User with id: " + userId + " Product with id: " + productId + " does not exists!")));
         licenceRepository.save(newLicence);
         return newLicence;
+    }
+
+    @Override
+    public Boolean checkLicenceAccordance(String id) {
+        Licence licence = licenceRepository.findById(id).orElseThrow(() -> new NoSuchElementException(
+                "Unable to create licence with id: " + id));
+        //null check for now. Later will come ip check or Browser Fingerprint or Device Information.
+        return Objects.nonNull(licence);
     }
 }
