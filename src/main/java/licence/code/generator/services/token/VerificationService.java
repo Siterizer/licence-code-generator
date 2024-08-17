@@ -1,4 +1,4 @@
-package licence.code.generator.services;
+package licence.code.generator.services.token;
 
 import licence.code.generator.entities.User;
 import licence.code.generator.entities.VerificationToken;

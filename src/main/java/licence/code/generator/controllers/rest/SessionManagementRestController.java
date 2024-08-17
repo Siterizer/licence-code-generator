@@ -66,7 +66,7 @@ public class SessionManagementRestController {
             @ApiResponse(responseCode = "409", description = "There is already an account with that username/email"),
     })
     @PostMapping(value = {REGISTER_PATH})
-    public ResponseEntity<?> registerUser(@Valid @RequestBody final RegisterUserDto userDto) {
+    public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterUserDto userDto) {
         LOGGER.info("Registering user with information: {}", userDto);
         userService.registerUser(userDto);
         LOGGER.info("User: {} registered", userDto);

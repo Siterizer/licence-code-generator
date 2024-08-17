@@ -3,13 +3,15 @@ package licence.code.generator.services.user;
 import licence.code.generator.dto.RegisterUserDto;
 import licence.code.generator.dto.UserDto;
 import licence.code.generator.dto.mapper.UserDtoMapper;
+import licence.code.generator.entities.ResetPasswordToken;
 import licence.code.generator.entities.RoleName;
 import licence.code.generator.entities.User;
 import licence.code.generator.entities.VerificationToken;
 import licence.code.generator.repositories.RoleRepository;
 import licence.code.generator.repositories.UserRepository;
-import licence.code.generator.services.IVerificationTokenService;
 import licence.code.generator.services.email.IEmailService;
+import licence.code.generator.services.token.IResetPasswordTokenService;
+import licence.code.generator.services.token.IVerificationTokenService;
 import licence.code.generator.web.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,17 +32,20 @@ public class UserService implements IUserService {
     private final RoleRepository roleRepository;
     private final UserDtoMapper userDtoMapper;
     private final IEmailService emailService;
-    private final IVerificationTokenService tokenService;
+    private final IVerificationTokenService verificationService;
+    private final IResetPasswordTokenService passwordChangeService;
 
     @Autowired
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository,
-                       UserDtoMapper userDtoMapper, IEmailService emailService, IVerificationTokenService tokenService) {
+                       UserDtoMapper userDtoMapper, IEmailService emailService, IVerificationTokenService verificationService,
+                       IResetPasswordTokenService passwordChangeService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.roleRepository = roleRepository;
         this.userDtoMapper = userDtoMapper;
         this.emailService = emailService;
-        this.tokenService = tokenService;
+        this.verificationService = verificationService;
+        this.passwordChangeService = passwordChangeService;
     }
 
     public List<User> getAllUsers() {
@@ -90,15 +95,15 @@ public class UserService implements IUserService {
         user.setLocked(true);
         userRepository.save(user);
 
-        VerificationToken generatedToken = tokenService.createVerificationToken(user);
+        VerificationToken generatedToken = verificationService.createVerificationToken(user);//TODO purge tokens after 24h
         emailService.sendRegistrationConfirmEmail(userDto.email(), generatedToken.getToken());
     }
 
     @Override
     public void confirmRegistration(String token) {
-        VerificationToken verificationToken = tokenService.findByToken(token);
+        VerificationToken verificationToken = verificationService.findByToken(token);
         if (Objects.isNull(verificationToken)) {
-            throw new NoSuchElementException("Provided Verification Token Does not exists: " + token);
+            throw new NoSuchElementException("Provided Verification Token does not exists: " + token);
         }
         User user = verificationToken.getUser();
         if (!user.isLocked()) {
@@ -111,11 +116,41 @@ public class UserService implements IUserService {
     }
 
     @Override
+    public void createResetUserPasswordToken(String username) {
+        User user = userRepository.findByUsername(username);
+        if (Objects.isNull(user)) {
+            //note we do not want to know the requester if the username exists and email was sent. That's why it not produces Exception
+            return;
+        }
+        if (passwordChangeService.findByUser(user) != null) {
+            //user clicked again on reset password. Only one can exist in a moment  //TODO purge tokens after 24h
+            return;
+        }
+
+        ResetPasswordToken passwordToken = passwordChangeService.createVerificationToken(user);
+        emailService.sendPasswordResetEmail(user.getEmail(), passwordToken.getToken());
+    }
+
+    @Override
+    public void resetUserPassword(String token, String newPassword) {
+        ResetPasswordToken resetPasswordToken = passwordChangeService.findByToken(token);
+        if (Objects.isNull(resetPasswordToken)) {
+            throw new NoSuchElementException("Provided Password Change Token does not exists: " + token);
+        }
+        User user = resetPasswordToken.getUser();
+        if (resetPasswordToken.isExpired()) {
+            throw new PasswordChangeTokenExpiredException("Password Change Token has Expired for User: " + user.getId());
+        }
+        user.setPassword(passwordEncoder.encode(newPassword));
+    }
+
+    @Override
     public void changeUserPassword(Long userId, final String oldPassword, final String newPassword) {
         User user = userRepository.findById(userId).orElseThrow();
         if (!validCurrentPassword(oldPassword, user.getPassword())) {
             throw new InvalidOldPasswordException("Invalid Old Password for user with id: " + user.getId());
         }
+
         user.setPassword(passwordEncoder.encode(newPassword));
     }
 

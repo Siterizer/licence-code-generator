@@ -13,6 +13,10 @@ public interface IUserService extends UserDetailsService {
 
     void confirmRegistration(String token);
 
+    void createResetUserPasswordToken(String username);
+
+    void resetUserPassword(String token, String newPassword);
+
     List<User> getAllUsers();
 
     List<UserDto> getAllUsersDto(User admin);
