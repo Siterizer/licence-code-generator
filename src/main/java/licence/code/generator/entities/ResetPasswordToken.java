@@ -2,26 +2,33 @@ package licence.code.generator.entities;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.UUID;
 
 @Entity
-@Table(name = "password_change_token")
+@Table(name = "reset_password_token")
 @Data
 public class ResetPasswordToken {
-    private static final int EXPIRATION = 60 * 24;
+    private static final int EXPIRATION = 60 * 2;
 
     @Id
-    @GeneratedValue(generator = "system-uuid")
-    @GenericGenerator(name = "system-uuid", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(name = "token", unique = true)
+    private Long id;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @MapsId
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private User user;
+
     private String token;
 
-    @OneToOne(targetEntity = User.class, fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false, name = "user_id", foreignKey = @ForeignKey(name = "FK_VERIFY_USER"))
-    private User user;
+    @PrePersist
+    public void autofill() {
+        this.setToken(UUID.randomUUID().toString());
+    }
 
     private Date expiryDate;
 

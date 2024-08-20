@@ -12,7 +12,7 @@ import java.util.Random;
 public class JpaUserEntityHelper {
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
     @Autowired
     JpaRoleEntityHelper roleEntityHelper;
     Random random = new Random();
@@ -23,6 +23,7 @@ public class JpaUserEntityHelper {
         user.setEmail(RandomString.make());
         user.setPassword(RandomString.make());
         user.setLocked(random.nextBoolean());
+        user.setAccountExpired(random.nextBoolean());
         user.setRoles(roleEntityHelper.getUserRole());
         userRepository.save(user);
         return user;
@@ -34,6 +35,7 @@ public class JpaUserEntityHelper {
         user.setEmail(RandomString.make());
         user.setPassword(RandomString.make());
         user.setLocked(false);
+        user.setAccountExpired(false);
         user.setRoles(roleEntityHelper.getUserRole());
         userRepository.save(user);
         return user;
@@ -45,8 +47,22 @@ public class JpaUserEntityHelper {
         user.setEmail(RandomString.make());
         user.setPassword(RandomString.make());
         user.setLocked(true);
+        user.setAccountExpired(false);
         user.setRoles(roleEntityHelper.getUserRole());
         userRepository.save(user);
+        return user;
+    }
+
+    public User createExpireddUser() {
+        User user = new User();
+        user.setUsername(RandomString.make());
+        user.setEmail(RandomString.make());
+        user.setPassword(RandomString.make());
+        user.setLocked(false);
+        user.setAccountExpired(true);
+        user.setRoles(roleEntityHelper.getUserRole());
+        userRepository.save(user);
+
         return user;
     }
 
@@ -56,6 +72,7 @@ public class JpaUserEntityHelper {
         user.setEmail(RandomString.make());
         user.setPassword(RandomString.make());
         user.setLocked(false);
+        user.setAccountExpired(false);
         user.setRoles(roleEntityHelper.getAdminRole());
         userRepository.save(user);
         return user;
@@ -67,6 +84,7 @@ public class JpaUserEntityHelper {
         user.setEmail(RandomString.make());
         user.setPassword(RandomString.make());
         user.setLocked(true);
+        user.setAccountExpired(false);
         user.setRoles(roleEntityHelper.getAdminRole());
         userRepository.save(user);
         return user;

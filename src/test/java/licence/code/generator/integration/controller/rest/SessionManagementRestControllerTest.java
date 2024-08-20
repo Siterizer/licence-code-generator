@@ -8,6 +8,8 @@ import licence.code.generator.entities.User;
 import licence.code.generator.entities.VerificationToken;
 import licence.code.generator.helper.DtoHelper;
 import licence.code.generator.helper.JpaUserEntityHelper;
+import licence.code.generator.repositories.UserRepository;
+import licence.code.generator.repositories.VerificationTokenRepository;
 import licence.code.generator.services.email.IEmailService;
 import licence.code.generator.services.token.IVerificationTokenService;
 import licence.code.generator.services.user.IUserService;
@@ -28,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import static licence.code.generator.util.GeneratorStringUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -48,13 +51,15 @@ public class SessionManagementRestControllerTest {
     @Autowired
     private IUserService userService;
     @Autowired
-    private IVerificationTokenService tokenService;
+    private IVerificationTokenService verificationTokenService;
     @MockBean
     private JavaMailSender mailSender;
     @Autowired
     private JpaUserEntityHelper jpaUserEntityHelper;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private VerificationTokenRepository verificationTokenRepository;
     @Value("${generator.app.jwtCookieName}")
     private String jwtCookie;
     @MockBean
@@ -81,7 +86,7 @@ public class SessionManagementRestControllerTest {
         assertEquals(userToRegister.username(), registeredUser.getUsername());
         assertTrue(passwordEncoder.matches(userToRegister.password(), registeredUser.getPassword()));
         assertTrue(registeredUser.hasRole(RoleName.ROLE_USER));
-        assertTrue(registeredUser.isLocked());
+        assertTrue(registeredUser.isAccountExpired());
     }
 
     @Test
@@ -99,7 +104,7 @@ public class SessionManagementRestControllerTest {
 
         //then:
         User registeredUser = userService.loadUserWithRelatedEntitiesByUsername(userToRegister.username());
-        VerificationToken verificationToken = tokenService.findByUser(registeredUser);
+        VerificationToken verificationToken = verificationTokenService.findByUser(registeredUser);
 
         assertNotNull(verificationToken.getToken());
         assertFalse(verificationToken.isExpired());
@@ -133,10 +138,10 @@ public class SessionManagementRestControllerTest {
 
     @Test
     @Transactional
-    void registrationConfirm_shouldUnBlockUser() throws Exception {
+    void registrationConfirm_shouldUnExpireUserAndDeleteVerificationToken() throws Exception {
         //given:
-        User user = jpaUserEntityHelper.createBlockedUser();
-        VerificationToken verificationToken = tokenService.createVerificationToken(user);
+        User user = jpaUserEntityHelper.createExpireddUser();
+        VerificationToken verificationToken = verificationTokenService.createVerificationToken(user);
 
         //when:
         MvcResult result = mvc.perform(get(API_PATH + REGISTRATION_CONFIRM_PATH + "?token=" + verificationToken.getToken())
@@ -145,14 +150,16 @@ public class SessionManagementRestControllerTest {
 
         //then:
         assertEquals(HttpStatus.NO_CONTENT.value(), result.getResponse().getStatus());
-        assertFalse(user.isLocked());
+        assertFalse(user.isAccountExpired());
+        assertNull(verificationTokenRepository.findByToken(verificationToken.getToken()));
     }
 
     @Test
+    @Transactional
     void registrationConfirm_shouldReturn400CodeForNullToken() throws Exception {
         //given:
-        User user = jpaUserEntityHelper.createBlockedUser();
-        VerificationToken verificationToken = tokenService.createVerificationToken(user);
+        User user = jpaUserEntityHelper.createExpireddUser();
+        VerificationToken verificationToken = verificationTokenService.createVerificationToken(user);
 
         //when-then:
         mvc.perform(get(API_PATH + REGISTRATION_CONFIRM_PATH + "?toke=" //Typo
@@ -161,10 +168,11 @@ public class SessionManagementRestControllerTest {
     }
 
     @Test
+    @Transactional
     void registrationConfirm_shouldReturn404CodeForNonExistingLicence() throws Exception {
         //given:
-        User user = jpaUserEntityHelper.createBlockedUser();
-        VerificationToken verificationToken = tokenService.createVerificationToken(user);
+        User user = jpaUserEntityHelper.createExpireddUser();
+        VerificationToken verificationToken = verificationTokenService.createVerificationToken(user);
 
         //when-then:
         mvc.perform(get(API_PATH + REGISTRATION_CONFIRM_PATH + "?token=" + verificationToken.getToken() + "123")
@@ -173,10 +181,12 @@ public class SessionManagementRestControllerTest {
     }
 
     @Test
+    @Transactional
     void registrationConfirm_shouldReturn409CodeForAlreadyConfirmedUser() throws Exception {
         //given:
-        User user = jpaUserEntityHelper.createNotBlockedUser();//note User is not blocked
-        VerificationToken verificationToken = tokenService.createVerificationToken(user);
+        User user = jpaUserEntityHelper.createExpireddUser();
+        VerificationToken verificationToken = verificationTokenService.createVerificationToken(user);
+        user.setAccountExpired(false);
 
         //when-then:
         mvc.perform(get(API_PATH + REGISTRATION_CONFIRM_PATH + "?token=" + verificationToken.getToken())
@@ -191,8 +201,8 @@ public class SessionManagementRestControllerTest {
         final Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(new Date().getTime());
         cal.add(Calendar.DATE, -1);
-        User user = jpaUserEntityHelper.createBlockedUser();
-        VerificationToken verificationToken = tokenService.createVerificationToken(user);
+        User user = jpaUserEntityHelper.createExpireddUser();
+        VerificationToken verificationToken = verificationTokenService.createVerificationToken(user);
         verificationToken.setExpiryDate(cal.getTime());
 
         //when-then:
@@ -265,7 +275,7 @@ public class SessionManagementRestControllerTest {
 
         //given (registrationConfirm):
         User registeredUser = userService.loadUserWithRelatedEntitiesByUsername(userToRegister.username());
-        VerificationToken verificationToken = tokenService.findByUser(registeredUser);
+        VerificationToken verificationToken = verificationTokenService.findByUser(registeredUser);
 
         //when-then (registrationConfirm):
         mvc.perform(get(API_PATH + REGISTRATION_CONFIRM_PATH + "?token=" + verificationToken.getToken())

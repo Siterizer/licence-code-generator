@@ -32,6 +32,7 @@ class UserDtoMapperTest {
         assertEquals(user.getUsername(), result.username());
         assertEquals(user.getEmail(), result.email());
         assertEquals(user.isLocked(), result.isLocked());
+        assertEquals(user.isAccountExpired(), result.isExpired());
         assertTrue(result.roles().contains(RoleName.ROLE_USER.name()));
     }
 

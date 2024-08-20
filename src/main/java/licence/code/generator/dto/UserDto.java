@@ -8,5 +8,6 @@ public record UserDto(
         String email,
         List<String> roles,
         List<LicenceDto> licences,
+        boolean isExpired,
         boolean isLocked) {
 }

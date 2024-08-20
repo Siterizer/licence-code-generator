@@ -92,10 +92,11 @@ public class UserService implements IUserService {
         user.setEmail(userDto.email());
         user.setPassword(passwordEncoder.encode(userDto.password()));
         user.setRoles(Collections.singleton(roleRepository.findByName(RoleName.ROLE_USER)));
-        user.setLocked(true);
+        user.setLocked(false);
+        user.setAccountExpired(true);
         userRepository.save(user);
 
-        VerificationToken generatedToken = verificationService.createVerificationToken(user);//TODO purge tokens after 24h
+        VerificationToken generatedToken = verificationService.createVerificationToken(user);
         emailService.sendRegistrationConfirmEmail(userDto.email(), generatedToken.getToken());
     }
 
@@ -106,13 +107,14 @@ public class UserService implements IUserService {
             throw new NoSuchElementException("Provided Verification Token does not exists: " + token);
         }
         User user = verificationToken.getUser();
-        if (!user.isLocked()) {
+        if (user.isAccountNonExpired()) {
             throw new EmailAlreadyConfirmedException("For User with id:" + user.getId() + " email is already confirmed");
         }
         if (verificationToken.isExpired()) {
             throw new VerificationTokenExpiredException("Verification Token has Expired for User: " + user.getId());
         }
-        user.setLocked(false);
+        user.setAccountExpired(false);
+        verificationService.delete(verificationToken);
     }
 
     @Override
@@ -122,8 +124,11 @@ public class UserService implements IUserService {
             //note we do not want to know the requester if the username exists and email was sent. That's why it not produces Exception
             return;
         }
+        if (user.isLocked() || user.isAccountExpired()){
+            return;
+        }
         if (passwordChangeService.findByUser(user) != null) {
-            //user clicked again on reset password. Only one can exist in a moment  //TODO purge tokens after 24h
+            //user clicked again on reset password. Only one can exist in a moment
             return;
         }
 
@@ -186,7 +191,7 @@ public class UserService implements IUserService {
     }
 
     private boolean userExists(String email, String username) {
-        return userRepository.findByEmail(email) != null || userRepository.findByUsername(username) != null;
+        return userRepository.findByEmail(email) != null || userRepository.findByUsername(username) != null;//TODO make it in one query
     }
 
     private boolean validCurrentPassword(String providedPassword, final String currentPassword) {

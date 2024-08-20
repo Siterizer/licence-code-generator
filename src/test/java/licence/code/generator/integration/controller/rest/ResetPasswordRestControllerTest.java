@@ -10,7 +10,6 @@ import licence.code.generator.helper.DtoHelper;
 import licence.code.generator.helper.JpaUserEntityHelper;
 import licence.code.generator.repositories.ResetPasswordTokenRepository;
 import licence.code.generator.services.email.IEmailService;
-import licence.code.generator.services.token.IResetPasswordTokenService;
 import licence.code.generator.services.user.IUserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,8 +50,6 @@ class ResetPasswordRestControllerTest {
     private IUserService userService;
     @Autowired
     private ResetPasswordTokenRepository resetPasswordRepository;
-    @Autowired
-    private IResetPasswordTokenService tokenService;
     @MockBean
     private IEmailService emailService;
     ObjectMapper mapper = new ObjectMapper();
@@ -61,7 +58,7 @@ class ResetPasswordRestControllerTest {
     @Transactional
     void userShouldBeAbleToPerformFullCycleResetPassword() throws Exception {
         //given:
-        User userToResetPassword = jpaUserEntityHelper.createRandomUser();
+        User userToResetPassword = jpaUserEntityHelper.createNotBlockedUser();
         UsernameDto usernameDto = new UsernameDto(userToResetPassword.getUsername());
 
         //when (reset password token send):
@@ -72,7 +69,7 @@ class ResetPasswordRestControllerTest {
                 .andExpect(status().isCreated());
 
         //given:
-        ResetPasswordToken resetPasswordToken = tokenService.findByUser(
+        ResetPasswordToken resetPasswordToken = resetPasswordRepository.findByUser(
                 userService.loadUserWithRelatedEntitiesByUsername(userToResetPassword.getUsername()));
         ResetPasswordDto passwordDto = dtoHelper.createResetPasswordDto();
 

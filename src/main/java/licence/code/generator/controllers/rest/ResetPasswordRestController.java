@@ -41,7 +41,7 @@ public class ResetPasswordRestController {
     @PostMapping(value = {USER_SEND_RESET_PASSWORD_EMAIL_PATH})
     public ResponseEntity<?> resetUserPasswordEmail(@Valid @RequestBody UsernameDto usernameDto) {
         LOGGER.info("Resetting password for user with username: {}", usernameDto);
-        userService.createResetUserPasswordToken(usernameDto.username());
+        userService.createResetUserPasswordToken(usernameDto.username());//TODO resend token
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

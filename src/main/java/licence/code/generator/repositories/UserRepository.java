@@ -2,6 +2,7 @@ package licence.code.generator.repositories;
 
 import licence.code.generator.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
@@ -41,4 +42,15 @@ public interface UserRepository extends JpaRepository<User, Long> {
             """
     )
     User findByUsernameWithRelatedEntities(String username);
+
+    @Modifying
+    @Query(value = """
+              DELETE FROM User u
+              WHERE u.id IN
+              (SELECT vt.user.id FROM VerificationToken vt
+                WHERE vt.expiryDate < CURRENT_TIMESTAMP
+              )
+            """
+    )
+    int deleteExpiredUsers();
 }

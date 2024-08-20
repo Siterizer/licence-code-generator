@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
-public class DeleteExpiredPasswordTest {
+public class DeleteExpiredPasswordTokenTest {
     @Autowired
     private ResetPasswordTokenRepository tokenRepository;
     @Autowired
@@ -29,10 +29,11 @@ public class DeleteExpiredPasswordTest {
         assertEquals(3, tokenRepository.findAll().size());
 
         //when:
-        tokenRepository.deleteExpiredTokens();
+        int deletedTokens = tokenRepository.deleteExpiredTokens();
 
         //then:
         assertEquals(0, tokenRepository.findAll().size());
+        assertEquals(3, deletedTokens);
     }
 
     @Test
@@ -46,12 +47,13 @@ public class DeleteExpiredPasswordTest {
         jpaResetPasswordEntityHelper.createResetPasswordToken(null);
 
         //before:
-        assertEquals(3, tokenRepository.findAll().size());
+        assertEquals(5, tokenRepository.findAll().size());
 
         //when:
-        tokenRepository.deleteExpiredTokens();
+        int deletedTokens = tokenRepository.deleteExpiredTokens();
 
         //then:
         assertEquals(3, tokenRepository.findAll().size());
+        assertEquals(2, deletedTokens);
     }
 }

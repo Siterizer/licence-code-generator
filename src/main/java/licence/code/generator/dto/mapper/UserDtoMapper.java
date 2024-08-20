@@ -41,7 +41,7 @@ public class UserDtoMapper {
                 .map(licenceDtoMapper::toDto)
                 .collect(toList());
 
-        UserDto userDto = new UserDto(user.getId(), user.getUsername(), user.getEmail(), roles, licences, !user.isAccountNonLocked());
+        UserDto userDto = new UserDto(user.getId(), user.getUsername(), user.getEmail(), roles, licences, user.isAccountExpired(), user.isLocked());
         LOGGER.debug("Mapped UserDto: {}", userDto);
 
         return userDto;
