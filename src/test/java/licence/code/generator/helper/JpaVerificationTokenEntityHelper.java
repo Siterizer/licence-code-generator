@@ -31,7 +31,7 @@ public class JpaVerificationTokenEntityHelper {
         cal.setTimeInMillis(new Date().getTime());
         cal.add(Calendar.MINUTE, -10);
         if (user == null) {
-            user = userEntityHelper.createExpireddUser();
+            user = userEntityHelper.createExpiredUser();
         }
         VerificationToken result = new VerificationToken(user);
         result.setExpiryDate(new Date(cal.getTime().getTime()));

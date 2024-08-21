@@ -53,7 +53,7 @@ public class JpaUserEntityHelper {
         return user;
     }
 
-    public User createExpireddUser() {
+    public User createExpiredUser() {
         User user = new User();
         user.setUsername(RandomString.make());
         user.setEmail(RandomString.make());

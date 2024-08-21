@@ -8,7 +8,6 @@ import licence.code.generator.entities.User;
 import licence.code.generator.entities.VerificationToken;
 import licence.code.generator.helper.DtoHelper;
 import licence.code.generator.helper.JpaUserEntityHelper;
-import licence.code.generator.repositories.UserRepository;
 import licence.code.generator.repositories.VerificationTokenRepository;
 import licence.code.generator.services.email.IEmailService;
 import licence.code.generator.services.token.IVerificationTokenService;
@@ -30,7 +29,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 import static licence.code.generator.util.GeneratorStringUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -140,7 +138,7 @@ public class SessionManagementRestControllerTest {
     @Transactional
     void registrationConfirm_shouldUnExpireUserAndDeleteVerificationToken() throws Exception {
         //given:
-        User user = jpaUserEntityHelper.createExpireddUser();
+        User user = jpaUserEntityHelper.createExpiredUser();
         VerificationToken verificationToken = verificationTokenService.createVerificationToken(user);
 
         //when:
@@ -158,7 +156,7 @@ public class SessionManagementRestControllerTest {
     @Transactional
     void registrationConfirm_shouldReturn400CodeForNullToken() throws Exception {
         //given:
-        User user = jpaUserEntityHelper.createExpireddUser();
+        User user = jpaUserEntityHelper.createExpiredUser();
         VerificationToken verificationToken = verificationTokenService.createVerificationToken(user);
 
         //when-then:
@@ -171,7 +169,7 @@ public class SessionManagementRestControllerTest {
     @Transactional
     void registrationConfirm_shouldReturn404CodeForNonExistingLicence() throws Exception {
         //given:
-        User user = jpaUserEntityHelper.createExpireddUser();
+        User user = jpaUserEntityHelper.createExpiredUser();
         VerificationToken verificationToken = verificationTokenService.createVerificationToken(user);
 
         //when-then:
@@ -184,7 +182,7 @@ public class SessionManagementRestControllerTest {
     @Transactional
     void registrationConfirm_shouldReturn409CodeForAlreadyConfirmedUser() throws Exception {
         //given:
-        User user = jpaUserEntityHelper.createExpireddUser();
+        User user = jpaUserEntityHelper.createExpiredUser();
         VerificationToken verificationToken = verificationTokenService.createVerificationToken(user);
         user.setAccountExpired(false);
 
@@ -201,7 +199,7 @@ public class SessionManagementRestControllerTest {
         final Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(new Date().getTime());
         cal.add(Calendar.DATE, -1);
-        User user = jpaUserEntityHelper.createExpireddUser();
+        User user = jpaUserEntityHelper.createExpiredUser();
         VerificationToken verificationToken = verificationTokenService.createVerificationToken(user);
         verificationToken.setExpiryDate(cal.getTime());
 

@@ -43,7 +43,7 @@ public class EmailService implements IEmailService {
     @Override
     public void sendPasswordResetEmail(String setTo, String passwordChangeToken) {
         String url = String.format("%s:%d%s%s?token=%s", InetAddress.getLoopbackAddress().getHostAddress(),
-                port, API_PATH, USER_SEND_RESET_PASSWORD_EMAIL_PATH, passwordChangeToken);
+                port, API_PATH, USER_RESET_PASSWORD_PATH, passwordChangeToken);
 
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(mailUsername);

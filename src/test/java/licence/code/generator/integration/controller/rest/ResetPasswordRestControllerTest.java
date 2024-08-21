@@ -90,7 +90,7 @@ class ResetPasswordRestControllerTest {
     @Transactional
     void resetUserPasswordEmail_shouldSendEmailOnceOnMultipleCalls() throws Exception {
         //given:
-        User userToResetPassword = jpaUserEntityHelper.createRandomUser();
+        User userToResetPassword = jpaUserEntityHelper.createNotBlockedUser();
         UsernameDto usernameDto = new UsernameDto(userToResetPassword.getUsername());
 
         //when:
