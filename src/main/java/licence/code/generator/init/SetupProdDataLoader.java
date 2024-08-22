@@ -62,7 +62,7 @@ public class SetupProdDataLoader implements ApplicationListener<ContextRefreshed
         final Role userRole = createRoleIfNotFound(RoleName.ROLE_USER, userPrivileges);
 
         // == create initial admin
-        createUserIfNotFound(adminEmail, adminPassword, adminUsername, Set.of(adminRole, userRole), false);
+        createUserIfNotFound(adminEmail, adminPassword, adminUsername, Set.of(adminRole, userRole), false, false);
 
 
         alreadySetup = true;
@@ -92,7 +92,7 @@ public class SetupProdDataLoader implements ApplicationListener<ContextRefreshed
     }
 
     @Transactional
-    User createUserIfNotFound(final String email, final String password, final String username, final Set<Role> roles, boolean locked) {
+    User createUserIfNotFound(final String email, final String password, final String username, final Set<Role> roles, boolean locked, boolean expired) {
         User user = userRepository.findByEmail(email) == null ? userRepository.findByUsername(username) : userRepository.findByEmail(email);
         if (user == null) {
             user = new User();
@@ -100,6 +100,7 @@ public class SetupProdDataLoader implements ApplicationListener<ContextRefreshed
             user.setUsername(username);
             user.setEmail(email);
             user.setLocked(locked);
+            user.setAccountExpired(expired);
         }
         user.setRoles(roles);
         user = userRepository.save(user);

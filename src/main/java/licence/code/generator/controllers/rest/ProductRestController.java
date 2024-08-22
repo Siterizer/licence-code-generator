@@ -38,7 +38,7 @@ public class ProductRestController {
     }
 
     @Operation(
-            summary = "Buy Licence for current user")
+            summary = "Show available products for current user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Successful operation"),
             @ApiResponse(responseCode = "401", description = "Requester is not logged-in"),

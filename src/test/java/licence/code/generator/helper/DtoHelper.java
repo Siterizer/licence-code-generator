@@ -1,6 +1,7 @@
 package licence.code.generator.helper;
 
 import licence.code.generator.dto.RegisterUserDto;
+import licence.code.generator.dto.ResetPasswordDto;
 import licence.code.generator.dto.UpdatePasswordDto;
 import net.bytebuddy.utility.RandomString;
 import org.springframework.stereotype.Component;
@@ -25,5 +26,10 @@ public class DtoHelper {
     public UpdatePasswordDto createRandomUpdatePasswordDto(String oldPassword) {
         String newPassword = RandomString.make() + "1";
         return new UpdatePasswordDto(oldPassword, newPassword, newPassword);
+    }
+
+    public ResetPasswordDto createResetPasswordDto() {
+        String newPassword = RandomString.make() + "1";
+        return new ResetPasswordDto(newPassword, newPassword);
     }
 }

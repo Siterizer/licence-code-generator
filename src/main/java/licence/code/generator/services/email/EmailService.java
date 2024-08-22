@@ -11,8 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.net.InetAddress;
 
-import static licence.code.generator.util.GeneratorStringUtils.API_PATH;
-import static licence.code.generator.util.GeneratorStringUtils.REGISTRATION_CONFIRM_PATH;
+import static licence.code.generator.util.GeneratorStringUtils.*;
 
 
 @Service("emailService")
@@ -38,6 +37,20 @@ public class EmailService implements IEmailService {
         message.setSubject("Confirm your address email for generator app");
         message.setText("Click the link and confirm your address: " + url);
         LOGGER.info("Sending email confirmation to user: {} with token: {}", setTo, verificationToken);
+        mailSender.send(message);
+    }
+
+    @Override
+    public void sendPasswordResetEmail(String setTo, String passwordChangeToken) {
+        String url = String.format("%s:%d%s%s?token=%s", InetAddress.getLoopbackAddress().getHostAddress(),
+                port, API_PATH, USER_RESET_PASSWORD_PATH, passwordChangeToken);
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(mailUsername);
+        message.setTo(setTo);
+        message.setSubject("Change your password for generator app");
+        message.setText("Click the link and change your password: " + url);
+        LOGGER.info("Sending password change email to user: {} with token: {}", setTo, passwordChangeToken);
         mailSender.send(message);
     }
 }

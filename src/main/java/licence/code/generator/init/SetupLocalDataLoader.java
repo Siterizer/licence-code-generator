@@ -61,10 +61,10 @@ public class SetupLocalDataLoader implements ApplicationListener<ContextRefreshe
         final Product fightingBot = createProductIfNotFound("Fighting Bot", new BigDecimal("2.50"));
 
         // == create initial user
-        final User locked = createUserIfNotFound("locked@test.com", "locked", "locked", new HashSet<>(Collections.singletonList(userRole)), true);
-        final User user1 = createUserIfNotFound("asd1@test.com", "asd", "asd1", new HashSet<>(Collections.singletonList(userRole)), false);
-        final User user2 = createUserIfNotFound("asd2@test.com", "asd", "asd2", new HashSet<>(Collections.singletonList(userRole)), false);
-        final User admin = createUserIfNotFound("test@test.com", "test", "test", new HashSet<>(List.of(adminRole, userRole)), false);
+        final User locked = createUserIfNotFound("locked@test.com", "locked", "locked", new HashSet<>(Collections.singletonList(userRole)), true, false);
+        final User user1 = createUserIfNotFound("asd1@test.com", "asd", "asd1", new HashSet<>(Collections.singletonList(userRole)), false, false);
+        final User user2 = createUserIfNotFound("asd2@test.com", "asd", "asd2", new HashSet<>(Collections.singletonList(userRole)), false, false);
+        final User admin = createUserIfNotFound("test@test.com", "test", "test", new HashSet<>(List.of(adminRole, userRole)), false, false);
 
         // == create initial licences
         createLicenceIfNotFound(user1, fishBot);
@@ -112,7 +112,7 @@ public class SetupLocalDataLoader implements ApplicationListener<ContextRefreshe
     }
 
     @Transactional
-    User createUserIfNotFound(final String email, final String password, final String username, final Set<Role> roles, boolean locked) {
+    User createUserIfNotFound(final String email, final String password, final String username, final Set<Role> roles, boolean locked, boolean expired) {
         User user = userRepository.findByEmail(email) == null ? userRepository.findByUsername(username) : userRepository.findByEmail(email);
         if (user == null) {
             user = new User();
@@ -120,6 +120,7 @@ public class SetupLocalDataLoader implements ApplicationListener<ContextRefreshe
             user.setUsername(username);
             user.setEmail(email);
             user.setLocked(locked);
+            user.setAccountExpired(expired);
         }
         user.setRoles(roles);
         user = userRepository.save(user);

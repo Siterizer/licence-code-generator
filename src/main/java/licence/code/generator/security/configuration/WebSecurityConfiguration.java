@@ -41,6 +41,7 @@ public class WebSecurityConfiguration {
                         .requestMatchers("/api/user*").authenticated()
                         .requestMatchers("/api/swagger-ui/index.html*", "/api/v3/api-docs/swagger-config").authenticated()
                         .requestMatchers("/api/login*", "/api/register*", "/api/registrationConfirm*").permitAll()
+                        .requestMatchers("/api/user/sendResetPasswordEmail", "/api/user/resetPassword").permitAll()
                         .requestMatchers("/css/*", "/js/*", "/favicon.ico", "/mainPage", "/", "/navbar").permitAll()
                         .requestMatchers("/admin", "/login", "/register", "/user").permitAll()
                         .requestMatchers("/api/licence/accordanceCheck*").permitAll()

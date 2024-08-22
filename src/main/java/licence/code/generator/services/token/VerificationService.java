@@ -1,4 +1,4 @@
-package licence.code.generator.services;
+package licence.code.generator.services.token;
 
 import licence.code.generator.entities.User;
 import licence.code.generator.entities.VerificationToken;
@@ -18,7 +18,7 @@ public class VerificationService implements IVerificationTokenService {
     }
 
     public VerificationToken createVerificationToken(User user) {
-        VerificationToken verificationToken = new VerificationToken(user);
+        final VerificationToken verificationToken = new VerificationToken(user);
         verificationTokenRepository.save(verificationToken);
         return verificationToken;
 
@@ -32,5 +32,10 @@ public class VerificationService implements IVerificationTokenService {
     @Override
     public VerificationToken findByUser(User user) {
         return verificationTokenRepository.findByUser(user);
+    }
+
+    @Override
+    public void delete(VerificationToken token) {
+        verificationTokenRepository.delete(token);
     }
 }

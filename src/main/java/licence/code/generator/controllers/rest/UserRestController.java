@@ -67,19 +67,12 @@ public class UserRestController {
     })
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @PostMapping(value = {USER_UPDATE_PASSWORD_PATH})
-    public ResponseEntity<?> updateUserPassword(@Valid @RequestBody final UpdatePasswordDto passwordDto) {
+    public ResponseEntity<?> updateUserPassword(@Valid @RequestBody UpdatePasswordDto passwordDto) {
         User requester = getRequester();
         LOGGER.info("Changing password for user with id: {}", requester.getId());
         userService.changeUserPassword(requester.getId(), passwordDto.oldPassword(), passwordDto.newPassword());
         LOGGER.info("Password changed for User with id: {}", requester.getId());
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-    }
-
-    @PostMapping(value = {USER_RESET_PASSWORD_PATH})
-    public String resetUserPassword() {
-        //TODO create resetPassword functionality
-        //userService.registerUser(user);
-        return "users";
     }
 
     private User getRequester() {

@@ -10,9 +10,9 @@ import java.util.Date;
 import java.util.UUID;
 
 @Entity
-@Table(name = "verification_token")
+@Table(name = "reset_password_token")
 @Data
-public class VerificationToken {
+public class ResetPasswordToken {
     private static final int EXPIRATION = 60 * 2;
 
     @Id
@@ -33,11 +33,11 @@ public class VerificationToken {
     private Date expiryDate;
 
     //Used by Hibernate
-    public VerificationToken() {
+    public ResetPasswordToken() {
 
     }
 
-    public VerificationToken(final User user) {
+    public ResetPasswordToken(final User user) {
         super();
 
         this.user = user;

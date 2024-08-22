@@ -128,7 +128,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.CONFLICT, request);
     }
 
-    //409
+    //410
     @ExceptionHandler({VerificationTokenExpiredException.class})
     public ResponseEntity<Object> handleVerificationTokenExpired(final RuntimeException ex, final WebRequest request) {
         logger.error("410 Status Code", ex);
@@ -136,6 +136,14 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.GONE, request);
     }
 
+    @ExceptionHandler({PasswordChangeTokenExpiredException.class})
+    public ResponseEntity<Object> handlePasswordChangeTokenExpired(final RuntimeException ex, final WebRequest request) {
+        logger.error("410 Status Code", ex);
+        final GenericResponse bodyOfResponse = new GenericResponse(messages.getMessage("message.user.password.token.expired", null, request.getLocale()), "PasswordChangeTokenExpiredException");
+        return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.GONE, request);
+    }
+
+    //500
     @ExceptionHandler({Exception.class})
     public ResponseEntity<Object> handleInternal(final RuntimeException ex, final WebRequest request) {
         logger.error("500 Status Code", ex);

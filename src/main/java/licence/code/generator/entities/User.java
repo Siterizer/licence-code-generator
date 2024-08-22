@@ -30,6 +30,15 @@ public class User implements UserDetails {
 
     private boolean isLocked;
 
+    //Used to determine whether the user has confirmed the email address
+    private boolean isAccountExpired;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, optional = false, orphanRemoval = true)
+    private ResetPasswordToken resetPasswordToken;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, optional = false, orphanRemoval = true)
+    private VerificationToken verificationToken;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -53,7 +62,7 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        return !isAccountExpired;
     }
 
     @Override
@@ -94,6 +103,8 @@ public class User implements UserDetails {
                 username +
                 ", id=" +
                 id +
+                ", isAccountExpired=" +
+                isAccountExpired +
                 ", isLocked=" +
                 isLocked +
                 ", roles=" +

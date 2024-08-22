@@ -14,12 +14,3 @@ INSERT INTO roles_privileges (role_id, privilege_id) VALUES (2, 1);
 INSERT INTO roles_privileges (role_id, privilege_id) VALUES (1, 2);
 
 ----------------- //  user_account // -----------------
-INSERT INTO user_account (username, email, password, is_locked) VALUES ('user1', 'user1@email.com', 'password', false);
-INSERT INTO user_account (username, email, password, is_locked) VALUES ('admin', 'admin@email.com', 'admin', false);
-INSERT INTO user_account (username, email, password, is_locked) VALUES ('locked', 'locked@email.com', 'locked', true);
-
------------------ //  users_roles // -----------------
-INSERT INTO users_roles (user_id, role_id) VALUES (1, 2);
-INSERT INTO users_roles (user_id, role_id) VALUES (2, 1);
-INSERT INTO users_roles (user_id, role_id) VALUES (2, 2);
-INSERT INTO users_roles (user_id, role_id) VALUES (3, 2);
