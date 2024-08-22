@@ -102,7 +102,7 @@ public class DeleteExpiredVerificationTokenTest {
 
         //before:
         int initialUserCount = userRepository.findAll().size();
-        assertEquals(3, licenceRepository.findAll().size());
+        int initialLicenceCount = licenceRepository.findAll().size();
         assertEquals(1, resetPasswordTokenRepository.findAll().size());
         assertEquals(1, roleRepository.findRolesByUsername(expiredUser.getUsername()).size());
 
@@ -112,7 +112,7 @@ public class DeleteExpiredVerificationTokenTest {
         //then:
         assertEquals(0, tokenRepository.findAll().size());
         assertEquals(1, initialUserCount - userRepository.findAll().size());
-        assertEquals(0, licenceRepository.findAll().size());
+        assertEquals(3, initialLicenceCount - licenceRepository.findAll().size());
         assertEquals(0, resetPasswordTokenRepository.findAll().size());
         assertEquals(0, roleRepository.findRolesByUsername(expiredUser.getUsername()).size());
         assertEquals(1, deletedRows);
