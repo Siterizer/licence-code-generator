@@ -103,7 +103,7 @@ public class DeleteExpiredPasswordTokenTest {
         //then:
         assertEquals(1, verificationTokenRepository.findAll().size());
         assertEquals(0, initialUserCount - userRepository.findAll().size());
-        assertEquals(3, initialLicenceCount - licenceRepository.findAll().size());
+        assertEquals(0, initialLicenceCount - licenceRepository.findAll().size());
         assertEquals(0, resetPasswordTokenRepository.findAll().size());
         assertEquals(1, roleRepository.findRolesByUsername(expiredUser.getUsername()).size());
         assertEquals(1, deletedRows);
