@@ -22,8 +22,8 @@ public class EventScheduler {
     @Autowired
     private ResetPasswordTokenRepository resetPasswordRepository;
 
-    //@Scheduled(cron = "0 0 20 * * ?", zone = "Europe/Warsaw")//Every day at 20:00
-    @Scheduled(cron = "0/20 * * * * ?", zone = "Europe/Warsaw")//Every day at 20:00
+    @Scheduled(cron = "0 0 20 * * ?", zone = "Europe/Warsaw")//Every day at 20:00
+    //@Scheduled(cron = "0/20 * * * * ?", zone = "Europe/Warsaw")//Every day at 20:00
     public void expiredEntitiesRemover() {
         deleteExpiredResetPasswordTokens();
         removeExpiredUsers();
