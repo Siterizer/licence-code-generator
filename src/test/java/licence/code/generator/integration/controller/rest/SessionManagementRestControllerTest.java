@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mail.SimpleMailMessage;
@@ -217,12 +218,15 @@ public class SessionManagementRestControllerTest {
         LoginDto loginDto = new LoginDto(notBlockedUser.getUsername(), notBlockedUser.getPassword());
         notBlockedUser.setPassword(passwordEncoder.encode(notBlockedUser.getPassword()));
 
-        //when-then:
-        mvc.perform(post(API_PATH + LOGIN_PATH)
+        //when:
+        MvcResult mvcResult = mvc.perform(post(API_PATH + LOGIN_PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(loginDto)))
-                .andExpect(cookie().exists(jwtCookie))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andReturn();
+        //then:
+        String authorizationHeader = mvcResult.getResponse().getHeader(HttpHeaders.AUTHORIZATION);
+        assertTrue(authorizationHeader.contains("Bearer "));
 
     }
 

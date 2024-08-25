@@ -52,10 +52,11 @@ public class SessionManagementRestController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         User userDetails = (User) authentication.getPrincipal();
-        ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
+        String jwtHeader = jwtUtils.generateBearerJwtToken(userDetails);
         LOGGER.debug("Setting jwt cookie for user with: {} username", loginDto.username());
-
-        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString()).build();
+        return ResponseEntity.ok()
+                .header(HttpHeaders.AUTHORIZATION, jwtHeader)
+                .build();
     }
 
     @Operation(
